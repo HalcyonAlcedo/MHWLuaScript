@@ -365,21 +365,21 @@ namespace Base {
 			PlayerData::Coordinate::Entity.y = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x164);
 			PlayerData::Coordinate::Entity.z = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x168);
 			PlayerData::Coordinate::Collision.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0xA50);
-			PlayerData::Coordinate::Collision.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0xA54);
-			PlayerData::Coordinate::Collision.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0xA58);
+			PlayerData::Coordinate::Collision.y = *offsetPtr<float>(BasicGameData::PlayerPlot, 0xA54);
+			PlayerData::Coordinate::Collision.z = *offsetPtr<float>(BasicGameData::PlayerPlot, 0xA58);
 			PlayerData::Coordinate::Collimator.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D30);
-			PlayerData::Coordinate::Collimator.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D34);
-			PlayerData::Coordinate::Collimator.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D38);
+			PlayerData::Coordinate::Collimator.y = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D34);
+			PlayerData::Coordinate::Collimator.z = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D38);
 			void* IncrementPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
 			if (IncrementPlot != nullptr) {
 				PlayerData::Coordinate::Increment.x = *offsetPtr<float>(IncrementPlot, 0x7D30);
-				PlayerData::Coordinate::Increment.x = *offsetPtr<float>(IncrementPlot, 0x7D34);
-				PlayerData::Coordinate::Increment.x = *offsetPtr<float>(IncrementPlot, 0x7D38);
+				PlayerData::Coordinate::Increment.y = *offsetPtr<float>(IncrementPlot, 0x7D34);
+				PlayerData::Coordinate::Increment.z = *offsetPtr<float>(IncrementPlot, 0x7D38);
 			}
 			else {
 				PlayerData::Coordinate::Increment.x = 0.0;
-				PlayerData::Coordinate::Increment.x = 0.0;
-				PlayerData::Coordinate::Increment.x = 0.0;
+				PlayerData::Coordinate::Increment.y = 0.0;
+				PlayerData::Coordinate::Increment.z = 0.0;
 			}
 			void* AimingStatePlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0xC0);
 			if (AimingStatePlot != nullptr)
