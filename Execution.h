@@ -9,7 +9,7 @@ namespace Execution {
 		//瞄准状态下双击W
 		if (Base::Keyboard::CheckKey(87,2) and Base::PlayerData::AimingState) {
 			//添加特效
-			Base::PlayerData::Effects::GenerateSpecialEffects(2002, 1);
+			Base::PlayerData::Effects::GenerateSpecialEffects(2003, 1);
 			//设置坐标
 			Base::PlayerData::Coordinate::TransportCoordinate(
 				Base::PlayerData::Coordinate::Collimator.x,

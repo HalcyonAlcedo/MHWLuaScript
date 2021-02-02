@@ -8,6 +8,7 @@ using namespace std;
 using namespace loader;
 
 extern "C" long long _stdcall Navigation(float*, float*, float*);
+extern "C" void* _stdcall GetVisualPtr(void*);
 
 namespace Base {
 	namespace ModConfig {
@@ -83,14 +84,8 @@ namespace Base {
 			if (ChronoscopeList.find(name) != ChronoscopeList.end()) {
 				if (ChronoscopeList[name].EndTime > NowTime)
 					return true;
-				else {
-					return false;
-				}
 			}
-			else {
-				return false;
-			}
-				
+			return false;
 		}
 	}
 	//计算
@@ -122,6 +117,13 @@ namespace Base {
 			y = Coordinate.y + r * sin((4 * atan(1.0) / 180 * angle));
 			return Vector2(x, y);
 		}
+		float myRander(float min, float max)
+		{
+			std::random_device rd;
+			std::mt19937 eng(rd());
+			std::uniform_real_distribution<float> dist(min, max);
+			return dist(eng);
+		}
 	}
 	//怪物信息
 	namespace Monster {
@@ -145,6 +147,16 @@ namespace Base {
 				Coordinate(float x = 0, float y = 0, float z = 0) :x(x), y(y), z(z) {
 				};
 			};
+
+			//缓存数据
+			namespace TempData {
+				void* t_visual = nullptr;
+				Coordinate t_SetVisualCoordinate;
+				void* t_SetVisualBind = nullptr;
+				bool t_SetVisual = false;
+				bool t_LockVisual = false;
+			}
+
 			//玩家坐标
 			Coordinate Entity;
 			//准星坐标
@@ -155,6 +167,8 @@ namespace Base {
 			Coordinate Increment;
 			//导航坐标
 			Coordinate Navigation;
+			//相机坐标
+			Coordinate Visual;
 			//玩家传送(X坐标,Y坐标,Z坐标,是否穿墙)
 			static void TransportCoordinate(float X, float Y, float Z, bool Across = false) {
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x160) = X;
@@ -183,6 +197,31 @@ namespace Base {
 				MH::Player::Effects((undefined*)Effects, group, record);
 			}
 		}
+		//相机设置(X坐标,Y坐标,Z坐标,持续时间0=长期)
+		static void SetVisual(float X, float Y, float Z, float Duration = 0) {
+			if (Duration != 0)
+				Chronoscope::AddChronoscope(Duration, "SetVisual", true);
+			else
+				Coordinate::TempData::t_LockVisual = true;
+			Coordinate::TempData::t_SetVisualCoordinate.x = X;
+			Coordinate::TempData::t_SetVisualCoordinate.y = Y;
+			Coordinate::TempData::t_SetVisualCoordinate.z = Z;
+			Coordinate::TempData::t_SetVisual = true;
+		}
+		//相机绑定
+		static void SetVisual(void* bind, float Duration = 0) {
+			if (Duration != 0)
+				Chronoscope::AddChronoscope(Duration, "SetVisual", true);
+			else
+				Coordinate::TempData::t_LockVisual = true;
+			Coordinate::TempData::t_SetVisualBind = bind;
+			Coordinate::TempData::t_SetVisual = true;
+		}
+		//解除相机设置
+		static void UnbindVisual() {
+			Coordinate::TempData::t_LockVisual = false;
+			Coordinate::TempData::t_SetVisual = false;
+		}
 		//朝向角度
 		float Angle;
 		//朝向弧度
@@ -191,6 +230,8 @@ namespace Base {
 		bool AimingState;
 		//最后一次击中的怪物地址
 		void* AttackMonsterPlot = nullptr;
+		//动作id
+		float ActionId;
 	}
 	//按键信息
 	namespace Keyboard {
@@ -220,7 +261,7 @@ namespace Base {
 					//计时器检查
 					if(TempData::t_KeyCount[vk] == 1)
 						Chronoscope::AddChronoscope(Duration, "KEY_" + to_string(vk), true);
-					else if (!Chronoscope::CheckChronoscope("KEY_" + to_string(vk))) {
+					if (!Chronoscope::CheckChronoscope("KEY_" + to_string(vk))) {
 						TempData::t_KeyCount[vk] = 0;
 					}
 					TempData::t_KeyCount[vk]++;
@@ -303,6 +344,22 @@ namespace Base {
 						Base::Monster::Monsters.erase(monster);
 						return original(monster);
 					});
+				//视角相机坐标修改
+				HookLambda(MH::Player::Visual,
+					[]() {
+						GetVisualPtr(&Base::PlayerData::Coordinate::TempData::t_visual);
+						if (Base::PlayerData::Coordinate::TempData::t_visual != nullptr) {
+							Base::PlayerData::Coordinate::Visual.x = *offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x0);
+							Base::PlayerData::Coordinate::Visual.y = *offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x4);
+							Base::PlayerData::Coordinate::Visual.z = *offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x8);
+							if (Base::PlayerData::Coordinate::TempData::t_SetVisual) {
+								*offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x0) = Base::PlayerData::Coordinate::TempData::t_SetVisualCoordinate.x;
+								*offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x4) = Base::PlayerData::Coordinate::TempData::t_SetVisualCoordinate.y;
+								*offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x8) = Base::PlayerData::Coordinate::TempData::t_SetVisualCoordinate.z;
+							}
+						}
+						return original();
+					});
 				MH_ApplyQueued();
 				ModConfig::GameDataInit = true;
 				LOG(INFO) << ModConfig::ModName << " : Game data initialization complete!";
@@ -347,6 +404,10 @@ namespace Base {
 				//清除环境生物数据
 				World::EnvironmentalData::TempData::t_environmentalMessages.clear();
 				World::EnvironmentalData::Environmentals.clear();
+				//清除相机数据
+				PlayerData::Coordinate::TempData::t_SetVisualBind = nullptr;
+				PlayerData::Coordinate::TempData::t_SetVisual = false;
+				PlayerData::Coordinate::TempData::t_LockVisual = false;
 				//更新地址信息
 				void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 				BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
@@ -390,13 +451,12 @@ namespace Base {
 			void* AttackMonsterOffset1 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterPlot, 0x98);
 			void* AttackMonsterOffset2 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset1, 0xD8);
 			PlayerData::AttackMonsterPlot = *offsetPtr<void*>(AimingStatePlot, 0x4298);
-
+			PlayerData::ActionId = *offsetPtr<int>(BasicGameData::ActionPlot, 0xE9C4);
 			//更新环境生物数据
 			vector<void*>::iterator it;
 			for (it = World::EnvironmentalData::TempData::t_environmentalMessages.begin(); it != World::EnvironmentalData::TempData::t_environmentalMessages.end(); it++)
 			{
 				if (*it != nullptr) {
-
 					if (Base::World::EnvironmentalData::Environmentals.find(*it) == Base::World::EnvironmentalData::Environmentals.end()) {
 						Base::World::EnvironmentalData::Environmentals[*it].Plot = *it;
 						Base::World::EnvironmentalData::Environmentals[*it].CoordinatesX = *offsetPtr<float>(*it, 0x160);
@@ -426,6 +486,22 @@ namespace Base {
 			}
 			//更新计时器时间
 			Chronoscope::NowTime = *offsetPtr<float>(BasicGameData::MapPlot, 0xC24);
+			//检查相机计时器
+			if (!Chronoscope::CheckChronoscope("SetVisual")) {
+				if(!PlayerData::Coordinate::TempData::t_LockVisual)
+					PlayerData::Coordinate::TempData::t_SetVisual = false;
+				Chronoscope::DelChronoscope("SetVisual");
+			}
+			//清除相机绑定数据
+			if (!PlayerData::Coordinate::TempData::t_SetVisual) {
+				PlayerData::Coordinate::TempData::t_SetVisualBind = nullptr;
+			}
+			//设置相机绑定数据
+			if (PlayerData::Coordinate::TempData::t_SetVisualBind != nullptr) {
+				PlayerData::Coordinate::TempData::t_SetVisualCoordinate.x = *offsetPtr<float>(PlayerData::Coordinate::TempData::t_SetVisualBind, 0x160);
+				PlayerData::Coordinate::TempData::t_SetVisualCoordinate.y = *offsetPtr<float>(PlayerData::Coordinate::TempData::t_SetVisualBind, 0x164);
+				PlayerData::Coordinate::TempData::t_SetVisualCoordinate.z = *offsetPtr<float>(PlayerData::Coordinate::TempData::t_SetVisualBind, 0x168);
+			}
 		}
 	}
 }

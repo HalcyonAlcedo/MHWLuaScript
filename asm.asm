@@ -12,8 +12,12 @@ Navigation proc
 	fstp dword ptr [rdx]
 	fld dword ptr [rbp+000002D8h]
 	fstp dword ptr [r8]
-
 	ret
 Navigation endp
+
+GetVisualPtr proc
+    mov [rcx], rbx
+	ret
+GetVisualPtr endp
 
 end

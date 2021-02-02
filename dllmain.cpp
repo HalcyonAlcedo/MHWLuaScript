@@ -22,18 +22,8 @@
 
 using namespace loader;
 
-//随机浮点数
-float myRander(float min, float max)
-{
-	std::random_device rd;
-	std::mt19937 eng(rd());
-	std::uniform_real_distribution<float> dist(min, max);
-	return dist(eng);
-}
-
 __declspec(dllexport) extern bool Load()
 {
-
 	//游戏版本检查
 	if (std::string(GameVersion) != Base::ModConfig::Version) {
 		LOG(WARN) << Base::ModConfig::ModName << " : Wrong version";
@@ -53,7 +43,6 @@ __declspec(dllexport) extern bool Load()
 		});
 	//应用钩子
 	MH_ApplyQueued();
-
 	return true;
 }
 
