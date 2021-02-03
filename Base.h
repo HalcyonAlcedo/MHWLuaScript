@@ -370,6 +370,10 @@ namespace Base {
 		void* AttackMonsterPlot = nullptr;
 		//动作id
 		float ActionId;
+		//武器类型
+		int WeaponType;
+		//武器ID
+		int WeaponId;
 	}
 	//按键信息
 	namespace Keyboard {
@@ -604,6 +608,11 @@ namespace Base {
 			void* AttackMonsterOffset2 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset1, 0xD8);
 			PlayerData::AttackMonsterPlot = *offsetPtr<void*>(AimingStatePlot, 0x4298);
 			PlayerData::ActionId = *offsetPtr<int>(BasicGameData::ActionPlot, 0xE9C4);
+			void* WeaponPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0xc0);
+			void* WeaponOffset1 = *offsetPtr<undefined**>((undefined(*)())WeaponPlot, 0x8);
+			void* WeaponOffset2 = *offsetPtr<undefined**>((undefined(*)())WeaponOffset1, 0x78);
+			PlayerData::WeaponType = *offsetPtr<int>(WeaponOffset2, 0x2E8);
+			PlayerData::WeaponId = *offsetPtr<int>(WeaponOffset2, 0x2EC);
 			//更新环境生物数据
 			vector<void*>::iterator it;
 			for (it = World::EnvironmentalData::TempData::t_environmentalMessages.begin(); it != World::EnvironmentalData::TempData::t_environmentalMessages.end(); it++)

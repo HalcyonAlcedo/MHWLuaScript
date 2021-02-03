@@ -10,9 +10,9 @@ namespace Component {
 		};
 	};
 	struct Effect {
+		bool Enable = false;
 		int group = 0;
 		int record = 0;
-		bool Enable = false;
 	};
 	
 	/*
@@ -66,7 +66,6 @@ namespace Component {
 	}
 	/*
 		将玩家移动到目标
-		适用于玩家、怪物、环境生物、环境采集物、环境实体
 		注：
 			速度值越大，速度越慢
 	*/
