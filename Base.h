@@ -239,6 +239,15 @@ namespace Base {
 			map<int, bool> t_KeyDown;
 			map<int, int> t_KeyCount;
 		}
+		//检查窗口
+		static bool CheckWindows() {
+			HWND wnd = GetForegroundWindow();;
+			HWND mhd = FindWindow(NULL, "MONSTER HUNTER: WORLD(421470)");
+			if (wnd == mhd)
+				return true;
+			else
+				return false;
+		}
 		//清理缓存
 		static void ClearKey() {
 			for (auto [Environmental, EData] : World::EnvironmentalData::Environmentals) {
@@ -249,6 +258,8 @@ namespace Base {
 		}
 		//按键检查
 		static bool CheckKey(int vk, int ComboClick = 1,float Duration = 0.3) {
+			if (!CheckWindows())
+				return false;
 			//建立按键档案
 			if (TempData::t_KeyDown.find(vk) == TempData::t_KeyDown.end()) {
 				TempData::t_KeyDown[vk] = false;
