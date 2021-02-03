@@ -11,6 +11,18 @@ extern "C" long long _stdcall Navigation(float*, float*, float*);
 extern "C" void* _stdcall GetVisualPtr(void*);
 
 namespace Base {
+	//常用结构
+	struct Vector3 {
+		float x, y, z;
+		Vector3(float x = 0, float y = 0, float z = 0) :x(x), y(y), z(z) {
+		};
+	};
+	struct Vector2 {
+		float x, y;
+		Vector2(float x = 0, float y = 0) :x(x), y(y) {
+		};
+	};
+
 	namespace ModConfig {
 		//内置参数
 		bool GameDataInit = false;
@@ -90,16 +102,6 @@ namespace Base {
 	}
 	//计算
 	namespace Calculation {
-		struct Vector3 {
-			float x, y, z;
-			Vector3(float x = 0, float y = 0, float z = 0) :x(x), y(y), z(z) {
-			};
-		};
-		struct Vector2 {
-			float x, y;
-			Vector2(float x = 0, float y = 0) :x(x), y(y){
-			};
-		};
 		Vector3 GetVector(Vector3 p1, Vector3 p2, float l) {
 			float a = (p2.x - p1.x);
 			float b = (p2.y - p1.y);
@@ -123,6 +125,142 @@ namespace Base {
 			std::mt19937 eng(rd());
 			std::uniform_real_distribution<float> dist(min, max);
 			return dist(eng);
+		}
+	}
+	//图形绘制
+	namespace Draw {
+		HWND GameHandle;
+		bool HandleInit = false;
+		//初始化图形绘制
+		static void InitDraw() {
+			string GameName = "MONSTER HUNTER: WORLD(" + ModConfig::Version + ")";
+			GameHandle = FindWindow(NULL, GameName.c_str());
+			if(GameHandle != nullptr)
+				HandleInit = true;
+		}
+		//绘制 待完善
+		static void Draw() {
+			HDC hdc = ::GetDC(GameHandle);
+			RECT rect;
+			::GetWindowRect(GameHandle, &rect);
+			::MoveToEx(hdc, 0, 0, NULL);
+			::LineTo(hdc, rect.right, rect.bottom);
+			::MoveToEx(hdc, rect.right, 0, NULL);
+			::LineTo(hdc, 0, rect.bottom);
+			::ReleaseDC(GameHandle, hdc);
+		}
+	}
+	//委托
+	namespace Commission {
+		namespace MoveEntity {
+			struct Parameter {
+				Vector3 Vector;
+				void* Entity = nullptr;
+				float speed = 100.0;
+			};
+			map<void*, Parameter> CommissionList;
+
+			static void MoveEntityToTarget() {
+				for (auto [entity, parameter] : CommissionList) {
+					if (entity != nullptr) {
+						//移动到目标
+						if (parameter.Entity != nullptr) {
+							float EntityX = *offsetPtr<float>(entity, 0x160);
+							float EntityY = *offsetPtr<float>(entity, 0x160);
+							float EntityZ = *offsetPtr<float>(entity, 0x160);
+							float ToEntityX = *offsetPtr<float>(parameter.Entity, 0x160);
+							float ToEntityY = *offsetPtr<float>(parameter.Entity, 0x160);
+							float ToEntityZ = *offsetPtr<float>(parameter.Entity, 0x160);
+
+							if (fabs(ToEntityX - EntityX) > float(10)) {
+								if (ToEntityX < EntityX)
+									EntityX -= float(fabs(ToEntityX - EntityX) / 10);
+								else
+									EntityX += float(fabs(ToEntityX - EntityX) / 10);
+							}
+							else
+								EntityX = ToEntityX;
+
+							if (fabs(ToEntityY - EntityY) > float(10)) {
+								if (ToEntityY < EntityY)
+									EntityY -= float(fabs(ToEntityY - EntityY) / parameter.speed);
+								else
+									EntityY += float(fabs(ToEntityY - EntityY) / parameter.speed);
+							}
+							else
+								EntityY = ToEntityY;
+
+							if (fabs(ToEntityZ - EntityZ) > float(10)) {
+								if (ToEntityZ < EntityZ)
+									EntityZ -= float(fabs(ToEntityZ - EntityZ) / 10);
+								else
+									EntityZ += float(fabs(ToEntityZ - EntityZ) / 10);
+							}
+							else
+								EntityZ = ToEntityZ;
+
+							*offsetPtr<float>(entity, 0x160) = ToEntityX;
+							*offsetPtr<float>(entity, 0x164) = ToEntityY;
+							*offsetPtr<float>(entity, 0x168) = ToEntityZ;
+
+							if (
+								*offsetPtr<float>(entity, 0x160) == ToEntityX and
+								*offsetPtr<float>(entity, 0x164) == ToEntityY and
+								*offsetPtr<float>(entity, 0x168) == ToEntityZ
+								)
+								CommissionList.erase(entity);
+						}
+						//移动到点
+						else {
+							float EntityX = *offsetPtr<float>(entity, 0x160);
+							float EntityY = *offsetPtr<float>(entity, 0x160);
+							float EntityZ = *offsetPtr<float>(entity, 0x160);
+							float ToEntityX = parameter.Vector.x;
+							float ToEntityY = parameter.Vector.y;
+							float ToEntityZ = parameter.Vector.z;
+							if (EntityX - ToEntityX > 10) {
+								if (EntityX > ToEntityX)
+									*offsetPtr<float>(entity, 0x160) -= (EntityX - ToEntityX) / parameter.speed;
+								else
+									*offsetPtr<float>(entity, 0x160) += (EntityX - ToEntityX) / parameter.speed;
+							}
+							else
+								*offsetPtr<float>(entity, 0x160) = ToEntityX;
+							if (EntityY - ToEntityY > 10) {
+								if (EntityY > ToEntityY)
+									*offsetPtr<float>(entity, 0x164) -= (EntityY - ToEntityY) / parameter.speed;
+								else
+									*offsetPtr<float>(entity, 0x164) += (EntityY - ToEntityY) / parameter.speed;
+							}
+							else
+								*offsetPtr<float>(entity, 0x164) = ToEntityY;
+							if (EntityZ - ToEntityZ > 10) {
+								if (EntityZ > ToEntityZ)
+									*offsetPtr<float>(entity, 0x168) -= (EntityZ - ToEntityZ) / parameter.speed;
+								else
+									*offsetPtr<float>(entity, 0x168) += (EntityZ - ToEntityZ) / parameter.speed;
+							}
+							else
+								*offsetPtr<float>(entity, 0x168) = ToEntityZ;
+
+							if (
+								*offsetPtr<float>(entity, 0x160) == ToEntityX and
+								*offsetPtr<float>(entity, 0x164) == ToEntityY and
+								*offsetPtr<float>(entity, 0x168) == ToEntityZ
+								)
+								CommissionList.erase(entity);
+						}
+					}
+				}
+			}
+		}
+
+		static void CleanCommission() {
+			MoveEntity::CommissionList.clear();
+		}
+
+		static void Run() {
+			MoveEntity::MoveEntityToTarget();
 		}
 	}
 	//怪物信息
@@ -241,8 +379,9 @@ namespace Base {
 		}
 		//检查窗口
 		static bool CheckWindows() {
+			string GameName = "MONSTER HUNTER: WORLD(" + ModConfig::Version + ")";
 			HWND wnd = GetForegroundWindow();;
-			HWND mhd = FindWindow(NULL, "MONSTER HUNTER: WORLD(421470)");
+			HWND mhd = FindWindow(NULL, GameName.c_str());
 			if (wnd == mhd)
 				return true;
 			else
@@ -419,6 +558,8 @@ namespace Base {
 				PlayerData::Coordinate::TempData::t_SetVisualBind = nullptr;
 				PlayerData::Coordinate::TempData::t_SetVisual = false;
 				PlayerData::Coordinate::TempData::t_LockVisual = false;
+				//清理委托
+				Commission::CleanCommission();
 				//更新地址信息
 				void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 				BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
@@ -513,6 +654,8 @@ namespace Base {
 				PlayerData::Coordinate::TempData::t_SetVisualCoordinate.y = *offsetPtr<float>(PlayerData::Coordinate::TempData::t_SetVisualBind, 0x164);
 				PlayerData::Coordinate::TempData::t_SetVisualCoordinate.z = *offsetPtr<float>(PlayerData::Coordinate::TempData::t_SetVisualBind, 0x168);
 			}
+			//运行委托
+			Commission::Run();
 		}
 	}
 }

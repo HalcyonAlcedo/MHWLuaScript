@@ -1,5 +1,5 @@
 #pragma once
-#include "loader.h"
+#include "Component.h"
 
 using namespace std;
 using namespace loader;
@@ -15,6 +15,17 @@ namespace Execution {
 				Base::PlayerData::Coordinate::Collimator.x,
 				Base::PlayerData::Coordinate::Collimator.y,
 				Base::PlayerData::Coordinate::Collimator.z);
+			/*
+			Component::MovePlayerToPoint(
+				Component::Coordinate{ 
+				Base::PlayerData::Coordinate::Collimator.x,
+				Base::PlayerData::Coordinate::Collimator.y, 
+				Base::PlayerData::Coordinate::Collimator.z
+				},
+				Component::Effect{2003,1,true},
+				false,100000.0
+			);
+			*/
 		}
 	}
 }

@@ -31,6 +31,9 @@
       <Filter>核心数据</Filter>
     </ClInclude>
     <ClInclude Include="Execution.h" />
+    <ClInclude Include="Component.h">
+      <Filter>核心数据</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="asm.asm">
