@@ -32,8 +32,46 @@ static int Gmae_Player_AddEffect(lua_State* pL) {
     Base::PlayerData::Effects::GenerateSpecialEffects(group, record);
     return 0;
 }
+static int Gmae_Player_GetPlayerIncrementCoordinate(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Increment.x);
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Increment.y);
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Increment.z);
+    return 3;
+}
+static int Gmae_Player_GetPlayerNavigationCoordinate(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Navigation.x);
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Navigation.y);
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Navigation.z);
+    return 3;
+}
+static int Gmae_Player_GetPlayerVisualCoordinate(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Visual.x);
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Visual.y);
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Visual.z);
+    return 3;
+}
+static int Gmae_Player_SetPlayerVisualCoordinate(lua_State* pL) {
+    float x = (float)lua_tonumber(pL, 1);
+    float y = (float)lua_tonumber(pL, 2);
+    float z = (float)lua_tonumber(pL, 3);
+    float duration = (float)lua_tonumber(pL, 3);
+    Base::PlayerData::SetVisual(x,y,z, duration);
+    return 0;
+}
+static int Gmae_Player_UnbindPlayerVisualCoordinate(lua_State* pL) {
+    Base::PlayerData::UnbindVisual();
+    return 0;
+}
+static int Gmae_Player_GetPlayerActionId(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::ActionId);
+    return 1;
+}
 
 #pragma region WeaponFun
+static int Gmae_Player_Weapon_GetWeaponId(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::WeaponId);
+    return 1;
+}
 static int Gmae_Player_Weapon_GetWeaponType(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::WeaponType);
     return 1;
@@ -63,6 +101,11 @@ static int System_Chronoscope_CheckChronoscope(lua_State* pL) {
     lua_pushnumber(pL, Base::Chronoscope::CheckChronoscope(name));
     return 1;
 }
+static int System_Message_ShowMessage(lua_State* pL) {
+    string message = (string)lua_tostring(pL, -1);
+    Component::ShowMessage(message);
+    return 0;
+}
 #pragma endregion
 //==============================================
 // Main Functions
@@ -84,10 +127,24 @@ int Lua_Main()
     lua_register(L, "Gmae_Player_GetPlayerCollimatorCoordinate", Gmae_Player_GetPlayerCollimatorCoordinate);
     //检查瞄准状态
     lua_register(L, "Gmae_Player_CheckAimingStatus", Gmae_Player_CheckAimingStatus);
+    //获取增量坐标
+    lua_register(L, "Gmae_Player_GetPlayerIncrementCoordinate", Gmae_Player_GetPlayerIncrementCoordinate);
+    //获取导航坐标
+    lua_register(L, "Gmae_Player_GetPlayerNavigationCoordinate", Gmae_Player_GetPlayerNavigationCoordinate);
+    //获取相机坐标
+    lua_register(L, "Gmae_Player_GetPlayerVisualCoordinate", Gmae_Player_GetPlayerVisualCoordinate);
+    //设置相机坐标（xyz和持续时间4个参数）
+    lua_register(L, "Gmae_Player_SetPlayerVisualCoordinate", Gmae_Player_SetPlayerVisualCoordinate);
+    //解除相机坐标绑定
+    lua_register(L, "Gmae_Player_UnbindPlayerVisualCoordinate", Gmae_Player_UnbindPlayerVisualCoordinate);
+    //获取玩家动作id
+    lua_register(L, "Gmae_Player_GetPlayerActionId", Gmae_Player_GetPlayerActionId);
     //添加特效
     lua_register(L, "Gmae_Player_AddEffect", Gmae_Player_AddEffect);
 
     #pragma region Weapon
+    //获取玩家武器Id
+    lua_register(L, "Gmae_Player_Weapon_GetWeaponId", Gmae_Player_Weapon_GetWeaponId);
     //获取玩家武器类型
     lua_register(L, "Gmae_Player_Weapon_GetWeaponType", Gmae_Player_Weapon_GetWeaponType);
     #pragma endregion
@@ -102,7 +159,8 @@ int Lua_Main()
     lua_register(L, "System_Chronoscope_AddChronoscope", System_Chronoscope_AddChronoscope);
     //检查计时器
     lua_register(L, "System_Chronoscope_CheckChronoscope", System_Chronoscope_CheckChronoscope);
-    
+    //向游戏内发送消息
+    lua_register(L, "System_Message_ShowMessage", System_Message_ShowMessage);
     #pragma endregion
 
     int error = luaL_dofile(L, "nativePC/LuaScript/MainScript.lua");    // 读取Lua源文件到内存编译

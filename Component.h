@@ -81,4 +81,10 @@ namespace Component {
 			MoveTargetToPoint(Base::BasicGameData::PlayerPlot, Point, false, speed);
 		}
 	}
+	/*
+		向游戏内发送消息
+	*/
+	static void ShowMessage(std::string message) {
+		MH::Chat::ShowGameMessage(*(undefined**)MH::Chat::MainPtr, (undefined*)&message[0], -1, -1, 0);
+	}
 }

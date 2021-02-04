@@ -31,7 +31,7 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.0";
+		string ModVersion = "v1.0.1";
 		string Version = "421470";
 	}
 	//游戏基址数据
@@ -273,7 +273,7 @@ namespace Base {
 			int Id = 0;
 			int SubId = 0;
 		};
-		//环境生物列表
+		//怪物列表
 		map<void*, MonsterData> Monsters;
 	}
 	//玩家信息
@@ -329,17 +329,6 @@ namespace Base {
 				MH::Player::Effects((undefined*)Effects, group, record);
 			}
 		}
-		//相机设置(X坐标,Y坐标,Z坐标,持续时间0=长期)
-		static void SetVisual(float X, float Y, float Z, float Duration = 0) {
-			if (Duration != 0)
-				Chronoscope::AddChronoscope(Duration, "SetVisual", true);
-			else
-				Coordinate::TempData::t_LockVisual = true;
-			Coordinate::TempData::t_SetVisualCoordinate.x = X;
-			Coordinate::TempData::t_SetVisualCoordinate.y = Y;
-			Coordinate::TempData::t_SetVisualCoordinate.z = Z;
-			Coordinate::TempData::t_SetVisual = true;
-		}
 		//相机绑定
 		static void SetVisual(void* bind, float Duration = 0) {
 			if (Duration != 0)
@@ -353,6 +342,20 @@ namespace Base {
 		static void UnbindVisual() {
 			Coordinate::TempData::t_LockVisual = false;
 			Coordinate::TempData::t_SetVisual = false;
+			Coordinate::TempData::t_SetVisualBind = nullptr;
+		}
+		//相机设置(X坐标,Y坐标,Z坐标,持续时间0=长期)
+		static void SetVisual(float X, float Y, float Z, float Duration = 0) {
+			if (Duration != 0) {
+				UnbindVisual();
+				Chronoscope::AddChronoscope(Duration, "SetVisual", true);
+			}
+			else
+				Coordinate::TempData::t_LockVisual = true;
+			Coordinate::TempData::t_SetVisualCoordinate.x = X;
+			Coordinate::TempData::t_SetVisualCoordinate.y = Y;
+			Coordinate::TempData::t_SetVisualCoordinate.z = Z;
+			Coordinate::TempData::t_SetVisual = true;
 		}
 		//朝向角度
 		float Angle;
