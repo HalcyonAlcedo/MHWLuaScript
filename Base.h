@@ -323,14 +323,8 @@ namespace Base {
 		namespace Effects {
 			//生成特效(特效组，特效id)
 			static void GenerateSpecialEffects(int group, int record) {
-				//仅仅这里用到，无需加入地址列表
-				void* EffectsPlot = *(undefined**)MH::Player::EffectsBasePlot;
-				void* EffectsOffset1 = *offsetPtr<undefined**>((undefined(*)())EffectsPlot, 0x80);
-				void* EffectsOffset2 = *offsetPtr<undefined**>((undefined(*)())EffectsOffset1, 0xC0);
-				void* EffectsOffset3 = *offsetPtr<undefined**>((undefined(*)())EffectsOffset2, 0x38);
-				void* EffectsOffset4 = *offsetPtr<undefined**>((undefined(*)())EffectsOffset3, 0x58);
-				void* EffectsOffset5 = *offsetPtr<undefined**>((undefined(*)())EffectsOffset4, 0x40);
-				void* Effects = offsetPtr<void*>(EffectsOffset5, 0xD10);
+				//感谢南风焓大佬提供的地址
+				void* Effects = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x8808);
 				//特效添加
 				MH::Player::Effects((undefined*)Effects, group, record);
 			}

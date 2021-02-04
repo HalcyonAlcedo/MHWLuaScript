@@ -39,7 +39,6 @@ namespace MH {
         static undefined(*PlayerBasePlot)() = (undefined(*)())0x145073ED0;
         static undefined(*ActionTrigger)(undefined*, uint) = (undefined(*)(undefined*, uint))0x14226E938;
         static void(*Effects)(undefined*,int,int) = (void(*)(undefined*,int,int))0x140ae3aa0;
-        static undefined(*EffectsBasePlot)() = (undefined(*)())0x1451836A8;
         static undefined(*Visual)() = (undefined(*)())0x141FBB736;
     }
     namespace EnvironmentalBiological {
