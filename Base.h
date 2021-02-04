@@ -29,7 +29,7 @@ namespace Base {
 		bool InitErrInfo = true;
 		int InitErrCount = 0;
 		//可设置参数
-		string ModName = "Blink";
+		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
 		string ModVersion = "v1.0";
 		string Version = "421470";

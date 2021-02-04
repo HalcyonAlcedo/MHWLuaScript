@@ -69,7 +69,7 @@ namespace Component {
 		注：
 			速度值越大，速度越慢
 	*/
-	static void MovePlayerToPoint(Coordinate Point, Effect effect, bool Instant = true, float speed = 100.0) {
+	static void MovePlayerToPoint(Coordinate Point, Effect effect = Effect{false}, bool Instant = true, float speed = 100.0) {
 		if (effect.Enable) {
 			Base::PlayerData::Effects::GenerateSpecialEffects(effect.group, effect.record);
 		}

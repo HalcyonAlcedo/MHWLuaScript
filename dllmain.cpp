@@ -19,6 +19,7 @@
 
 #include "Base.h"
 #include "Execution.h"
+#include "LuaScript.h"
 
 using namespace loader;
 
@@ -29,7 +30,6 @@ __declspec(dllexport) extern bool Load()
 		LOG(WARN) << Base::ModConfig::ModName << " : Wrong version";
 		return false;
 	}
-
 	//初始化钩子
 	MH_Initialize();
 	HookLambda(MH::World::MapClockLocal,
@@ -37,7 +37,8 @@ __declspec(dllexport) extern bool Load()
 			auto ret = original(clock, clock2);
 			if (Base::Init()) {
 				Base::RealTimeUpdate();
-				Execution::Main();
+				//Execution::Main();
+				Lua_Main();
 			}
 			return ret;
 		});

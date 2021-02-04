@@ -34,6 +34,7 @@
     <ClInclude Include="Component.h">
       <Filter>核心数据</Filter>
     </ClInclude>
+    <ClInclude Include="LuaScript.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="asm.asm">

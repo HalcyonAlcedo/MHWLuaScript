@@ -22,9 +22,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{8CCB2C51-B523-4118-81F0-4F6379B5DAB8}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Blink</RootNamespace>
+    <RootNamespace>Template</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>闪现</ProjectName>
+    <ProjectName>LuaScript</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -175,6 +175,7 @@
     <ClInclude Include="Base.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Execution.h" />
+    <ClInclude Include="LuaScript.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
