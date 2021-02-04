@@ -66,8 +66,6 @@ static int Gmae_Player_GetPlayerActionId(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::ActionId);
     return 1;
 }
-
-#pragma region WeaponFun
 static int Gmae_Player_Weapon_GetWeaponId(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::WeaponId);
     return 1;
@@ -76,7 +74,32 @@ static int Gmae_Player_Weapon_GetWeaponType(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::WeaponType);
     return 1;
 }
-#pragma endregion
+static int Gmae_World_GetMapId(lua_State* pL) {
+    lua_pushnumber(pL, Base::World::MapId);
+    return 1;
+}
+static int Game_Monster_SetFilter(lua_State* pL) {
+    int id = (float)lua_tonumber(pL, 1);
+    int subId = (float)lua_tonumber(pL, 2);
+    Component::SetMonsterFilter(id,subId);
+    return 0;
+}
+static int Game_Monster_DisableFilter(lua_State* pL) {
+    Component::DisableMonsterFilter();
+    return 0;
+}
+static int Game_Monster_KillNavigationMarkMonster(lua_State* pL) {
+    lua_pushnumber(pL, Component::KillNavigationMonster());
+    return 1;
+}
+static int Game_Monster_KillNearestMonster(lua_State* pL) {
+    lua_pushnumber(pL, Component::KillNearestMonster());
+    return 1;
+}
+static int Game_Monster_KillLastHitMonster(lua_State* pL) {
+    lua_pushnumber(pL, Component::KillLastHitMonster());
+    return 1;
+}
 
 #pragma endregion
 #pragma region SystemFun
@@ -104,6 +127,16 @@ static int System_Chronoscope_CheckChronoscope(lua_State* pL) {
 static int System_Message_ShowMessage(lua_State* pL) {
     string message = (string)lua_tostring(pL, -1);
     Component::ShowMessage(message);
+    return 0;
+}
+static int System_Console_Info(lua_State* pL) {
+    string message = (string)lua_tostring(pL, -1);
+    LOG(INFO) << Base::ModConfig::ModName << " LUA INFO:" << message;
+    return 0;
+}
+static int System_Console_Error(lua_State* pL) {
+    string message = (string)lua_tostring(pL, -1);
+    LOG(ERR) << Base::ModConfig::ModName << " LUA ERR:"<< message;
     return 0;
 }
 #pragma endregion
@@ -141,13 +174,30 @@ int Lua_Main()
     lua_register(L, "Gmae_Player_GetPlayerActionId", Gmae_Player_GetPlayerActionId);
     //添加特效
     lua_register(L, "Gmae_Player_AddEffect", Gmae_Player_AddEffect);
-
-    #pragma region Weapon
     //获取玩家武器Id
     lua_register(L, "Gmae_Player_Weapon_GetWeaponId", Gmae_Player_Weapon_GetWeaponId);
     //获取玩家武器类型
     lua_register(L, "Gmae_Player_Weapon_GetWeaponType", Gmae_Player_Weapon_GetWeaponType);
-    #pragma endregion
+
+    //获取当前地图Id
+    lua_register(L, "Gmae_World_GetMapId", Gmae_World_GetMapId);
+    
+    //设置怪物筛选器
+    lua_register(L, "Game_Monster_SetFilter", Game_Monster_SetFilter);
+    //清除怪物筛选器
+    lua_register(L, "Game_Monster_DisableFilter", Game_Monster_DisableFilter);
+    //杀死导航标记的怪物
+    lua_register(L, "Game_Monster_KillNavigationMarkMonster", Game_Monster_KillNavigationMarkMonster);
+    //给导航标记的怪物设置异常状态
+    //lua_register(L, "Game_Monster_SetDebuffToNavigationMarkMonster", Game_Monster_SetDebuffToNavigationMarkMonster);
+    //杀死距离最近的怪物
+    lua_register(L, "Game_Monster_KillNearestMonster", Game_Monster_KillNearestMonster);
+    //给距离最近的怪物设置异常状态
+    //lua_register(L, "Game_Monster_SetDebuffNearestMonster", Game_Monster_SetDebuffNearestMonster);
+    //杀死最后一次击中的怪物
+    //lua_register(L, "Game_Monster_KillLastHitMonster", Game_Monster_KillLastHitMonster);
+    //给最后一次击中的怪物设置异常状态
+    //lua_register(L, "Game_Monster_SetDebuffLastHitMonster", Game_Monster_SetDebuffLastHitMonster);
     
     #pragma endregion
     #pragma region System
@@ -161,6 +211,10 @@ int Lua_Main()
     lua_register(L, "System_Chronoscope_CheckChronoscope", System_Chronoscope_CheckChronoscope);
     //向游戏内发送消息
     lua_register(L, "System_Message_ShowMessage", System_Message_ShowMessage);
+    //向控制台发送消息
+    lua_register(L, "System_Console_Info", System_Console_Info);
+    //向控制台发送错误消息
+    lua_register(L, "System_Console_Error", System_Console_Error);
     #pragma endregion
 
     int error = luaL_dofile(L, "nativePC/LuaScript/MainScript.lua");    // 读取Lua源文件到内存编译

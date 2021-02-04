@@ -87,4 +87,100 @@ namespace Component {
 	static void ShowMessage(std::string message) {
 		MH::Chat::ShowGameMessage(*(undefined**)MH::Chat::MainPtr, (undefined*)&message[0], -1, -1, 0);
 	}
+	/*
+		设置怪物筛选器
+	*/
+	static void SetMonsterFilter(int monsterId, int monsterSubId) {
+		Base::Monster::Filter = pair<int, int>(monsterId, monsterSubId);
+	}
+	/*
+		清除怪物筛选器
+	*/
+	static void DisableMonsterFilter() {
+		Base::Monster::Filter = pair<int, int>(255, 255);
+	}
+	/*
+		杀死导航标记的怪物
+	*/
+	static bool KillNavigationMonster() {
+		for (auto [monster, monsterData] : Base::Monster::Monsters) {
+			if (monster != nullptr) {
+				if (
+					monsterData.Id != Base::Monster::Filter.first and
+					monsterData.SubId != Base::Monster::Filter.second and
+					Base::Monster::Filter.first != 255 and
+					Base::Monster::Filter.second != 255
+					)
+					continue;
+				Base::Vector3 monsterCoordinates(
+					*offsetPtr<float>(monster, 0x160),
+					*offsetPtr<float>(monster, 0x164),
+					*offsetPtr<float>(monster, 0x168)
+				);
+				float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Base::PlayerData::Coordinate::Navigation,monsterCoordinates);
+				if (distance < 5) {
+					void* healthMgr = *offsetPtr<void*>(monster, 0x7670);
+					float health = *offsetPtr<float>(healthMgr, 0x64);
+					if (health > 1) {
+						*offsetPtr<float>(healthMgr, 0x60) = 0.1;
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	/*
+		杀死距离最近的怪物
+	*/
+	static bool KillNearestMonster() {
+		pair<void*, float> tempKillMonster;
+		for (auto [monster, monsterData] : Base::Monster::Monsters) {
+			if (monster != nullptr) {
+				if (
+					monsterData.Id != Base::Monster::Filter.first and
+					monsterData.SubId != Base::Monster::Filter.second and
+					Base::Monster::Filter.first != 255 and
+					Base::Monster::Filter.second != 255
+					)
+					continue;
+				Base::Vector3 monsterCoordinates(
+					*offsetPtr<float>(monster, 0x160),
+					*offsetPtr<float>(monster, 0x164),
+					*offsetPtr<float>(monster, 0x168)
+				);
+				float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Base::PlayerData::Coordinate::Entity, monsterCoordinates);
+				if (tempKillMonster.first != nullptr) {
+					if(tempKillMonster.second > distance)
+						tempKillMonster = pair<void*, float>(monster, distance);
+				}
+				else
+					tempKillMonster = pair<void*, float>(monster, distance);
+			}
+		}
+		if (tempKillMonster.first != nullptr) {
+			void* healthMgr = *offsetPtr<void*>(tempKillMonster.first, 0x7670);
+			float health = *offsetPtr<float>(healthMgr, 0x64);
+			if (health > 1) {
+				*offsetPtr<float>(healthMgr, 0x60) = 0.1;
+				return true;
+			}
+		}
+
+		return false;
+	}
+	/*
+		杀死最后一次击中的怪物
+	*/
+	static bool KillLastHitMonster() {
+		if (Base::PlayerData::AttackMonsterPlot != nullptr) {
+			void* healthMgr = *offsetPtr<void*>(Base::PlayerData::AttackMonsterPlot, 0x7670);
+			float health = *offsetPtr<float>(healthMgr, 0x64);
+			if (health > 1) {
+				*offsetPtr<float>(healthMgr, 0x60) = 0.1;
+				return true;
+			}
+		}
+		return false;
+	}
 }

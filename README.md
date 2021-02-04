@@ -27,11 +27,13 @@
 ### 系统操作
 |                                   |示例							                                               |说明						                     |
 |-----------------------------------|---------------------------------------------------------------|-------------------------------------|
-|System_Keyboard_CheckKey			      |`System_Keyboard_CheckKey(87)`                                 |检查按键是否按下，按键为VK码           |
-|System_Keyboard_CheckDoubleKey		  |`System_Keyboard_CheckDoubleKey(87)`                           |检查是否双击按键，按键为VK码           |
+|System_Keyboard_CheckKey			|`System_Keyboard_CheckKey(87)`                                 |检查按键是否按下，按键为VK码           |
+|System_Keyboard_CheckDoubleKey		|`System_Keyboard_CheckDoubleKey(87)`                           |检查是否双击按键，按键为VK码           |
 |System_Chronoscope_AddChronoscope	|`System_Chronoscope_AddChronoscope(1.0,'ChronoscopeName')`     |创建计时器，需设定时间和计时器名称      |
 |System_Chronoscope_CheckChronoscope|`System_Chronoscope_CheckChronoscope('ChronoscopeName')`       |检查指定名称的计时器是否到期，到期值为0 |
 |System_Message_ShowMessage			|`System_Message_ShowMessage('Message')`       	                |向游戏内发送消息                      |
+|System_Console_Info				|`System_Console_Info('Message')`       	                    |向控制台发送消息                      |
+|System_Console_Error				|`System_Console_Error('Message')`       	                    |向控制台发送错误消息                  |
 
 ### 玩家数据
 |                                         |示例							                                         |说明						   |
@@ -49,3 +51,13 @@
 |Gmae_Player_GetPlayerActionId            |`Gmae_Player_GetPlayerActionId()`                         |获取玩家动作ID     |
 |Gmae_Player_Weapon_GetWeaponId           |`Gmae_Player_Weapon_GetWeaponId()`                        |获取玩家武器ID     |
 |Gmae_Player_Weapon_GetWeaponType         |`Gmae_Player_Weapon_GetWeaponType()`                      |获取玩家武器类型   |
+|Gmae_World_GetMapId                      |`Gmae_World_GetMapId()`                                   |获取地图ID        |
+
+### 怪物操作
+|                                         |示例                                                      |说明						   |
+|-----------------------------------------|----------------------------------------------------------|------------------|
+|Game_Monster_SetFilter                   |`Game_Monster_SetFilter(1,0)`                             |设置怪物筛选器     |
+|Game_Monster_DisableFilter               |`Game_Monster_DisableFilter()`                            |清除怪物筛选器     |
+~~|Game_Monster_KillNavigationMarkMonster   |`Game_Monster_KillNavigationMarkMonster()`              |杀死导航标记的怪物,受筛选器影响，返回是否成功击杀 |~~
+~~|Game_Monster_KillNearestMonster          |`Game_Monster_KillNearestMonster()`                     |杀死距离最近的怪物,受筛选器影响，返回是否成功击杀 |~~
+~~|Game_Monster_KillLastHitMonster          |`Game_Monster_KillLastHitMonster()`                     |杀死最后一次击中的怪物,不受筛选器影响，返回是否成功击杀 |~~

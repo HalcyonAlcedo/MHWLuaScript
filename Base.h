@@ -126,6 +126,11 @@ namespace Base {
 			std::uniform_real_distribution<float> dist(min, max);
 			return dist(eng);
 		}
+		float DistanceBetweenTwoCoordinates(Vector3 point1, Vector3 point2) {
+			float RangeDistance = sqrt((point1.x - point2.x) * (point1.x - point2.x)) + sqrt((point1.z - point2.z) * (point1.z - point2.z));
+			RangeDistance = sqrt((RangeDistance * RangeDistance) + sqrt((point1.y - point2.y) * (point1.y - point2.y)));
+			return RangeDistance;
+		}
 	}
 	//图形绘制
 	namespace Draw {
@@ -275,38 +280,38 @@ namespace Base {
 		};
 		//怪物列表
 		map<void*, MonsterData> Monsters;
+		//怪物筛选器
+		pair<int, int> Filter(255,255);
+		//给怪物设置buff
+		static void SetBuff(void* monster,int buff){
+			//待添加
+		}
 	}
 	//玩家信息
 	namespace PlayerData {
 		//坐标
 		namespace Coordinate {
-			struct Coordinate {
-				float x, y, z;
-				Coordinate(float x = 0, float y = 0, float z = 0) :x(x), y(y), z(z) {
-				};
-			};
-
 			//缓存数据
 			namespace TempData {
 				void* t_visual = nullptr;
-				Coordinate t_SetVisualCoordinate;
+				Vector3 t_SetVisualCoordinate;
 				void* t_SetVisualBind = nullptr;
 				bool t_SetVisual = false;
 				bool t_LockVisual = false;
 			}
 
 			//玩家坐标
-			Coordinate Entity;
+			Vector3 Entity;
 			//准星坐标
-			Coordinate Collimator;
+			Vector3 Collimator;
 			//碰撞返回坐标
-			Coordinate Collision;
+			Vector3 Collision;
 			//增量坐标
-			Coordinate Increment;
+			Vector3 Increment;
 			//导航坐标
-			Coordinate Navigation;
+			Vector3 Navigation;
 			//相机坐标
-			Coordinate Visual;
+			Vector3 Visual;
 			//玩家传送(X坐标,Y坐标,Z坐标,是否穿墙)
 			static void TransportCoordinate(float X, float Y, float Z, bool Across = false) {
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x160) = X;
@@ -561,6 +566,8 @@ namespace Base {
 				PlayerData::Coordinate::TempData::t_LockVisual = false;
 				//清理委托
 				Commission::CleanCommission();
+				//清理怪物筛选器
+				Monster::Filter = pair<int, int>(255, 255);
 				//更新地址信息
 				void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 				BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
