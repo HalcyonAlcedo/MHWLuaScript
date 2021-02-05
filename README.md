@@ -49,10 +49,11 @@
 |Gmae_Player_CheckAimingStatus            |`Gmae_Player_CheckAimingStatus()`                         |检查是否处于瞄准状态|
 |Gmae_Player_AddEffect                    |`Gmae_Player_AddEffect(0,0)`                              |为玩家添加特效     |
 |Gmae_Player_GetPlayerActionId            |`Gmae_Player_GetPlayerActionId()`                         |获取玩家动作ID     |
+|Gmae_Player_GetPlayerAngle               |`Gmae_Player_GetPlayerAngle()`                            |获取玩家面向角度   |
 |Gmae_Player_Weapon_GetWeaponId           |`Gmae_Player_Weapon_GetWeaponId()`                        |获取玩家武器ID     |
 |Gmae_Player_Weapon_GetWeaponType         |`Gmae_Player_Weapon_GetWeaponType()`                      |获取玩家武器类型   |
 |Gmae_Player_GetFsmData                   |`local type,id = Gmae_Player_GetFsmData()`                |获取玩家当前派生动作信息   |
-|Gmae_Player_RunFsmAction                 |`Gmae_Player_RunFsmAction(3,5)`                           |执行指定对象的派生动作，第一个参数为对象（玩家0，武器3）第二个参数为派生动作Id   |
+|Gmae_Player_RunFsmAction                 |`Gmae_Player_RunFsmAction(3,5)`                           |执行指定对象的派生动作，第一个参数为对象（玩家1，武器3）第二个参数为派生动作Id   |
 |Gmae_Player_CheckRunFsmActionOver        |`Gmae_Player_CheckRunFsmActionOver()`                     |检查执行的派生动作是否结束  |
 |Gmae_World_GetMapId                      |`Gmae_World_GetMapId()`                                   |获取地图ID        |
 

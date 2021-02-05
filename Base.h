@@ -307,6 +307,12 @@ namespace Base {
 			};
 		};
 
+		//缓存数据
+		namespace TempData {
+			FsmData t_ManualFsmAction;
+			bool t_executingFsmAction = false;
+		}
+
 		//坐标
 		namespace Coordinate {
 			//缓存数据
@@ -380,17 +386,6 @@ namespace Base {
 			Coordinate::TempData::t_SetVisualCoordinate.z = Z;
 			Coordinate::TempData::t_SetVisual = true;
 		}
-		//执行派生动作(执行对象,执行Id)
-		static void RunDerivedAction(int type,int id) {
-			*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6284) = type;
-			*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6288) = id;
-		}
-		//检查执行派生动作是否结束
-		static bool CheckDerivedAction() {
-			return
-				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6284) == 4294967295 and
-				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6288) == 4294967295;
-		}
 		//朝向角度
 		float Angle;
 		//朝向弧度
@@ -408,6 +403,28 @@ namespace Base {
 		//派生信息
 		FsmData Fsm;
 
+		//执行派生动作(执行对象,执行Id)
+		static void RunDerivedAction(int type, int id) {
+			TempData::t_ManualFsmAction = FsmData(type, id);
+			TempData::t_executingFsmAction = true;
+			*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6284) = type;
+			*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6288) = id;
+			*offsetPtr<int>(BasicGameData::PlayerPlot, 0x628C) = type;
+			*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6290) = id;
+			Fsm = FsmData(type, id);
+		}
+		//检查执行派生动作是否结束
+		static bool CheckDerivedAction() {
+			if (TempData::t_executingFsmAction) {
+				if (Fsm.Id != TempData::t_ManualFsmAction.Id and Fsm.Target != TempData::t_ManualFsmAction.Target) {
+					TempData::t_executingFsmAction = false;
+					return true;
+				}
+				else
+					return false;
+			}
+			return true;
+		}
 		//玩家数据更新
 		static void Updata() {
 			Angle = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x198) * 180.0;
@@ -646,6 +663,10 @@ namespace Base {
 				Monster::Filter = pair<int, int>(255, 255);
 				//清理玩家击中的怪物地址
 				PlayerData::AttackMonsterPlot = nullptr;
+				//清理玩家Fsm
+				PlayerData::Fsm = PlayerData::FsmData(0, 0);
+				PlayerData::TempData::t_ManualFsmAction = PlayerData::FsmData(0, 0);
+				PlayerData::TempData::t_executingFsmAction = false;
 				//更新地址信息
 				void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 				BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);

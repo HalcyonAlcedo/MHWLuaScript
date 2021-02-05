@@ -66,6 +66,10 @@ static int Gmae_Player_GetPlayerActionId(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::ActionId);
     return 1;
 }
+static int Gmae_Player_GetPlayerAngle(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::Angle);
+    return 1;
+}
 static int Gmae_Player_Weapon_GetWeaponId(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::WeaponId);
     return 1;
@@ -230,6 +234,8 @@ int Lua_Main()
     lua_register(L, "Gmae_Player_UnbindPlayerVisualCoordinate", Gmae_Player_UnbindPlayerVisualCoordinate);
     //获取玩家动作id
     lua_register(L, "Gmae_Player_GetPlayerActionId", Gmae_Player_GetPlayerActionId);
+    //获取面向角度
+    lua_register(L, "Gmae_Player_GetPlayerAngle", Gmae_Player_GetPlayerAngle);
     //添加特效
     lua_register(L, "Gmae_Player_AddEffect", Gmae_Player_AddEffect);
     //获取玩家武器Id
