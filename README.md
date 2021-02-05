@@ -24,7 +24,7 @@
 
 ## API说明
 
-### 系统操作
+### 系统
 |                                   |示例							                                               |说明						                     |
 |-----------------------------------|---------------------------------------------------------------|-------------------------------------|
 |System_Keyboard_CheckKey			|`System_Keyboard_CheckKey(87)`                                 |检查按键是否按下，按键为VK码           |
@@ -35,7 +35,7 @@
 |System_Console_Info				|`System_Console_Info('Message')`       	                    |向控制台发送消息                      |
 |System_Console_Error				|`System_Console_Error('Message')`       	                    |向控制台发送错误消息                  |
 
-### 玩家数据
+### 玩家
 |                                         |示例							                                         |说明						   |
 |-----------------------------------------|----------------------------------------------------------|------------------|
 |Gmae_Player_GetPlayerCoordinate          |`local x,y,z = Gmae_Player_GetPlayerCoordinate()`         |获取玩家坐标       |
@@ -51,9 +51,12 @@
 |Gmae_Player_GetPlayerActionId            |`Gmae_Player_GetPlayerActionId()`                         |获取玩家动作ID     |
 |Gmae_Player_Weapon_GetWeaponId           |`Gmae_Player_Weapon_GetWeaponId()`                        |获取玩家武器ID     |
 |Gmae_Player_Weapon_GetWeaponType         |`Gmae_Player_Weapon_GetWeaponType()`                      |获取玩家武器类型   |
+|Gmae_Player_GetFsmData                   |`local type,id = Gmae_Player_GetFsmData()`                |获取玩家当前派生动作信息   |
+|Gmae_Player_RunFsmAction                 |`Gmae_Player_RunFsmAction(3,5)`                           |执行指定对象的派生动作，第一个参数为对象（玩家0，武器3）第二个参数为派生动作Id   |
+|Gmae_Player_CheckRunFsmActionOver        |`Gmae_Player_CheckRunFsmActionOver()`                     |检查执行的派生动作是否结束  |
 |Gmae_World_GetMapId                      |`Gmae_World_GetMapId()`                                   |获取地图ID        |
 
-### 怪物操作
+### 怪物
 |                                         |示例                                                      |说明						   |
 |-----------------------------------------|----------------------------------------------------------|------------------|
 |Game_Monster_SetFilter                   |`Game_Monster_SetFilter(1,0)`                             |设置怪物筛选器     |

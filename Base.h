@@ -32,12 +32,13 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.0.2";
+		string ModVersion = "v1.0.3";
 		string Version = "421470";
 	}
 	//游戏基址数据
 	namespace BasicGameData {
 		void* PlayerPlot = nullptr;
+		void* PlayerFsmPlot = nullptr;
 		void* ActionPlot = nullptr;
 		void* MapPlot = nullptr;
 		void* GameTimePlot = nullptr;
@@ -297,6 +298,15 @@ namespace Base {
 	}
 	//玩家信息
 	namespace PlayerData {
+		struct FsmData {
+			//对象 0为人物3为武器
+			int Target = 0;
+			//执行Id
+			int Id = 0;
+			FsmData(int Target = 0, int Id = 0) :Target(Target), Id(Id) {
+			};
+		};
+
 		//坐标
 		namespace Coordinate {
 			//缓存数据
@@ -370,6 +380,17 @@ namespace Base {
 			Coordinate::TempData::t_SetVisualCoordinate.z = Z;
 			Coordinate::TempData::t_SetVisual = true;
 		}
+		//执行派生动作(执行对象,执行Id)
+		static void RunDerivedAction(int type,int id) {
+			*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6284) = type;
+			*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6288) = id;
+		}
+		//检查执行派生动作是否结束
+		static bool CheckDerivedAction() {
+			return
+				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6284) == 4294967295 and
+				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6288) == 4294967295;
+		}
 		//朝向角度
 		float Angle;
 		//朝向弧度
@@ -384,6 +405,53 @@ namespace Base {
 		int WeaponType;
 		//武器ID
 		int WeaponId;
+		//派生信息
+		FsmData Fsm;
+
+		//玩家数据更新
+		static void Updata() {
+			Angle = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x198) * 180.0;
+			Radian = 4 * atan(1.0) / 180 * PlayerData::Angle;
+			Coordinate::Entity.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x160);
+			Coordinate::Entity.y = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x164);
+			Coordinate::Entity.z = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x168);
+			Coordinate::Collision.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0xA50);
+			Coordinate::Collision.y = *offsetPtr<float>(BasicGameData::PlayerPlot, 0xA54);
+			Coordinate::Collision.z = *offsetPtr<float>(BasicGameData::PlayerPlot, 0xA58);
+			Coordinate::Collimator.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D30);
+			Coordinate::Collimator.y = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D34);
+			Coordinate::Collimator.z = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D38);
+			void* IncrementPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
+			if (IncrementPlot != nullptr) {
+				Coordinate::Increment.x = *offsetPtr<float>(IncrementPlot, 0x7D30);
+				Coordinate::Increment.y = *offsetPtr<float>(IncrementPlot, 0x7D34);
+				Coordinate::Increment.z = *offsetPtr<float>(IncrementPlot, 0x7D38);
+			}
+			else {
+				Coordinate::Increment.x = 0.0;
+				Coordinate::Increment.y = 0.0;
+				Coordinate::Increment.z = 0.0;
+			}
+			void* AimingStatePlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0xC0);
+			if (AimingStatePlot != nullptr)
+				AimingState = *offsetPtr<bool>(AimingStatePlot, 0xC28);
+			else
+				AimingState = false;
+			void* AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x4C0);
+			void* AttackMonsterOffset1 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterPlot, 0x98);
+			void* AttackMonsterOffset2 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset1, 0xD8);
+			AttackMonsterPlot = *offsetPtr<void*>(AttackMonsterOffset2, 0x4298);
+			ActionId = *offsetPtr<int>(BasicGameData::ActionPlot, 0xE9C4);
+			void* WeaponPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0xc0);
+			void* WeaponOffset1 = *offsetPtr<undefined**>((undefined(*)())WeaponPlot, 0x8);
+			void* WeaponOffset2 = *offsetPtr<undefined**>((undefined(*)())WeaponOffset1, 0x78);
+			WeaponType = *offsetPtr<int>(WeaponOffset2, 0x2E8);
+			WeaponId = *offsetPtr<int>(WeaponOffset2, 0x2EC);
+			Fsm = FsmData(
+				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x628C),
+				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6290)
+			);
+		}
 	}
 	//按键信息
 	namespace Keyboard {
@@ -590,43 +658,7 @@ namespace Base {
 				}
 			}
 			//更新玩家数据
-			PlayerData::Angle = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x198) * 180.0;
-			PlayerData::Radian = 4 * atan(1.0) / 180 * PlayerData::Angle;
-			PlayerData::Coordinate::Entity.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x160);
-			PlayerData::Coordinate::Entity.y = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x164);
-			PlayerData::Coordinate::Entity.z = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x168);
-			PlayerData::Coordinate::Collision.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0xA50);
-			PlayerData::Coordinate::Collision.y = *offsetPtr<float>(BasicGameData::PlayerPlot, 0xA54);
-			PlayerData::Coordinate::Collision.z = *offsetPtr<float>(BasicGameData::PlayerPlot, 0xA58);
-			PlayerData::Coordinate::Collimator.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D30);
-			PlayerData::Coordinate::Collimator.y = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D34);
-			PlayerData::Coordinate::Collimator.z = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D38);
-			void* IncrementPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
-			if (IncrementPlot != nullptr) {
-				PlayerData::Coordinate::Increment.x = *offsetPtr<float>(IncrementPlot, 0x7D30);
-				PlayerData::Coordinate::Increment.y = *offsetPtr<float>(IncrementPlot, 0x7D34);
-				PlayerData::Coordinate::Increment.z = *offsetPtr<float>(IncrementPlot, 0x7D38);
-			}
-			else {
-				PlayerData::Coordinate::Increment.x = 0.0;
-				PlayerData::Coordinate::Increment.y = 0.0;
-				PlayerData::Coordinate::Increment.z = 0.0;
-			}
-			void* AimingStatePlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0xC0);
-			if (AimingStatePlot != nullptr)
-				PlayerData::AimingState = *offsetPtr<bool>(AimingStatePlot, 0xC28);
-			else
-				PlayerData::AimingState = false;
-			void* AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x4C0);
-			void* AttackMonsterOffset1 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterPlot, 0x98);
-			void* AttackMonsterOffset2 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset1, 0xD8);
-			PlayerData::AttackMonsterPlot = *offsetPtr<void*>(AttackMonsterOffset2, 0x4298);
-			PlayerData::ActionId = *offsetPtr<int>(BasicGameData::ActionPlot, 0xE9C4);
-			void* WeaponPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0xc0);
-			void* WeaponOffset1 = *offsetPtr<undefined**>((undefined(*)())WeaponPlot, 0x8);
-			void* WeaponOffset2 = *offsetPtr<undefined**>((undefined(*)())WeaponOffset1, 0x78);
-			PlayerData::WeaponType = *offsetPtr<int>(WeaponOffset2, 0x2E8);
-			PlayerData::WeaponId = *offsetPtr<int>(WeaponOffset2, 0x2EC);
+			PlayerData::Updata();
 			//更新环境生物数据
 			vector<void*>::iterator it;
 			for (it = World::EnvironmentalData::TempData::t_environmentalMessages.begin(); it != World::EnvironmentalData::TempData::t_environmentalMessages.end(); it++)

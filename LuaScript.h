@@ -74,6 +74,21 @@ static int Gmae_Player_Weapon_GetWeaponType(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::WeaponType);
     return 1;
 }
+static int Gmae_Player_GetFsmData(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::Fsm.Target);
+    lua_pushnumber(pL, Base::PlayerData::Fsm.Id);
+    return 2;
+}
+static int Gmae_Player_RunFsmAction(lua_State* pL) {
+    int type = (int)lua_tonumber(pL, 1);
+    int id = (int)lua_tonumber(pL, 2);
+    Base::PlayerData::RunDerivedAction(type, id);
+    return 0;
+}
+static int Gmae_Player_CheckRunFsmActionOver(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::CheckDerivedAction());
+    return 1;
+}
 static int Gmae_World_GetMapId(lua_State* pL) {
     lua_pushnumber(pL, Base::World::MapId);
     return 1;
@@ -143,7 +158,6 @@ static int Game_Monster_AddDebuffLastHitMonster(lua_State* pL) {
     lua_pushnumber(pL, Component::SetLastHitMonsterBuff(buff));
     return 1;
 }
-
 
 #pragma endregion
 #pragma region SystemFun
@@ -222,6 +236,12 @@ int Lua_Main()
     lua_register(L, "Gmae_Player_Weapon_GetWeaponId", Gmae_Player_Weapon_GetWeaponId);
     //获取玩家武器类型
     lua_register(L, "Gmae_Player_Weapon_GetWeaponType", Gmae_Player_Weapon_GetWeaponType);
+    //获取玩家派生信息
+    lua_register(L, "Gmae_Player_GetFsmData", Gmae_Player_GetFsmData);
+    //执行指定的派生动作
+    lua_register(L, "Gmae_Player_RunFsmAction", Gmae_Player_RunFsmAction);
+    //检查执行的派生动作是否结束
+    lua_register(L, "Gmae_Player_CheckRunFsmActionOver", Gmae_Player_CheckRunFsmActionOver);
 
     //获取当前地图Id
     lua_register(L, "Gmae_World_GetMapId", Gmae_World_GetMapId);
