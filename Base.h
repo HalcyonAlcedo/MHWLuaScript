@@ -423,7 +423,7 @@ namespace Base {
 				else
 					return false;
 			}
-			return true;
+			return false;
 		}
 		//玩家数据更新
 		static void Updata() {

@@ -140,6 +140,12 @@ static int Game_Monster_KillLastHitMonster(lua_State* pL) {
     lua_pushnumber(pL, Component::KillLastHitMonster());
     return 1;
 }
+static int Game_Monster_KillAllMonsterInRange(lua_State* pL) {
+    float min = (float)lua_tonumber(pL, 1);
+    float max = (float)lua_tonumber(pL, 2);
+    Component::KillAllMonster(min, max);
+    return 0;
+}
 static int Game_Monster_AddDebuffToNavigationMarkMonster(lua_State* pL) {
     string buff = (string)lua_tostring(pL, -1);
     lua_pushnumber(pL, Component::SetNavigationMonsterBuff(buff));
@@ -161,6 +167,13 @@ static int Game_Monster_AddDebuffLastHitMonster(lua_State* pL) {
     string buff = (string)lua_tostring(pL, -1);
     lua_pushnumber(pL, Component::SetLastHitMonsterBuff(buff));
     return 1;
+}
+static int Game_Monster_AddDebuffToAllMonsterInRange(lua_State* pL) {
+    string buff = (string)lua_tostring(pL, 1);
+    float min = (float)lua_tonumber(pL, 2);
+    float max = (float)lua_tonumber(pL, 3);
+    Component::SetAllMonsterBuff(buff, min, max);
+    return 0;
 }
 
 #pragma endregion
@@ -278,7 +291,11 @@ int Lua_Main()
     lua_register(L, "Game_Monster_KillLastHitMonster", Game_Monster_KillLastHitMonster);
     //给最后一次击中的怪物设置异常状态
     lua_register(L, "Game_Monster_AddDebuffLastHitMonster", Game_Monster_AddDebuffLastHitMonster);
-    
+    //杀死范围内所有怪物
+    lua_register(L, "Game_Monster_KillAllMonsterInRange", Game_Monster_KillAllMonsterInRange);
+    //给范围内所有怪物设置异常状态
+    lua_register(L, "Game_Monster_AddDebuffToAllMonsterInRange", Game_Monster_AddDebuffToAllMonsterInRange);
+
     #pragma endregion
     #pragma region System
     //检查按键

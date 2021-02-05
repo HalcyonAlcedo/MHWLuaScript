@@ -258,4 +258,58 @@ namespace Component {
 		}
 		return false;
 	}
+	/*
+		设置范围内所有的怪物的Buff
+	*/
+	static void SetAllMonsterBuff(string buff, float MinRange = 0, float MaxRange = 9999999.0) {
+		for (auto [monster, monsterData] : Base::Monster::Monsters) {
+			if (monster != nullptr) {
+				if (
+					monsterData.Id != Base::Monster::Filter.first and
+					monsterData.SubId != Base::Monster::Filter.second and
+					Base::Monster::Filter.first != 255 and
+					Base::Monster::Filter.second != 255
+					)
+					continue;
+				Base::Vector3 monsterCoordinates(
+					*offsetPtr<float>(monster, 0x160),
+					*offsetPtr<float>(monster, 0x164),
+					*offsetPtr<float>(monster, 0x168)
+				);
+				float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Base::PlayerData::Coordinate::Entity, monsterCoordinates);
+				if (distance < MaxRange and distance > MinRange) {
+					Base::Monster::SetBuff(monster, buff);
+				}
+			}
+		}
+	}
+	/*
+		杀死范围内所有怪物
+	*/
+	static void KillAllMonster(float MinRange = 0, float MaxRange = 9999999.0) {
+		for (auto [monster, monsterData] : Base::Monster::Monsters) {
+			if (monster != nullptr) {
+				if (
+					monsterData.Id != Base::Monster::Filter.first and
+					monsterData.SubId != Base::Monster::Filter.second and
+					Base::Monster::Filter.first != 255 and
+					Base::Monster::Filter.second != 255
+					)
+					continue;
+				Base::Vector3 monsterCoordinates(
+					*offsetPtr<float>(monster, 0x160),
+					*offsetPtr<float>(monster, 0x164),
+					*offsetPtr<float>(monster, 0x168)
+				);
+				float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Base::PlayerData::Coordinate::Entity, monsterCoordinates);
+				if (distance < MaxRange and distance > MinRange) {
+					void* healthMgr = *offsetPtr<void*>(monster, 0x7670);
+					float health = *offsetPtr<float>(healthMgr, 0x64);
+					if (health > 1) {
+						*offsetPtr<float>(healthMgr, 0x60) = 0.1;
+					}
+				}
+			}
+		}
+	}
 }
