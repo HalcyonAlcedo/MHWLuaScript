@@ -1,6 +1,7 @@
 #pragma once
 #include <lua.hpp> 
 #include "loader.h"
+#include "LuaData.h"
 lua_State* L;
 #pragma region GameFun
 static int Gmae_Player_GetPlayerCoordinate(lua_State* pL) {
@@ -23,7 +24,7 @@ static int Gmae_Player_GetPlayerCollimatorCoordinate(lua_State* pL) {
     return 3;
 }
 static int Gmae_Player_CheckAimingStatus(lua_State* pL) {
-    lua_pushnumber(pL, Base::PlayerData::AimingState);
+    lua_pushboolean(pL, Base::PlayerData::AimingState);
     return 1;
 }
 static int Gmae_Player_AddEffect(lua_State* pL) {
@@ -63,7 +64,7 @@ static int Gmae_Player_UnbindPlayerVisualCoordinate(lua_State* pL) {
     return 0;
 }
 static int Gmae_Player_GetPlayerActionId(lua_State* pL) {
-    lua_pushnumber(pL, Base::PlayerData::ActionId);
+    lua_pushinteger(pL, Base::PlayerData::ActionId);
     return 1;
 }
 static int Gmae_Player_GetPlayerAngle(lua_State* pL) {
@@ -71,16 +72,16 @@ static int Gmae_Player_GetPlayerAngle(lua_State* pL) {
     return 1;
 }
 static int Gmae_Player_Weapon_GetWeaponId(lua_State* pL) {
-    lua_pushnumber(pL, Base::PlayerData::WeaponId);
+    lua_pushinteger(pL, Base::PlayerData::WeaponId);
     return 1;
 }
 static int Gmae_Player_Weapon_GetWeaponType(lua_State* pL) {
-    lua_pushnumber(pL, Base::PlayerData::WeaponType);
+    lua_pushinteger(pL, Base::PlayerData::WeaponType);
     return 1;
 }
 static int Gmae_Player_GetFsmData(lua_State* pL) {
-    lua_pushnumber(pL, Base::PlayerData::Fsm.Target);
-    lua_pushnumber(pL, Base::PlayerData::Fsm.Id);
+    lua_pushinteger(pL, Base::PlayerData::Fsm.Target);
+    lua_pushinteger(pL, Base::PlayerData::Fsm.Id);
     return 2;
 }
 static int Gmae_Player_RunFsmAction(lua_State* pL) {
@@ -90,11 +91,11 @@ static int Gmae_Player_RunFsmAction(lua_State* pL) {
     return 0;
 }
 static int Gmae_Player_CheckRunFsmActionOver(lua_State* pL) {
-    lua_pushnumber(pL, Base::PlayerData::CheckDerivedAction());
+    lua_pushboolean(pL, Base::PlayerData::CheckDerivedAction());
     return 1;
 }
 static int Gmae_World_GetMapId(lua_State* pL) {
-    lua_pushnumber(pL, Base::World::MapId);
+    lua_pushinteger(pL, Base::World::MapId);
     return 1;
 }
 static int Game_Monster_SetFilter(lua_State* pL) {
@@ -109,35 +110,35 @@ static int Game_Monster_DisableFilter(lua_State* pL) {
 }
 static int Game_Monster_SetBehaviorOfNavigationMonsters(lua_State* pL) {
     int fsmId = (int)lua_tonumber(pL, -1);
-    lua_pushnumber(pL, Component::NavigationMonsterBehaviorControl(fsmId));
+    lua_pushboolean(pL, Component::NavigationMonsterBehaviorControl(fsmId));
     return 1;
 }
 static int Game_Monster_KillNavigationMarkMonster(lua_State* pL) {
-    lua_pushnumber(pL, Component::KillNavigationMonster());
+    lua_pushboolean(pL, Component::KillNavigationMonster());
     return 1;
 }
 static int Game_Monster_SetBehaviorOfNearestMonsters(lua_State* pL) {
     int fsmId = (int)lua_tonumber(pL, -1);
-    lua_pushnumber(pL, Component::NearestMonsterBehaviorControl(fsmId));
+    lua_pushboolean(pL, Component::NearestMonsterBehaviorControl(fsmId));
     return 1;
 }
 static int Game_Monster_KillNearestMonster(lua_State* pL) {
-    lua_pushnumber(pL, Component::KillNearestMonster());
+    lua_pushboolean(pL, Component::KillNearestMonster());
     return 1;
 }
 static int Game_Monster_KillNearestMonsterInRange(lua_State* pL) {
     float min = (float)lua_tonumber(pL, 1);
     float max = (float)lua_tonumber(pL, 2);
-    lua_pushnumber(pL, Component::KillNearestMonster(min, max));
+    lua_pushboolean(pL, Component::KillNearestMonster(min, max));
     return 1;
 }
 static int Game_Monster_SetBehaviorOfLastHitMonsters(lua_State* pL) {
     int fsmId = (int)lua_tonumber(pL, -1);
-    lua_pushnumber(pL, Component::LastHitMonsterBehaviorControl(fsmId));
+    lua_pushboolean(pL, Component::LastHitMonsterBehaviorControl(fsmId));
     return 1;
 }
 static int Game_Monster_KillLastHitMonster(lua_State* pL) {
-    lua_pushnumber(pL, Component::KillLastHitMonster());
+    lua_pushboolean(pL, Component::KillLastHitMonster());
     return 1;
 }
 static int Game_Monster_KillAllMonsterInRange(lua_State* pL) {
@@ -148,24 +149,24 @@ static int Game_Monster_KillAllMonsterInRange(lua_State* pL) {
 }
 static int Game_Monster_AddDebuffToNavigationMarkMonster(lua_State* pL) {
     string buff = (string)lua_tostring(pL, -1);
-    lua_pushnumber(pL, Component::SetNavigationMonsterBuff(buff));
+    lua_pushboolean(pL, Component::SetNavigationMonsterBuff(buff));
     return 1;
 }
 static int Game_Monster_AddDebuffNearestMonster(lua_State* pL) {
     string buff = (string)lua_tostring(pL, -1);
-    lua_pushnumber(pL, Component::SetNearestMonsterBuff(buff));
+    lua_pushboolean(pL, Component::SetNearestMonsterBuff(buff));
     return 1;
 }
 static int Game_Monster_AddDebuffNearestMonsterInRange(lua_State* pL) {
     string buff = (string)lua_tostring(pL, 1);
     float min = (float)lua_tonumber(pL, 2);
     float max = (float)lua_tonumber(pL, 3);
-    lua_pushnumber(pL, Component::SetNearestMonsterBuff(buff, min, max));
+    lua_pushboolean(pL, Component::SetNearestMonsterBuff(buff, min, max));
     return 1;
 }
 static int Game_Monster_AddDebuffLastHitMonster(lua_State* pL) {
     string buff = (string)lua_tostring(pL, -1);
-    lua_pushnumber(pL, Component::SetLastHitMonsterBuff(buff));
+    lua_pushboolean(pL, Component::SetLastHitMonsterBuff(buff));
     return 1;
 }
 static int Game_Monster_AddDebuffToAllMonsterInRange(lua_State* pL) {
@@ -180,12 +181,12 @@ static int Game_Monster_AddDebuffToAllMonsterInRange(lua_State* pL) {
 #pragma region SystemFun
 static int System_Keyboard_CheckKey(lua_State* pL) {    
     int key = (int)lua_tointeger(pL, -1);
-    lua_pushnumber(pL, Base::Keyboard::CheckKey(key));
+    lua_pushboolean(pL, Base::Keyboard::CheckKey(key));
     return 1;
 }
 static int System_Keyboard_CheckDoubleKey(lua_State* pL) {
     int key = (int)lua_tointeger(pL, -1);
-    lua_pushnumber(pL, Base::Keyboard::CheckKey(key, 2));
+    lua_pushboolean(pL, Base::Keyboard::CheckKey(key, 2));
     return 1;
 }
 static int System_Chronoscope_AddChronoscope(lua_State* pL) {
@@ -196,7 +197,7 @@ static int System_Chronoscope_AddChronoscope(lua_State* pL) {
 }
 static int System_Chronoscope_CheckChronoscope(lua_State* pL) {
     string name = (string)lua_tostring(pL, -1);
-    lua_pushnumber(pL, Base::Chronoscope::CheckChronoscope(name));
+    lua_pushboolean(pL, Base::Chronoscope::CheckChronoscope(name));
     return 1;
 }
 static int System_Message_ShowMessage(lua_State* pL) {
@@ -215,18 +216,84 @@ static int System_Console_Error(lua_State* pL) {
     return 0;
 }
 #pragma endregion
+#pragma region LuaFun
+//存入整数变量
+static int Lua_Variable_SaveIntVariable(lua_State* pL) {
+    string variableName = (string)lua_tostring(pL, 1);
+    int variableValue = (int)lua_tointeger(pL, 2);
+    LuaData::IntVariable[variableName] = variableValue;
+    return 0;
+}
+//存入浮点数变量
+static int Lua_Variable_SaveFloatVariable(lua_State* pL) {
+    string variableName = (string)lua_tostring(pL, 1);
+    float variableValue = (float)lua_tonumber(pL, 2);
+    LuaData::FloatVariable[variableName] = variableValue;
+    return 0;
+}
+//存入字符串变量
+static int Lua_Variable_SaveStringVariable(lua_State* pL) {
+    string variableName = (string)lua_tostring(pL, 1);
+    string variableValue = (string)lua_tostring(pL, 2);
+    LuaData::StringVariable[variableName] = variableValue;
+    return 0;
+}
+//读取整数变量
+static int Lua_Variable_ReadIntVariable(lua_State* pL) {
+    string variableName = (string)lua_tostring(pL, -1);
+    int ret;
+    if (LuaData::IntVariable.find(variableName) == LuaData::IntVariable.end())
+        ret = 0;
+    else
+        ret = LuaData::IntVariable[variableName];
+    lua_pushinteger(pL, ret);
+    return 1;
+}
+//读取浮点数变量
+static int Lua_Variable_ReadFloatVariable(lua_State* pL) {
+    string variableName = (string)lua_tostring(pL, -1);
+    float ret;
+    if (LuaData::FloatVariable.find(variableName) == LuaData::FloatVariable.end())
+        ret = 0;
+    else
+        ret = LuaData::FloatVariable[variableName];
+    lua_pushnumber(pL, ret);
+    return 1;
+}
+//读取字符串变量
+static int Lua_Variable_ReadStringVariable(lua_State* pL) {
+    string variableName = (string)lua_tostring(pL, -1);
+    string ret;
+    if (LuaData::StringVariable.find(variableName) == LuaData::StringVariable.end())
+        ret = "";
+    else
+        ret = LuaData::StringVariable[variableName];
+    lua_pushstring(pL, ret.c_str());
+    return 1;
+}
+//销毁变量
+static int Lua_Variable_DestroyVariable(lua_State* pL) {
+    string variableTpye = (string)lua_tostring(pL, -1);
+    string variableName = (string)lua_tostring(pL, -1);
+    if (variableTpye == "Int")
+        LuaData::IntVariable.erase(variableName);
+    else if (variableTpye == "Float")
+        LuaData::FloatVariable.erase(variableName);
+    else if (variableTpye == "String")
+        LuaData::StringVariable.erase(variableName);
+    return 0;
+}
+#pragma endregion
 //==============================================
 // Main Functions
 //==============================================
 int Lua_Main()
 {
     lua_State* L = luaL_newstate();
-    luaopen_base(L);     // 加载Lua基本库
+    luaopen_base(L);
     luaL_openlibs(L);
-    //L = lua_open();   //新版本被弃用   
 
-   /* load the script */
-    #pragma region Game
+#pragma region Game
     //获取玩家坐标
     lua_register(L, "Gmae_Player_GetPlayerCoordinate", Gmae_Player_GetPlayerCoordinate);
     //设置玩家坐标
@@ -296,8 +363,8 @@ int Lua_Main()
     //给范围内所有怪物设置异常状态
     lua_register(L, "Game_Monster_AddDebuffToAllMonsterInRange", Game_Monster_AddDebuffToAllMonsterInRange);
 
-    #pragma endregion
-    #pragma region System
+#pragma endregion
+#pragma region System
     //检查按键
     lua_register(L, "System_Keyboard_CheckKey", System_Keyboard_CheckKey);
     //检查按键双击
@@ -312,9 +379,25 @@ int Lua_Main()
     lua_register(L, "System_Console_Info", System_Console_Info);
     //向控制台发送错误消息
     lua_register(L, "System_Console_Error", System_Console_Error);
-    #pragma endregion
+#pragma endregion
+#pragma region Lua
+    //存入整数变量
+    lua_register(L, "Lua_Variable_SaveIntVariable", Lua_Variable_SaveIntVariable);
+    //存入浮点数变量
+    lua_register(L, "Lua_Variable_SaveFloatVariable", Lua_Variable_SaveFloatVariable);
+    //存入字符串变量
+    lua_register(L, "Lua_Variable_SaveStringVariable", Lua_Variable_SaveStringVariable);
+    //读取整数变量
+    lua_register(L, "Lua_Variable_ReadIntVariable", Lua_Variable_ReadIntVariable);
+    //读取浮点数变量
+    lua_register(L, "Lua_Variable_ReadFloatVariable", Lua_Variable_ReadFloatVariable);
+    //读取字符串变量
+    lua_register(L, "Lua_Variable_ReadStringVariable", Lua_Variable_ReadStringVariable);
+    //销毁变量
+    lua_register(L, "Lua_Variable_DestroyVariable", Lua_Variable_DestroyVariable);
+#pragma endregion
 
-    int error = luaL_dofile(L, "nativePC/LuaScript/MainScript.lua");    // 读取Lua源文件到内存编译
+    int error = luaL_dofile(L, "nativePC/LuaScript/MainScript.lua");
     if (error)
     {
         //LOG(ERR) << "dofile error";

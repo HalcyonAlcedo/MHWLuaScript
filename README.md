@@ -24,6 +24,17 @@
 
 ## API说明
 
+### Lua
+|                                   |示例							                                               |说明						                     |
+|-----------------------------------|---------------------------------------------------------------|-------------------------------------|
+|Lua_Variable_SaveIntVariable       |`Lua_Variable_SaveIntVariable('VariableName',10)`              |存入整数变量                          |
+|Lua_Variable_SaveFloatVariable		|`Lua_Variable_SaveFloatVariable('VariableName',1.0)`            |存入浮点数变量                       |
+|Lua_Variable_SaveStringVariable	|`Lua_Variable_SaveStringVariable('VariableName','VariableValue')`|存入字符串变量                      |
+|Lua_Variable_ReadIntVariable       |`local Variable = Lua_Variable_ReadIntVariable('VariableName')`|读取整数变量                          |
+|Lua_Variable_ReadFloatVariable		|`local Variable = Lua_Variable_ReadFloatVariable('VariableName')`|读取浮点数变量                        |
+|Lua_Variable_ReadStringVariable	|`local Variable = Lua_Variable_ReadStringVariable('VariableName')`|读取字符串变量                        |
+|Lua_Variable_DestroyVariable		|`Lua_Variable_DestroyVariable('VariableName')`                 |销毁变量                             |
+
 ### 系统
 |                                   |示例							                                               |说明						                     |
 |-----------------------------------|---------------------------------------------------------------|-------------------------------------|

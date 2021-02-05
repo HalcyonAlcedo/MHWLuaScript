@@ -1,6 +1,4 @@
-local Modular = {}
-
-function Modular.run ()
+function run ()
     local PlayrAction = Gmae_Player_GetPlayerActionId
     local x,y,z = Gmae_Player_GetPlayerNavigationCoordinate()
     local TP = false
@@ -14,5 +12,3 @@ function Modular.run ()
         TP = false
     end
 end
-
-return Modular
