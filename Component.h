@@ -216,4 +216,46 @@ namespace Component {
 		}
 		return false;
 	}
+	/*
+		设置最近击中的怪物的行为
+	*/
+	static bool LastHitMonsterBehaviorControl(int fsm) {
+		if (Base::PlayerData::AttackMonsterPlot != nullptr) {
+			Base::Monster::BehaviorControl(Base::PlayerData::AttackMonsterPlot, fsm);
+			return true;
+		}
+		return false;
+	}
+	/*
+		设置导航怪物的Buff
+	*/
+	static bool SetNavigationMonsterBuff(string buff) {
+		void* monster = GetNavigationMonster();
+		if (monster != nullptr) {
+			Base::Monster::SetBuff(monster, buff);
+			return true;
+		}
+		return false;
+	}
+	/*
+		设置距离最近的怪物的Buff
+	*/
+	static bool SetNearestMonsterBuff(string buff, float MinRange = 0, float MaxRange = 9999999.0) {
+		void* monster = GetNearestMonster(MinRange, MaxRange);
+		if (monster != nullptr) {
+			Base::Monster::SetBuff(monster, buff);
+			return true;
+		}
+		return false;
+	}
+	/*
+		设置最近击中的怪物的Buff
+	*/
+	static bool SetLastHitMonsterBuff(string buff) {
+		if (Base::PlayerData::AttackMonsterPlot != nullptr) {
+			Base::Monster::SetBuff(Base::PlayerData::AttackMonsterPlot, buff);
+			return true;
+		}
+		return false;
+	}
 }

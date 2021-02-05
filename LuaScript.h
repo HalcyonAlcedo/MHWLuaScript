@@ -79,8 +79,8 @@ static int Gmae_World_GetMapId(lua_State* pL) {
     return 1;
 }
 static int Game_Monster_SetFilter(lua_State* pL) {
-    int id = (float)lua_tonumber(pL, 1);
-    int subId = (float)lua_tonumber(pL, 2);
+    int id = (int)lua_tonumber(pL, 1);
+    int subId = (int)lua_tonumber(pL, 2);
     Component::SetMonsterFilter(id,subId);
     return 0;
 }
@@ -89,7 +89,7 @@ static int Game_Monster_DisableFilter(lua_State* pL) {
     return 0;
 }
 static int Game_Monster_SetBehaviorOfNavigationMonsters(lua_State* pL) {
-    int fsmId = (float)lua_tonumber(pL, -1);
+    int fsmId = (int)lua_tonumber(pL, -1);
     lua_pushnumber(pL, Component::NavigationMonsterBehaviorControl(fsmId));
     return 1;
 }
@@ -98,7 +98,7 @@ static int Game_Monster_KillNavigationMarkMonster(lua_State* pL) {
     return 1;
 }
 static int Game_Monster_SetBehaviorOfNearestMonsters(lua_State* pL) {
-    int fsmId = (float)lua_tonumber(pL, -1);
+    int fsmId = (int)lua_tonumber(pL, -1);
     lua_pushnumber(pL, Component::NearestMonsterBehaviorControl(fsmId));
     return 1;
 }
@@ -112,10 +112,38 @@ static int Game_Monster_KillNearestMonsterInRange(lua_State* pL) {
     lua_pushnumber(pL, Component::KillNearestMonster(min, max));
     return 1;
 }
+static int Game_Monster_SetBehaviorOfLastHitMonsters(lua_State* pL) {
+    int fsmId = (int)lua_tonumber(pL, -1);
+    lua_pushnumber(pL, Component::LastHitMonsterBehaviorControl(fsmId));
+    return 1;
+}
 static int Game_Monster_KillLastHitMonster(lua_State* pL) {
     lua_pushnumber(pL, Component::KillLastHitMonster());
     return 1;
 }
+static int Game_Monster_AddDebuffToNavigationMarkMonster(lua_State* pL) {
+    string buff = (string)lua_tostring(pL, -1);
+    lua_pushnumber(pL, Component::SetNavigationMonsterBuff(buff));
+    return 1;
+}
+static int Game_Monster_AddDebuffNearestMonster(lua_State* pL) {
+    string buff = (string)lua_tostring(pL, -1);
+    lua_pushnumber(pL, Component::SetNearestMonsterBuff(buff));
+    return 1;
+}
+static int Game_Monster_AddDebuffNearestMonsterInRange(lua_State* pL) {
+    string buff = (string)lua_tostring(pL, 1);
+    float min = (float)lua_tonumber(pL, 2);
+    float max = (float)lua_tonumber(pL, 3);
+    lua_pushnumber(pL, Component::SetNearestMonsterBuff(buff, min, max));
+    return 1;
+}
+static int Game_Monster_AddDebuffLastHitMonster(lua_State* pL) {
+    string buff = (string)lua_tostring(pL, -1);
+    lua_pushnumber(pL, Component::SetLastHitMonsterBuff(buff));
+    return 1;
+}
+
 
 #pragma endregion
 #pragma region SystemFun
@@ -207,7 +235,7 @@ int Lua_Main()
     //杀死导航标记的怪物
     lua_register(L, "Game_Monster_KillNavigationMarkMonster", Game_Monster_KillNavigationMarkMonster);
     //给导航标记的怪物设置异常状态
-    //lua_register(L, "Game_Monster_SetDebuffToNavigationMarkMonster", Game_Monster_SetDebuffToNavigationMarkMonster);
+    lua_register(L, "Game_Monster_AddDebuffToNavigationMarkMonster", Game_Monster_AddDebuffToNavigationMarkMonster);
     //控制距离最近的怪物的行为
     lua_register(L, "Game_Monster_SetBehaviorOfNearestMonsters", Game_Monster_SetBehaviorOfNearestMonsters);
     //杀死距离最近的怪物
@@ -215,11 +243,15 @@ int Lua_Main()
     //杀死范围内距离最近的怪物
     lua_register(L, "Game_Monster_KillNearestMonsterInRange", Game_Monster_KillNearestMonsterInRange);
     //给距离最近的怪物设置异常状态
-    //lua_register(L, "Game_Monster_SetDebuffNearestMonster", Game_Monster_SetDebuffNearestMonster);
+    lua_register(L, "Game_Monster_AddDebuffNearestMonster", Game_Monster_AddDebuffNearestMonster);
+    //给范围内距离最近的怪物设置异常状态
+    lua_register(L, "Game_Monster_AddDebuffNearestMonsterInRange", Game_Monster_AddDebuffNearestMonsterInRange);
+    //控制最后一次击中的怪物的行为
+    lua_register(L, "Game_Monster_SetBehaviorOfLastHitMonsters", Game_Monster_SetBehaviorOfLastHitMonsters);
     //杀死最后一次击中的怪物
     lua_register(L, "Game_Monster_KillLastHitMonster", Game_Monster_KillLastHitMonster);
     //给最后一次击中的怪物设置异常状态
-    //lua_register(L, "Game_Monster_SetDebuffLastHitMonster", Game_Monster_SetDebuffLastHitMonster);
+    lua_register(L, "Game_Monster_AddDebuffLastHitMonster", Game_Monster_AddDebuffLastHitMonster);
     
     #pragma endregion
     #pragma region System

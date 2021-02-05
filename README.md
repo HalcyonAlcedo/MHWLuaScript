@@ -59,8 +59,36 @@
 |Game_Monster_SetFilter                   |`Game_Monster_SetFilter(1,0)`                             |设置怪物筛选器     |
 |Game_Monster_DisableFilter               |`Game_Monster_DisableFilter()`                            |清除怪物筛选器     |
 |Game_Monster_SetBehaviorOfNavigationMonsters|`Game_Monster_SetBehaviorOfNavigationMonsters(20)`     |设置导航标记的怪物的行为,不受筛选器影响     |
-|~~Game_Monster_KillNavigationMarkMonster~~   |`Game_Monster_KillNavigationMarkMonster()`            |杀死导航标记的怪物,受筛选器影响，返回是否成功击杀 |
+|~~Game_Monster_KillNavigationMarkMonster~~|`Game_Monster_KillNavigationMarkMonster()`            |杀死导航标记的怪物,受筛选器影响，返回是否成功击杀 |
+|Game_Monster_AddDebuffToNavigationMarkMonster|`Game_Monster_AddDebuffToNavigationMarkMonster('Sleep')`|为导航标记的怪物添加异常状态,不受筛选器影响     |
 |Game_Monster_SetBehaviorOfNearestMonsters|`Game_Monster_SetBehaviorOfNearestMonsters(20)`           |设置距离最近的怪物的行为,不受筛选器影响     |
 |~~Game_Monster_KillNearestMonster~~      |`Game_Monster_KillNearestMonster()`                       |杀死距离最近的怪物,受筛选器影响，返回是否成功击杀 |
 |~~Game_Monster_KillNearestMonsterInRange~~|`Game_Monster_KillNearestMonsterInRange(0,2000)`         |杀死范围内距离最近的怪物,受筛选器影响，返回是否成功击杀 |
+|Game_Monster_AddDebuffNearestMonster     |`Game_Monster_AddDebuffNearestMonster('Sleep')`           |为距离最近的怪物添加异常状态,不受筛选器影响     |
+|Game_Monster_AddDebuffNearestMonsterInRange|`Game_Monster_AddDebuffNearestMonsterInRange('Sleep',0,2000)`|为距离最近的怪物添加异常状态,不受筛选器影响     |
+|Game_Monster_SetBehaviorOfLastHitMonsters|`Game_Monster_SetBehaviorOfLastHitMonsters(20)`           |设置最后一次击中的怪物的行为,不受筛选器影响     |
 |Game_Monster_KillLastHitMonster          |`Game_Monster_KillLastHitMonster()`                       |杀死最后一次击中的怪物,不受筛选器影响，返回是否成功击杀 |
+|Game_Monster_AddDebuffToNavigationMarkMonster|`Game_Monster_AddDebuffToNavigationMarkMonster('Sleep')`|为最后一次击中的怪物添加异常状态,不受筛选器影响     |
+
+## 数据表
+
+## 怪物异常状态
+|状态名         |示例	     |
+|---------------|-----------|
+|Retrea         |撤退       |
+|Covet          |垂涎       |
+|Dizziness      |眩晕       |
+|Paralysis      |麻痹       |
+|Sleep          |睡眠       |
+|Anesthesia     |麻醉       |
+|Poisoning      |中毒       |
+|Ride           |骑乘       |
+|Ridedowna      |骑乘倒地   |
+|Reducebreath   |减气       |
+|Explode        |爆破       |
+|Flicker        |闪光       |
+|FlickerG       |闪光G      |
+|Smoke          |烟雾       |
+|Foreignodor    |异臭       |
+|Traphole       |落穴       |
+|Stasistrap     |麻痹陷阱   |

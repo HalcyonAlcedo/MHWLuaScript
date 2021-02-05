@@ -3,6 +3,7 @@
 #include "util.h"
 #include "loader.h"
 #include <map>
+#include "MonsterBuff.h"
 
 using namespace std;
 using namespace loader;
@@ -31,7 +32,7 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.0.1";
+		string ModVersion = "v1.0.2";
 		string Version = "421470";
 	}
 	//游戏基址数据
@@ -283,8 +284,11 @@ namespace Base {
 		//怪物筛选器
 		pair<int, int> Filter(255,255);
 		//给怪物设置buff
-		static void SetBuff(void* monster,int buff){
-			//待添加
+		static void SetBuff(void* monster,string buff){
+			MonsterBuff::MonsterBuffState monsterBuff = MonsterBuff::GetMonsterBuffState(monster,buff);
+			if (monsterBuff.MaxStateValue != 0) {
+				MonsterBuff::SetMonsterBuffState(monster, buff);
+			}
 		}
 		static void BehaviorControl(void* monster, int Fsm) {
 			//感谢南风焓大佬提供的地址
@@ -572,6 +576,8 @@ namespace Base {
 				Commission::CleanCommission();
 				//清理怪物筛选器
 				Monster::Filter = pair<int, int>(255, 255);
+				//清理玩家击中的怪物地址
+				PlayerData::AttackMonsterPlot = nullptr;
 				//更新地址信息
 				void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 				BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
