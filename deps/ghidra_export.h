@@ -66,6 +66,7 @@ namespace MH {
         namespace SoftenTimers {
             static undefined8(*WoundPartLocal)() = (undefined8(*)())0x140aff490;
         }
+        static void(*BehaviorControl)(undefined*, int) = (void(*)(undefined*, int))0x141CE0A50;
     }
     namespace Weapon {
         namespace UI {

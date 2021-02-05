@@ -88,12 +88,28 @@ static int Game_Monster_DisableFilter(lua_State* pL) {
     Component::DisableMonsterFilter();
     return 0;
 }
+static int Game_Monster_SetBehaviorOfNavigationMonsters(lua_State* pL) {
+    int fsmId = (float)lua_tonumber(pL, -1);
+    lua_pushnumber(pL, Component::NavigationMonsterBehaviorControl(fsmId));
+    return 1;
+}
 static int Game_Monster_KillNavigationMarkMonster(lua_State* pL) {
     lua_pushnumber(pL, Component::KillNavigationMonster());
     return 1;
 }
+static int Game_Monster_SetBehaviorOfNearestMonsters(lua_State* pL) {
+    int fsmId = (float)lua_tonumber(pL, -1);
+    lua_pushnumber(pL, Component::NearestMonsterBehaviorControl(fsmId));
+    return 1;
+}
 static int Game_Monster_KillNearestMonster(lua_State* pL) {
     lua_pushnumber(pL, Component::KillNearestMonster());
+    return 1;
+}
+static int Game_Monster_KillNearestMonsterInRange(lua_State* pL) {
+    float min = (float)lua_tonumber(pL, 1);
+    float max = (float)lua_tonumber(pL, 2);
+    lua_pushnumber(pL, Component::KillNearestMonster(min, max));
     return 1;
 }
 static int Game_Monster_KillLastHitMonster(lua_State* pL) {
@@ -186,16 +202,22 @@ int Lua_Main()
     lua_register(L, "Game_Monster_SetFilter", Game_Monster_SetFilter);
     //清除怪物筛选器
     lua_register(L, "Game_Monster_DisableFilter", Game_Monster_DisableFilter);
+    //控制导航怪物的行为
+    lua_register(L, "Game_Monster_SetBehaviorOfNavigationMonsters", Game_Monster_SetBehaviorOfNavigationMonsters);
     //杀死导航标记的怪物
     lua_register(L, "Game_Monster_KillNavigationMarkMonster", Game_Monster_KillNavigationMarkMonster);
     //给导航标记的怪物设置异常状态
     //lua_register(L, "Game_Monster_SetDebuffToNavigationMarkMonster", Game_Monster_SetDebuffToNavigationMarkMonster);
+    //控制距离最近的怪物的行为
+    lua_register(L, "Game_Monster_SetBehaviorOfNearestMonsters", Game_Monster_SetBehaviorOfNearestMonsters);
     //杀死距离最近的怪物
     lua_register(L, "Game_Monster_KillNearestMonster", Game_Monster_KillNearestMonster);
+    //杀死范围内距离最近的怪物
+    lua_register(L, "Game_Monster_KillNearestMonsterInRange", Game_Monster_KillNearestMonsterInRange);
     //给距离最近的怪物设置异常状态
     //lua_register(L, "Game_Monster_SetDebuffNearestMonster", Game_Monster_SetDebuffNearestMonster);
     //杀死最后一次击中的怪物
-    //lua_register(L, "Game_Monster_KillLastHitMonster", Game_Monster_KillLastHitMonster);
+    lua_register(L, "Game_Monster_KillLastHitMonster", Game_Monster_KillLastHitMonster);
     //给最后一次击中的怪物设置异常状态
     //lua_register(L, "Game_Monster_SetDebuffLastHitMonster", Game_Monster_SetDebuffLastHitMonster);
     

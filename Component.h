@@ -100,41 +100,29 @@ namespace Component {
 		Base::Monster::Filter = pair<int, int>(255, 255);
 	}
 	/*
-		杀死导航标记的怪物
+		获取导航的怪物
 	*/
-	static bool KillNavigationMonster() {
+	static void* GetNavigationMonster() {
 		for (auto [monster, monsterData] : Base::Monster::Monsters) {
 			if (monster != nullptr) {
-				if (
-					monsterData.Id != Base::Monster::Filter.first and
-					monsterData.SubId != Base::Monster::Filter.second and
-					Base::Monster::Filter.first != 255 and
-					Base::Monster::Filter.second != 255
-					)
-					continue;
 				Base::Vector3 monsterCoordinates(
 					*offsetPtr<float>(monster, 0x160),
 					*offsetPtr<float>(monster, 0x164),
 					*offsetPtr<float>(monster, 0x168)
 				);
-				float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Base::PlayerData::Coordinate::Navigation,monsterCoordinates);
+				float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Base::PlayerData::Coordinate::Navigation, monsterCoordinates);
 				if (distance < 5) {
-					void* healthMgr = *offsetPtr<void*>(monster, 0x7670);
-					float health = *offsetPtr<float>(healthMgr, 0x64);
-					if (health > 1) {
-						*offsetPtr<float>(healthMgr, 0x60) = 0.1;
-						return true;
-					}
+					return monster;
 				}
 			}
 		}
-		return false;
+		return nullptr;
 	}
 	/*
-		杀死距离最近的怪物
+		获取距离最近的怪物
 	*/
-	static bool KillNearestMonster() {
-		pair<void*, float> tempKillMonster;
+	static void* GetNearestMonster(float MinRange = 0, float MaxRange = 9999999.0) {
+		pair<void*, float> tempMonster (nullptr,0);
 		for (auto [monster, monsterData] : Base::Monster::Monsters) {
 			if (monster != nullptr) {
 				if (
@@ -150,23 +138,46 @@ namespace Component {
 					*offsetPtr<float>(monster, 0x168)
 				);
 				float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Base::PlayerData::Coordinate::Entity, monsterCoordinates);
-				if (tempKillMonster.first != nullptr) {
-					if(tempKillMonster.second > distance)
-						tempKillMonster = pair<void*, float>(monster, distance);
+				if (distance < MaxRange and distance > MinRange) {
+					if (tempMonster.first != nullptr) {
+						if (tempMonster.second > distance)
+							tempMonster = pair<void*, float>(monster, distance);
+					}
+					else
+						tempMonster = pair<void*, float>(monster, distance);
 				}
-				else
-					tempKillMonster = pair<void*, float>(monster, distance);
 			}
 		}
-		if (tempKillMonster.first != nullptr) {
-			void* healthMgr = *offsetPtr<void*>(tempKillMonster.first, 0x7670);
+		return tempMonster.first;
+	}
+	/*
+		杀死导航标记的怪物
+	*/
+	static bool KillNavigationMonster() {
+		void* monster = GetNavigationMonster();
+		if (monster != nullptr) {
+			void* healthMgr = *offsetPtr<void*>(monster, 0x7670);
 			float health = *offsetPtr<float>(healthMgr, 0x64);
 			if (health > 1) {
 				*offsetPtr<float>(healthMgr, 0x60) = 0.1;
 				return true;
 			}
 		}
-
+		return false;
+	}
+	/*
+		杀死距离最近的怪物
+	*/
+	static bool KillNearestMonster(float MinRange = 0, float MaxRange = 9999999.0) {
+		void* monster = GetNearestMonster(MinRange,MaxRange);
+		if (monster != nullptr) {
+			void* healthMgr = *offsetPtr<void*>(monster, 0x7670);
+			float health = *offsetPtr<float>(healthMgr, 0x64);
+			if (health > 1) {
+				*offsetPtr<float>(healthMgr, 0x60) = 0.1;
+				return true;
+			}
+		}
 		return false;
 	}
 	/*
@@ -180,6 +191,28 @@ namespace Component {
 				*offsetPtr<float>(healthMgr, 0x60) = 0.1;
 				return true;
 			}
+		}
+		return false;
+	}
+	/*
+		设置导航怪物的行为
+	*/
+	static bool NavigationMonsterBehaviorControl(int fsm) {
+		void* monster = GetNavigationMonster();
+		if (monster != nullptr) {
+			Base::Monster::BehaviorControl(monster, fsm);
+			return true;
+		}
+		return false;
+	}
+	/*
+		设置距离最近的怪物的行为
+	*/
+	static bool NearestMonsterBehaviorControl(int fsm) {
+		void* monster = GetNearestMonster();
+		if (monster != nullptr) {
+			Base::Monster::BehaviorControl(monster, fsm);
+			return true;
 		}
 		return false;
 	}

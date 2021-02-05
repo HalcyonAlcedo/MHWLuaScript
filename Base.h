@@ -286,6 +286,10 @@ namespace Base {
 		static void SetBuff(void* monster,int buff){
 			//待添加
 		}
+		static void BehaviorControl(void* monster, int Fsm) {
+			//感谢南风焓大佬提供的地址
+			MH::Monster::BehaviorControl((undefined*)monster, Fsm);
+		}
 	}
 	//玩家信息
 	namespace PlayerData {
@@ -610,7 +614,7 @@ namespace Base {
 			void* AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x4C0);
 			void* AttackMonsterOffset1 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterPlot, 0x98);
 			void* AttackMonsterOffset2 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset1, 0xD8);
-			PlayerData::AttackMonsterPlot = *offsetPtr<void*>(AimingStatePlot, 0x4298);
+			PlayerData::AttackMonsterPlot = *offsetPtr<void*>(AttackMonsterOffset2, 0x4298);
 			PlayerData::ActionId = *offsetPtr<int>(BasicGameData::ActionPlot, 0xE9C4);
 			void* WeaponPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0xc0);
 			void* WeaponOffset1 = *offsetPtr<undefined**>((undefined(*)())WeaponPlot, 0x8);
