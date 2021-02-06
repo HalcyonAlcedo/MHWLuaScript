@@ -51,7 +51,7 @@
 |-----------------------------------------|----------------------------------------------------------|------------------|
 |Gmae_Player_GetPlayerCoordinate          |`local x,y,z = Gmae_Player_GetPlayerCoordinate()`         |获取玩家坐标       |
 |Gmae_Player_SetPlayerCoordinate          |`Gmae_Player_SetPlayerCoordinate(1.0,1.0,1.0)`            |设置玩家坐标       |
-|Gmae_Player_GetPlayerCollimatorCoordinate|`local x,y,z = Gmae_Player_GetPlayerCoordinate()`         |获取准星坐标       |
+|Gmae_Player_GetPlayerCollimatorCoordinate|`local x,y,z = Gmae_Player_GetPlayerCollimatorCoordinate()`|获取准星坐标       |
 |Gmae_Player_GetPlayerIncrementCoordinate |`local x,y,z = Gmae_Player_GetPlayerIncrementCoordinate()`|获取坐标运动增量   |
 |Gmae_Player_GetPlayerNavigationCoordinate|`local x,y,z = Gmae_Player_GetPlayerNavigationCoordinate()`|获取导航坐标      |
 |Gmae_Player_GetPlayerVisualCoordinate    |`local x,y,z = Gmae_Player_GetPlayerVisualCoordinate()`   |获取视角相机坐标    |
@@ -86,6 +86,16 @@
 |Game_Monster_SetBehaviorOfLastHitMonsters|`Game_Monster_SetBehaviorOfLastHitMonsters(20)`           |设置最后一次击中的怪物的行为,不受筛选器影响     |
 |Game_Monster_AddDebuffLastHitMonster     |`Game_Monster_AddDebuffLastHitMonster('Sleep')`           |为最后一次击中的怪物添加异常状态,不受筛选器影响     |
 |Game_Monster_AddDebuffToAllMonsterInRange|`Game_Monster_AddDebuffToAllMonsterInRange('Sleep',0,200)`|为范围内所有的怪物添加异常状态,受筛选器影响     |
+|Game_Monster_GetNavigationMonsterCoordinates|`local x,y,z = Game_Monster_GetNavigationMonsterCoordinates()`|获取导航的怪物的坐标       |
+|Game_Monster_GetNearestMonsterCoordinates|`local x,y,z = Game_Monster_GetNearestMonsterCoordinates()`|获取距离最近的怪物的坐标       |
+|Game_Monster_GetLastHitMonsterCoordinates|`local x,y,z = Game_Monster_GetLastHitMonsterCoordinates()`|获取最后一次击中的怪物的坐标       |
+
+### 环境生物
+|                                         |示例                                                      |说明						   |
+|-----------------------------------------|----------------------------------------------------------|------------------|
+|Game_Environmental_SetFilter             |`Game_Environmental_SetFilter(1,0)`                       |设置环境生物筛选器  |
+|Game_Environmental_DisableFilter         |`Game_Environmental_DisableFilter()`                      |清除环境生物筛选器  |
+|Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange|`Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange(100.0,100.0,100.0,0,1000)`|设置范围内所有环境生物的坐标,受筛选器影响  |
 
 ## 数据表
 

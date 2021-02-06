@@ -14,7 +14,7 @@ static int Gmae_Player_SetPlayerCoordinate(lua_State* pL) {
     float x = (float)lua_tonumber(pL, 1);
     float y = (float)lua_tonumber(pL, 2);
     float z = (float)lua_tonumber(pL, 3);
-    Component::MovePlayerToPoint(Component::Coordinate{ x,y,z });
+    Component::MovePlayerToPoint(Base::Vector3( x,y,z ));
     return 0;
 }
 static int Gmae_Player_GetPlayerCollimatorCoordinate(lua_State* pL) {
@@ -99,8 +99,8 @@ static int Gmae_World_GetMapId(lua_State* pL) {
     return 1;
 }
 static int Game_Monster_SetFilter(lua_State* pL) {
-    int id = (int)lua_tonumber(pL, 1);
-    int subId = (int)lua_tonumber(pL, 2);
+    int id = (int)lua_tointeger(pL, 1);
+    int subId = (int)lua_tointeger(pL, 2);
     Component::SetMonsterFilter(id,subId);
     return 0;
 }
@@ -109,7 +109,7 @@ static int Game_Monster_DisableFilter(lua_State* pL) {
     return 0;
 }
 static int Game_Monster_SetBehaviorOfNavigationMonsters(lua_State* pL) {
-    int fsmId = (int)lua_tonumber(pL, -1);
+    int fsmId = (int)lua_tointeger(pL, -1);
     lua_pushboolean(pL, Component::NavigationMonsterBehaviorControl(fsmId));
     return 1;
 }
@@ -118,7 +118,7 @@ static int Game_Monster_KillNavigationMarkMonster(lua_State* pL) {
     return 1;
 }
 static int Game_Monster_SetBehaviorOfNearestMonsters(lua_State* pL) {
-    int fsmId = (int)lua_tonumber(pL, -1);
+    int fsmId = (int)lua_tointeger(pL, -1);
     lua_pushboolean(pL, Component::NearestMonsterBehaviorControl(fsmId));
     return 1;
 }
@@ -133,7 +133,7 @@ static int Game_Monster_KillNearestMonsterInRange(lua_State* pL) {
     return 1;
 }
 static int Game_Monster_SetBehaviorOfLastHitMonsters(lua_State* pL) {
-    int fsmId = (int)lua_tonumber(pL, -1);
+    int fsmId = (int)lua_tointeger(pL, -1);
     lua_pushboolean(pL, Component::LastHitMonsterBehaviorControl(fsmId));
     return 1;
 }
@@ -174,6 +174,46 @@ static int Game_Monster_AddDebuffToAllMonsterInRange(lua_State* pL) {
     float min = (float)lua_tonumber(pL, 2);
     float max = (float)lua_tonumber(pL, 3);
     Component::SetAllMonsterBuff(buff, min, max);
+    return 0;
+}
+static int Game_Monster_GetNavigationMonsterCoordinates(lua_State* pL) {
+    Base::Vector3 Coordinate = Component::GetNavigationMonsterCoordinates();
+    lua_pushnumber(pL, Coordinate.x);
+    lua_pushnumber(pL, Coordinate.y);
+    lua_pushnumber(pL, Coordinate.z);
+    return 3;
+}
+static int Game_Monster_GetNearestMonsterCoordinates(lua_State* pL) {
+    Base::Vector3 Coordinate = Component::GetNearestMonsterCoordinates();
+    lua_pushnumber(pL, Coordinate.x);
+    lua_pushnumber(pL, Coordinate.y);
+    lua_pushnumber(pL, Coordinate.z);
+    return 3;
+}
+static int Game_Monster_GetLastHitMonsterCoordinates(lua_State* pL) {
+    Base::Vector3 Coordinate = Component::GetLastHitMonsterCoordinates();
+    lua_pushnumber(pL, Coordinate.x);
+    lua_pushnumber(pL, Coordinate.y);
+    lua_pushnumber(pL, Coordinate.z);
+    return 3;
+}
+static int Game_Environmental_SetFilter(lua_State* pL) {
+    int id = (int)lua_tointeger(pL, 1);
+    int subId = (int)lua_tointeger(pL, 2);
+    Component::SetEnvironmentalFilter(id, subId);
+    return 0;
+}
+static int Game_Environmental_DisableFilter(lua_State* pL) {
+    Component::DisableEnvironmentalFilter();
+    return 0;
+}
+static int Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange(lua_State* pL) {
+    float x = (float)lua_tonumber(pL, 1);
+    float y = (float)lua_tonumber(pL, 2);
+    float z = (float)lua_tonumber(pL, 3);
+    float min = (float)lua_tonumber(pL, 4);
+    float max = (float)lua_tonumber(pL, 5);
+    Component::SetAllEnvironmentalCoordinates(Base::Vector3(x,y,z), min, max);
     return 0;
 }
 
@@ -294,6 +334,7 @@ int Lua_Main()
     luaL_openlibs(L);
 
 #pragma region Game
+    #pragma region Player
     //获取玩家坐标
     lua_register(L, "Gmae_Player_GetPlayerCoordinate", Gmae_Player_GetPlayerCoordinate);
     //设置玩家坐标
@@ -328,10 +369,10 @@ int Lua_Main()
     lua_register(L, "Gmae_Player_RunFsmAction", Gmae_Player_RunFsmAction);
     //检查执行的派生动作是否结束
     lua_register(L, "Gmae_Player_CheckRunFsmActionOver", Gmae_Player_CheckRunFsmActionOver);
-
+    #pragma endregion
     //获取当前地图Id
     lua_register(L, "Gmae_World_GetMapId", Gmae_World_GetMapId);
-    
+    #pragma region Monster
     //设置怪物筛选器
     lua_register(L, "Game_Monster_SetFilter", Game_Monster_SetFilter);
     //清除怪物筛选器
@@ -362,7 +403,21 @@ int Lua_Main()
     lua_register(L, "Game_Monster_KillAllMonsterInRange", Game_Monster_KillAllMonsterInRange);
     //给范围内所有怪物设置异常状态
     lua_register(L, "Game_Monster_AddDebuffToAllMonsterInRange", Game_Monster_AddDebuffToAllMonsterInRange);
-
+    //获取导航的怪物的坐标
+    lua_register(L, "Game_Monster_GetNavigationMonsterCoordinates", Game_Monster_GetNavigationMonsterCoordinates);
+    //获取距离最近的怪物的坐标
+    lua_register(L, "Game_Monster_GetNearestMonsterCoordinates", Game_Monster_GetNearestMonsterCoordinates);
+    //获取最后一次击中的怪物的坐标
+    lua_register(L, "Game_Monster_GetLastHitMonsterCoordinates", Game_Monster_GetLastHitMonsterCoordinates);
+    #pragma endregion
+    #pragma region Environmental
+    //设置怪物筛选器
+    lua_register(L, "Game_Environmental_SetFilter", Game_Environmental_SetFilter);
+    //清除怪物筛选器
+    lua_register(L, "Game_Environmental_DisableFilter", Game_Environmental_DisableFilter);
+    //设置范围内所有环境生物的坐标
+    lua_register(L, "Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange", Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange);
+    #pragma endregion
 #pragma endregion
 #pragma region System
     //检查按键

@@ -4,11 +4,6 @@ using namespace std;
 using namespace loader;
 
 namespace Component {
-	struct Coordinate {
-		float x, y, z;
-		Coordinate(float x = 0, float y = 0, float z = 0) :x(x), y(y), z(z) {
-		};
-	};
 	struct Effect {
 		bool Enable = false;
 		int group = 0;
@@ -22,7 +17,8 @@ namespace Component {
 			速度值越大，速度越慢
 			玩家和怪物推荐使用MovePlayerToPoint和MoveMonsterToPoint进行操作
 	*/
-	static void MoveTargetToPoint(void* Target, Coordinate Point,bool Instant = true,float speed = 100.0) {
+#pragma region MoveTargetToPoint
+	static void MoveTargetToPoint(void* Target, Base::Vector3 Point,bool Instant = true,float speed = 100.0) {
 		if (Target == nullptr)
 			return;
 		if (Instant) {
@@ -38,6 +34,7 @@ namespace Component {
 			};
 		}
 	}
+#pragma endregion
 	/*
 		将目标移动到目标
 		适用于玩家、怪物、环境生物、环境采集物、环境实体
@@ -45,6 +42,7 @@ namespace Component {
 			速度值越大，速度越慢
 			玩家和怪物推荐使用MovePlayerToTarget和MoveMonsterToTarget进行操作
 	*/
+#pragma region MoveTargetToTarget
 	static void MoveTargetToTarget(void* Target, void* ToTarget, bool Instant = true, float speed = 100.0) {
 		if (Target == nullptr || ToTarget == nullptr)
 			return;
@@ -64,12 +62,14 @@ namespace Component {
 			};
 		}
 	}
+#pragma endregion
 	/*
 		将玩家移动到目标
 		注：
 			速度值越大，速度越慢
 	*/
-	static void MovePlayerToPoint(Coordinate Point, Effect effect = Effect{false}, bool Instant = true, float speed = 100.0) {
+#pragma region MovePlayerToPoint
+	static void MovePlayerToPoint(Base::Vector3 Point, Effect effect = Effect{false}, bool Instant = true, float speed = 100.0) {
 		if (effect.Enable) {
 			Base::PlayerData::Effects::GenerateSpecialEffects(effect.group, effect.record);
 		}
@@ -81,27 +81,35 @@ namespace Component {
 			MoveTargetToPoint(Base::BasicGameData::PlayerPlot, Point, false, speed);
 		}
 	}
+#pragma endregion
 	/*
 		向游戏内发送消息
 	*/
+#pragma region ShowMessage
 	static void ShowMessage(std::string message) {
 		MH::Chat::ShowGameMessage(*(undefined**)MH::Chat::MainPtr, (undefined*)&message[0], -1, -1, 0);
 	}
+#pragma endregion
 	/*
 		设置怪物筛选器
 	*/
+#pragma region SetMonsterFilter
 	static void SetMonsterFilter(int monsterId, int monsterSubId) {
 		Base::Monster::Filter = pair<int, int>(monsterId, monsterSubId);
 	}
+#pragma endregion
 	/*
 		清除怪物筛选器
 	*/
+#pragma region DisableMonsterFilter
 	static void DisableMonsterFilter() {
 		Base::Monster::Filter = pair<int, int>(255, 255);
 	}
+#pragma endregion
 	/*
 		获取导航的怪物
 	*/
+#pragma region GetNavigationMonster
 	static void* GetNavigationMonster() {
 		for (auto [monster, monsterData] : Base::Monster::Monsters) {
 			if (monster != nullptr) {
@@ -118,9 +126,11 @@ namespace Component {
 		}
 		return nullptr;
 	}
+#pragma endregion
 	/*
 		获取距离最近的怪物
 	*/
+#pragma region GetNearestMonster
 	static void* GetNearestMonster(float MinRange = 0, float MaxRange = 9999999.0) {
 		pair<void*, float> tempMonster (nullptr,0);
 		for (auto [monster, monsterData] : Base::Monster::Monsters) {
@@ -150,9 +160,11 @@ namespace Component {
 		}
 		return tempMonster.first;
 	}
+#pragma endregion
 	/*
 		杀死导航标记的怪物
 	*/
+#pragma region KillNavigationMonster
 	static bool KillNavigationMonster() {
 		void* monster = GetNavigationMonster();
 		if (monster != nullptr) {
@@ -165,9 +177,11 @@ namespace Component {
 		}
 		return false;
 	}
+#pragma endregion
 	/*
 		杀死距离最近的怪物
 	*/
+#pragma region KillNearestMonster
 	static bool KillNearestMonster(float MinRange = 0, float MaxRange = 9999999.0) {
 		void* monster = GetNearestMonster(MinRange,MaxRange);
 		if (monster != nullptr) {
@@ -180,9 +194,11 @@ namespace Component {
 		}
 		return false;
 	}
+#pragma endregion
 	/*
 		杀死最后一次击中的怪物
 	*/
+#pragma region KillLastHitMonster
 	static bool KillLastHitMonster() {
 		if (Base::PlayerData::AttackMonsterPlot != nullptr) {
 			void* healthMgr = *offsetPtr<void*>(Base::PlayerData::AttackMonsterPlot, 0x7670);
@@ -194,9 +210,11 @@ namespace Component {
 		}
 		return false;
 	}
+#pragma endregion
 	/*
 		设置导航怪物的行为
 	*/
+#pragma region NavigationMonsterBehaviorControl
 	static bool NavigationMonsterBehaviorControl(int fsm) {
 		void* monster = GetNavigationMonster();
 		if (monster != nullptr) {
@@ -205,9 +223,11 @@ namespace Component {
 		}
 		return false;
 	}
+#pragma endregion
 	/*
 		设置距离最近的怪物的行为
 	*/
+#pragma region NearestMonsterBehaviorControl
 	static bool NearestMonsterBehaviorControl(int fsm) {
 		void* monster = GetNearestMonster();
 		if (monster != nullptr) {
@@ -216,9 +236,11 @@ namespace Component {
 		}
 		return false;
 	}
+#pragma endregion
 	/*
 		设置最近击中的怪物的行为
 	*/
+#pragma region LastHitMonsterBehaviorControl
 	static bool LastHitMonsterBehaviorControl(int fsm) {
 		if (Base::PlayerData::AttackMonsterPlot != nullptr) {
 			Base::Monster::BehaviorControl(Base::PlayerData::AttackMonsterPlot, fsm);
@@ -226,9 +248,11 @@ namespace Component {
 		}
 		return false;
 	}
+#pragma endregion
 	/*
 		设置导航怪物的Buff
 	*/
+#pragma region SetNavigationMonsterBuff
 	static bool SetNavigationMonsterBuff(string buff) {
 		void* monster = GetNavigationMonster();
 		if (monster != nullptr) {
@@ -237,9 +261,11 @@ namespace Component {
 		}
 		return false;
 	}
+#pragma endregion
 	/*
 		设置距离最近的怪物的Buff
 	*/
+#pragma region SetNearestMonsterBuff
 	static bool SetNearestMonsterBuff(string buff, float MinRange = 0, float MaxRange = 9999999.0) {
 		void* monster = GetNearestMonster(MinRange, MaxRange);
 		if (monster != nullptr) {
@@ -248,9 +274,11 @@ namespace Component {
 		}
 		return false;
 	}
+#pragma endregion
 	/*
 		设置最近击中的怪物的Buff
 	*/
+#pragma region SetLastHitMonsterBuff
 	static bool SetLastHitMonsterBuff(string buff) {
 		if (Base::PlayerData::AttackMonsterPlot != nullptr) {
 			Base::Monster::SetBuff(Base::PlayerData::AttackMonsterPlot, buff);
@@ -258,9 +286,11 @@ namespace Component {
 		}
 		return false;
 	}
+#pragma endregion
 	/*
 		设置范围内所有的怪物的Buff
 	*/
+#pragma region SetAllMonsterBuff
 	static void SetAllMonsterBuff(string buff, float MinRange = 0, float MaxRange = 9999999.0) {
 		for (auto [monster, monsterData] : Base::Monster::Monsters) {
 			if (monster != nullptr) {
@@ -283,9 +313,11 @@ namespace Component {
 			}
 		}
 	}
+#pragma endregion
 	/*
 		杀死范围内所有怪物
 	*/
+#pragma region KillAllMonster
 	static void KillAllMonster(float MinRange = 0, float MaxRange = 9999999.0) {
 		for (auto [monster, monsterData] : Base::Monster::Monsters) {
 			if (monster != nullptr) {
@@ -312,4 +344,100 @@ namespace Component {
 			}
 		}
 	}
+#pragma endregion
+	/*
+		获取导航怪物的坐标
+	*/
+#pragma region GetNavigationMonsterCoordinates
+	static Base::Vector3 GetNavigationMonsterCoordinates() {
+		void* monster = GetNavigationMonster();
+		if (monster != nullptr) {
+			return Base::Vector3(
+				*offsetPtr<float>(monster, 0x160),
+				*offsetPtr<float>(monster, 0x160),
+				*offsetPtr<float>(monster, 0x160)
+			);
+		}
+		return Base::Vector3();
+	}
+#pragma endregion
+	/*
+		获取距离最近的怪物的坐标
+	*/
+#pragma region GetNearestMonsterCoordinates
+	static Base::Vector3 GetNearestMonsterCoordinates(float MinRange = 0, float MaxRange = 9999999.0) {
+		void* monster = GetNearestMonster(MinRange, MaxRange);
+		if (monster != nullptr) {
+			return Base::Vector3(
+				*offsetPtr<float>(monster, 0x160),
+				*offsetPtr<float>(monster, 0x160),
+				*offsetPtr<float>(monster, 0x160)
+			);
+		}
+		return Base::Vector3();
+	}
+#pragma endregion
+	/*
+		获取最后一次击中的怪物的坐标
+	*/
+#pragma region GetLastHitMonsterCoordinates
+	static Base::Vector3 GetLastHitMonsterCoordinates() {
+		if (Base::PlayerData::AttackMonsterPlot != nullptr) {
+			return Base::Vector3(
+				*offsetPtr<float>(Base::PlayerData::AttackMonsterPlot, 0x160),
+				*offsetPtr<float>(Base::PlayerData::AttackMonsterPlot, 0x160),
+				*offsetPtr<float>(Base::PlayerData::AttackMonsterPlot, 0x160)
+			);
+		}
+		return Base::Vector3();
+	}
+#pragma endregion
+	/*
+	设置怪物筛选器
+	*/
+#pragma region SetEnvironmentalFilter
+	static void SetEnvironmentalFilter(int environmentalId, int environmentalSubId) {
+		Base::World::EnvironmentalData::Filter = pair<int, int>(environmentalId, environmentalSubId);
+	}
+#pragma endregion
+	/*
+		清除怪物筛选器
+	*/
+#pragma region DisableEnvironmentalFilter
+	static void DisableEnvironmentalFilter() {
+		Base::World::EnvironmentalData::Filter = pair<int, int>(255, 255);
+	}
+#pragma endregion
+	/*
+		设置范围内所有环境生物的坐标
+	*/
+#pragma region SetAllEnvironmentalCoordinates
+	static void SetAllEnvironmentalCoordinates(Base::Vector3 Coordinates, float MinRange = 0, float MaxRange = 9999999.0) {
+		for (auto [environmental, environmentalData] : Base::World::EnvironmentalData::Environmentals) {
+			if (environmental != nullptr) {
+				if (
+					environmentalData.Id != Base::World::EnvironmentalData::Filter.first and
+					environmentalData.SubId != Base::World::EnvironmentalData::Filter.second and
+					Base::World::EnvironmentalData::Filter.first != 255 and
+					Base::World::EnvironmentalData::Filter.second != 255
+					)
+					continue;
+				Base::Vector3 environmentalCoordinates(
+					*offsetPtr<float>(environmental, 0x160),
+					*offsetPtr<float>(environmental, 0x164),
+					*offsetPtr<float>(environmental, 0x168)
+				);
+				float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Base::PlayerData::Coordinate::Entity, environmentalCoordinates);
+				if (distance < MaxRange and distance > MinRange) {
+					*offsetPtr<float>(environmental, 0x160) = Coordinates.x;
+					*offsetPtr<float>(environmental, 0x164) = Coordinates.y;
+					*offsetPtr<float>(environmental, 0x168) = Coordinates.z;
+					//MoveTargetToPoint(environmental, environmentalCoordinates);
+				}
+			}
+		}
+	}
+#pragma endregion
 }
+
+

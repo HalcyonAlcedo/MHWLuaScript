@@ -11,11 +11,11 @@ namespace Execution {
 			//Ãé×¼×´Ì¬ÏÂË«»÷W
 			if (Base::Keyboard::CheckKey(87, 2) and Base::PlayerData::AimingState and Base::PlayerData::WeaponType != 9) {
 				Component::MovePlayerToPoint(
-					Component::Coordinate{
+					Base::Vector3(
 					Base::PlayerData::Coordinate::Collimator.x,
 					Base::PlayerData::Coordinate::Collimator.y,
 					Base::PlayerData::Coordinate::Collimator.z
-					},
+					),
 					Component::Effect{ true,2003,5 }
 				);
 				//Ìí¼Ó5ÃëCD

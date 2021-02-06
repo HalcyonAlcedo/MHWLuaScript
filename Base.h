@@ -32,7 +32,7 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.0.3";
+		string ModVersion = "v1.0.4";
 		string Version = "421470";
 	}
 	//游戏基址数据
@@ -62,9 +62,20 @@ namespace Base {
 				float CoordinatesZ = 0;
 				int Id = 0;
 				int SubId = 0;
+				EnvironmentalData(
+					void* Plot = nullptr,
+					float CoordinatesX = 0,
+					float CoordinatesY = 0,
+					float CoordinatesZ = 0,
+					int Id = 0,
+					int SubId = 0)
+					:Plot(Plot), CoordinatesX(CoordinatesX), CoordinatesY(CoordinatesY), CoordinatesZ(CoordinatesZ), Id(Id), SubId(SubId) {
+				};
 			};
 			//环境生物列表
 			map<void*, EnvironmentalData> Environmentals;
+			//怪物筛选器
+			pair<int, int> Filter(255, 255);
 		}
 		int MapId = 0;
 	}
@@ -108,6 +119,7 @@ namespace Base {
 	}
 #pragma endregion
 	//计算
+#pragma region Calculation
 	namespace Calculation {
 		Vector3 GetVector(Vector3 p1, Vector3 p2, float l) {
 			float a = (p2.x - p1.x);
@@ -139,7 +151,9 @@ namespace Base {
 			return RangeDistance;
 		}
 	}
+#pragma endregion
 	//图形绘制
+#pragma region Draw
 	namespace Draw {
 		HWND GameHandle;
 		bool HandleInit = false;
@@ -162,7 +176,9 @@ namespace Base {
 			::ReleaseDC(GameHandle, hdc);
 		}
 	}
+#pragma endregion
 	//委托
+#pragma region Commission
 	namespace Commission {
 		namespace MoveEntity {
 			struct Parameter {
@@ -275,7 +291,9 @@ namespace Base {
 			MoveEntity::MoveEntityToTarget();
 		}
 	}
+#pragma endregion
 	//怪物信息
+#pragma region Monster
 	namespace Monster {
 		struct MonsterData {
 			void* Plot;
@@ -310,7 +328,9 @@ namespace Base {
 			MH::Monster::BehaviorControl((undefined*)monster, Fsm);
 		}
 	}
+#pragma endregion
 	//玩家信息
+#pragma region PlayerData
 	namespace PlayerData {
 		struct FsmData {
 			//对象 0为人物3为武器
@@ -484,6 +504,7 @@ namespace Base {
 			);
 		}
 	}
+#pragma endregion
 	//按键信息
 	namespace Keyboard {
 		namespace TempData {
@@ -697,12 +718,9 @@ namespace Base {
 			{
 				if (*it != nullptr) {
 					if (Base::World::EnvironmentalData::Environmentals.find(*it) == Base::World::EnvironmentalData::Environmentals.end()) {
-						Base::World::EnvironmentalData::Environmentals[*it].Plot = *it;
-						Base::World::EnvironmentalData::Environmentals[*it].CoordinatesX = *offsetPtr<float>(*it, 0x160);
-						Base::World::EnvironmentalData::Environmentals[*it].CoordinatesY = *offsetPtr<float>(*it, 0x164);
-						Base::World::EnvironmentalData::Environmentals[*it].CoordinatesZ = *offsetPtr<float>(*it, 0x168);
-						Base::World::EnvironmentalData::Environmentals[*it].Id = *offsetPtr<int>(*it, 0x1AF0);
-						Base::World::EnvironmentalData::Environmentals[*it].SubId = *offsetPtr<int>(*it, 0x1AF4);
+						Base::World::EnvironmentalData::Environmentals[*it] = Base::World::EnvironmentalData::EnvironmentalData(
+							*it, *offsetPtr<float>(*it, 0x160), *offsetPtr<float>(*it, 0x164), *offsetPtr<float>(*it, 0x168), *offsetPtr<int>(*it, 0x1AF0), *offsetPtr<int>(*it, 0x1AF4)
+						);
 					}
 					else {
 						//如果生物存在列表中就只更新坐标数据
