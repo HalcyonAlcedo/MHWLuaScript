@@ -718,8 +718,14 @@ namespace Base {
 			{
 				if (*it != nullptr) {
 					if (Base::World::EnvironmentalData::Environmentals.find(*it) == Base::World::EnvironmentalData::Environmentals.end()) {
-						Base::World::EnvironmentalData::Environmentals[*it] = Base::World::EnvironmentalData::EnvironmentalData(
-							*it, *offsetPtr<float>(*it, 0x160), *offsetPtr<float>(*it, 0x164), *offsetPtr<float>(*it, 0x168), *offsetPtr<int>(*it, 0x1AF0), *offsetPtr<int>(*it, 0x1AF4)
+						Base::World::EnvironmentalData::Environmentals[*it] = 
+						Base::World::EnvironmentalData::EnvironmentalData(
+							*it,
+							0,
+							0, 
+							0,
+							*offsetPtr<int>(*it, 0x1AF0),
+							*offsetPtr<int>(*it, 0x1AF4)
 						);
 					}
 					else {
