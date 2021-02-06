@@ -23,7 +23,7 @@ namespace Base {
 		Vector2(float x = 0, float y = 0) :x(x), y(y) {
 		};
 	};
-
+#pragma region ModConfig
 	namespace ModConfig {
 		//内置参数
 		bool GameDataInit = false;
@@ -43,7 +43,9 @@ namespace Base {
 		void* MapPlot = nullptr;
 		void* GameTimePlot = nullptr;
 	}
+#pragma endregion
 	//世界信息
+#pragma region World
 	namespace World {
 		//环境生物
 		namespace EnvironmentalData {
@@ -66,7 +68,9 @@ namespace Base {
 		}
 		int MapId = 0;
 	}
+#pragma endregion
 	//计时器
+#pragma region Chronoscope
 	namespace Chronoscope {
 		struct ChronoscopeData {
 			float StartTime = 0;
@@ -102,6 +106,7 @@ namespace Base {
 			return false;
 		}
 	}
+#pragma endregion
 	//计算
 	namespace Calculation {
 		Vector3 GetVector(Vector3 p1, Vector3 p2, float l) {
@@ -273,12 +278,21 @@ namespace Base {
 	//怪物信息
 	namespace Monster {
 		struct MonsterData {
-			void* Plot = nullptr;
-			float CoordinatesX = 0;
-			float CoordinatesY = 0;
-			float CoordinatesZ = 0;
-			int Id = 0;
-			int SubId = 0;
+			void* Plot;
+			float CoordinatesX;
+			float CoordinatesY;
+			float CoordinatesZ;
+			int Id;
+			int SubId;
+			MonsterData(
+				void* Plot = nullptr,
+				float CoordinatesX = 0,
+				float CoordinatesY = 0,
+				float CoordinatesZ = 0,
+				int Id = 0,
+				int SubId = 0) 
+				:Plot(Plot), CoordinatesX(CoordinatesX), CoordinatesY(CoordinatesY), CoordinatesZ(CoordinatesZ), Id(Id), SubId(SubId){
+			};
 		};
 		//怪物列表
 		map<void*, MonsterData> Monsters;
@@ -580,12 +594,9 @@ namespace Base {
 				HookLambda(MH::Monster::ctor,
 					[](auto monster, auto id, auto subId) {
 						auto ret = original(monster, id, subId);
-						Base::Monster::Monsters[monster].Plot = monster;
-						Base::Monster::Monsters[monster].CoordinatesX = *offsetPtr<float>(monster, 0x160);
-						Base::Monster::Monsters[monster].CoordinatesY = *offsetPtr<float>(monster, 0x164);
-						Base::Monster::Monsters[monster].CoordinatesZ = *offsetPtr<float>(monster, 0x168);
-						Base::Monster::Monsters[monster].Id = id;
-						Base::Monster::Monsters[monster].SubId = subId;
+						Base::Monster::Monsters[monster] = Base::Monster::MonsterData(
+							monster, 0, 0, 0, id, subId
+						);
 						return ret;
 					});
 				HookLambda(MH::Monster::dtor,
