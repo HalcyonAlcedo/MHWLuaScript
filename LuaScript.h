@@ -85,6 +85,12 @@ static int Gmae_Player_Weapon_GetWeaponType(lua_State* pL) {
     lua_pushinteger(pL, Base::PlayerData::WeaponType);
     return 1;
 }
+static int Gmae_Player_Weapon_ChangeWeapons(lua_State* pL) {
+    int type = (int)lua_tointeger(pL, 1);
+    int id = (int)lua_tointeger(pL, 2);
+    Base::PlayerData::ChangeWeapons(type, id);
+    return 0;
+}
 static int Gmae_Player_GetFsmData(lua_State* pL) {
     lua_pushinteger(pL, Base::PlayerData::Fsm.Target);
     lua_pushinteger(pL, Base::PlayerData::Fsm.Id);
@@ -285,6 +291,35 @@ static int Gmae_Player_CreateBowgunProjectiles(lua_State* pL) {
     ));
     return 1;
 }
+static int Game_Monster_GetAllMonsterCoordinatesInRange(lua_State* pL)
+{
+    float min = (float)lua_tonumber(pL, 1);
+    float max = (float)lua_tonumber(pL, 2);
+    lua_newtable(pL);//创建一个表格，放在栈顶
+    for (auto [id, monsterData] : Component::GetAllMonsterCoordinates(min, max)) {
+        lua_pushinteger(pL, id);//压入编号
+        lua_newtable(pL);//压入编号信息表
+        lua_pushstring(pL, "X");//X坐标
+        lua_pushnumber(pL, monsterData.CoordinatesX);//value
+        lua_settable(pL, -3);//弹出X坐标
+        lua_pushstring(pL, "Y");//Y坐标
+        lua_pushnumber(pL, monsterData.CoordinatesY);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Z");//Z坐标
+        lua_pushnumber(pL, monsterData.CoordinatesZ);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Id");//怪物Id
+        lua_pushinteger(pL, monsterData.Id);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "SubId");//怪物SubId
+        lua_pushinteger(pL, monsterData.SubId);
+        lua_settable(pL, -3);
+        lua_settable(pL, -3);//弹出到顶层
+    }
+    return 1;
+}
+
+
 #pragma endregion
 #pragma region SystemFun
 static int System_Keyboard_CheckKey(lua_State* pL) {    
@@ -441,6 +476,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Gmae_Player_Weapon_GetWeaponId", Gmae_Player_Weapon_GetWeaponId);
     //获取玩家武器类型
     lua_register(L, "Gmae_Player_Weapon_GetWeaponType", Gmae_Player_Weapon_GetWeaponType);
+    //更换玩家的武器
+    lua_register(L, "Gmae_Player_Weapon_ChangeWeapons", Gmae_Player_Weapon_ChangeWeapons);
     //获取玩家派生信息
     lua_register(L, "Gmae_Player_GetFsmData", Gmae_Player_GetFsmData);
     //执行指定的派生动作
@@ -465,7 +502,7 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Gmae_Player_CreateWeaponProjectiles", Gmae_Player_CreateWeaponProjectiles);
     //生成玩家手弩投射物
     lua_register(L, "Gmae_Player_CreateBowgunProjectiles", Gmae_Player_CreateBowgunProjectiles);
-
+    
     #pragma endregion
     //获取当前地图Id
     lua_register(L, "Gmae_World_GetMapId", Gmae_World_GetMapId);
@@ -506,6 +543,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Monster_GetNearestMonsterCoordinates", Game_Monster_GetNearestMonsterCoordinates);
     //获取最后一次击中的怪物的坐标
     lua_register(L, "Game_Monster_GetLastHitMonsterCoordinates", Game_Monster_GetLastHitMonsterCoordinates);
+    //获取范围内所有怪物的坐标
+    lua_register(L, "Game_Monster_GetAllMonsterCoordinatesInRange", Game_Monster_GetAllMonsterCoordinatesInRange);
     #pragma endregion
     #pragma region Environmental
     //设置怪物筛选器

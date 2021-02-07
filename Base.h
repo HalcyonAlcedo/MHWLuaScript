@@ -482,6 +482,11 @@ namespace Base {
 			}
 			return false;
 		}
+		//更换武器（武器类型，武器ID）
+		static void ChangeWeapons(int type, int id) {
+			if(type <= 13 and type >= 0 and id >= 0)
+				MH::Weapon::ChangeWeapon(BasicGameData::PlayerPlot, type, id);
+		}
 		//玩家数据更新
 		static void Updata() {
 			Angle = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x198) * 180.0;
