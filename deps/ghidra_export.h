@@ -52,6 +52,10 @@ namespace MH {
         static undefined(*GmaeClockControl)(float) = (undefined(*)(float))0x141B9EB37;
         static undefined(*Message)() = (undefined(*)())0x144FE7D80;
     }
+    namespace Shlp {
+        static void* (*GetShlp)(void*, int) = (void* (*)(void*, int))0x140F86090;//·µ»ØshlpÂ·¾¶ shlp»ùÖ· shlpid
+        static void(*CallShlp)(void*, void*, void*, void*) = (void(*)(void*, void*, void*, void*))0x141ABA910;//shlp
+    }
     namespace Savefile {
         static bool(*CheckFlag)(longlong, uint) = (bool(*)(longlong, uint))0x14136bdf0;
     }
@@ -78,7 +82,6 @@ namespace MH {
             }
             static undefined8(*CalcElementalBloat)() = (undefined8(*)())0x1419900a0;
         }
-
         namespace MainWeapon {
             static undefined(*coordinateX)(float) = (undefined(*)(float))0x142135ADB;
             static undefined(*coordinateY)(float, float) = (undefined(*)(float, float))0x142135AF6;

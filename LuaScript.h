@@ -23,6 +23,12 @@ static int Gmae_Player_GetPlayerCollimatorCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Collimator.z);
     return 3;
 }
+static int Gmae_Player_GetPlayerWeaponCoordinate(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Weapon.x);
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Weapon.y);
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Weapon.z);
+    return 3;
+}
 static int Gmae_Player_CheckAimingStatus(lua_State* pL) {
     lua_pushboolean(pL, Base::PlayerData::AimingState);
     return 1;
@@ -253,6 +259,19 @@ static int Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange(lua_State* p
     Component::SetAllEnvironmentalCoordinates(Base::Vector3(x,y,z), min, max);
     return 0;
 }
+static int Gmae_Player_CreateProjectiles(lua_State* pL) {
+    int id = (int)lua_tointeger(pL, 1);
+    float startx = (float)lua_tonumber(pL, 2);
+    float starty = (float)lua_tonumber(pL, 3);
+    float startz = (float)lua_tonumber(pL, 4);
+    float endx = (float)lua_tonumber(pL, 5);
+    float endy = (float)lua_tonumber(pL, 6);
+    float endz = (float)lua_tonumber(pL, 7);
+    lua_pushboolean(pL, Base::ProjectilesOperation::CreateProjectiles(
+        id, Base::Vector3(startx, starty, startz), Base::Vector3(endx, endy, endz)
+    ));
+    return 1;
+}
 
 #pragma endregion
 #pragma region SystemFun
@@ -264,6 +283,11 @@ static int System_Keyboard_CheckKey(lua_State* pL) {
 static int System_Keyboard_CheckDoubleKey(lua_State* pL) {
     int key = (int)lua_tointeger(pL, -1);
     lua_pushboolean(pL, Base::Keyboard::CheckKey(key, 2));
+    return 1;
+}
+static int System_Keyboard_CheckKeyIsPressed(lua_State* pL) {
+    int key = (int)lua_tointeger(pL, -1);
+    lua_pushboolean(pL, GetKeyState(key) < 0);
     return 1;
 }
 static int System_Chronoscope_AddChronoscope(lua_State* pL) {
@@ -378,6 +402,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Gmae_Player_SetPlayerCoordinate", Gmae_Player_SetPlayerCoordinate);
     //获取准星坐标
     lua_register(L, "Gmae_Player_GetPlayerCollimatorCoordinate", Gmae_Player_GetPlayerCollimatorCoordinate);
+    //获取武器坐标
+    lua_register(L, "Gmae_Player_GetPlayerWeaponCoordinate", Gmae_Player_GetPlayerWeaponCoordinate);
     //检查瞄准状态
     lua_register(L, "Gmae_Player_CheckAimingStatus", Gmae_Player_CheckAimingStatus);
     //获取增量坐标
@@ -420,6 +446,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Gmae_Player_SetPlayerMaxEndurance", Gmae_Player_SetPlayerMaxEndurance);
     //获取玩家角色信息
     lua_register(L, "Gmae_Player_GetPlayerRoleInfo", Gmae_Player_GetPlayerRoleInfo);
+    //生成玩家投射物
+    lua_register(L, "Gmae_Player_CreateProjectiles", Gmae_Player_CreateProjectiles);
 
     #pragma endregion
     //获取当前地图Id
@@ -476,6 +504,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_Keyboard_CheckKey", System_Keyboard_CheckKey);
     //检查按键双击
     lua_register(L, "System_Keyboard_CheckDoubleKey", System_Keyboard_CheckDoubleKey);
+    //检查按键是否处于按下状态
+    lua_register(L, "System_Keyboard_CheckKeyIsPressed", System_Keyboard_CheckKeyIsPressed);
     //添加计时器
     lua_register(L, "System_Chronoscope_AddChronoscope", System_Chronoscope_AddChronoscope);
     //检查计时器

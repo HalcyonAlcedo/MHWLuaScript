@@ -32,9 +32,12 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.0.5";
+		string ModVersion = "v1.0.6";
 		string Version = "421470";
 	}
+#pragma endregion
+	//游戏基础地址
+#pragma region BasicGameData
 	//游戏基址数据
 	namespace BasicGameData {
 		void* PlayerPlot = nullptr;
@@ -370,6 +373,8 @@ namespace Base {
 			Vector3 Navigation;
 			//相机坐标
 			Vector3 Visual;
+			//武器坐标
+			Vector3 Weapon;
 			//玩家传送(X坐标,Y坐标,Z坐标,是否穿墙)
 			static void TransportCoordinate(float X, float Y, float Z, bool Across = false) {
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x160) = X;
@@ -481,15 +486,28 @@ namespace Base {
 		static void Updata() {
 			Angle = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x198) * 180.0;
 			Radian = 4 * atan(1.0) / 180 * PlayerData::Angle;
-			Coordinate::Entity.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x160);
-			Coordinate::Entity.y = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x164);
-			Coordinate::Entity.z = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x168);
-			Coordinate::Collision.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0xA50);
-			Coordinate::Collision.y = *offsetPtr<float>(BasicGameData::PlayerPlot, 0xA54);
-			Coordinate::Collision.z = *offsetPtr<float>(BasicGameData::PlayerPlot, 0xA58);
-			Coordinate::Collimator.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D30);
-			Coordinate::Collimator.y = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D34);
-			Coordinate::Collimator.z = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D38);
+			Coordinate::Entity = Vector3(
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x160),
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x164),
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x168)
+			);
+			Coordinate::Collision = Vector3(
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0xA50),
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0xA54),
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0xA58)
+			);
+			Coordinate::Collimator = Vector3(
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D30),
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D34),
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D38)
+			);
+			void* WeaponEntityPlot = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x76B0);
+			if(WeaponEntityPlot != nullptr)
+				Coordinate::Weapon = Vector3(
+					*offsetPtr<float>(WeaponEntityPlot, 0x160),
+					*offsetPtr<float>(WeaponEntityPlot, 0x164),
+					*offsetPtr<float>(WeaponEntityPlot, 0x168)
+				);
 			VisualDistance = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7690);
 			void* IncrementPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
 			if (IncrementPlot != nullptr) {
@@ -542,6 +560,7 @@ namespace Base {
 	}
 #pragma endregion
 	//按键信息
+#pragma region Keyboard
 	namespace Keyboard {
 		namespace TempData {
 			map<int, bool> t_KeyDown;
@@ -602,6 +621,82 @@ namespace Base {
 			return false;
 		}
 	}
+#pragma endregion
+	//投射物
+#pragma region ProjectilesOperation
+	namespace ProjectilesOperation {
+		//执行投射物生成
+		static bool CallProjectilesGenerate(int Id, float* Coordinate) {
+			void* Weapon = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x76B0);
+			void* ShlpPlot= *offsetPtr<void*>(Weapon, 0x1D90);
+			if (ShlpPlot == nullptr)
+				return false;
+			void* ShlpRoute = MH::Shlp::GetShlp(ShlpPlot, Id);
+			if (ShlpRoute == nullptr)
+				return false;
+			ShlpRoute = *offsetPtr<void*>(ShlpRoute, 0x8);
+			MH::Shlp::CallShlp(ShlpRoute, BasicGameData::PlayerPlot, BasicGameData::PlayerPlot, Coordinate);
+			return true;
+		}
+		//处理投射物路径数据
+		static void GenerateProjectilesCoordinateData(float*& CalculationCoordinates,Vector3 startPoint, Vector3 endPoint) {
+			//缓存指针
+			float* temp_float = CalculationCoordinates;
+			//写入起始坐标
+			*temp_float = startPoint.x;
+			temp_float++;
+			*temp_float = startPoint.y;
+			temp_float++;
+			*temp_float = startPoint.z;
+			temp_float++;
+			//起始坐标写入完成，空4个字节
+			*temp_float = 0;
+			temp_float++;
+			//更换指针为单字节并写入1
+			unsigned char* temp_byte = (unsigned char*)temp_float;
+			*temp_byte = 1;
+
+			//重设缓存指针至坐标地址40处
+			temp_float = offsetPtr<float>(CalculationCoordinates, 0x40);
+			//写入结束坐标
+			*temp_float = endPoint.x;
+			temp_float++;
+			*temp_float = endPoint.y;
+			temp_float++;
+			*temp_float = endPoint.z;
+			temp_float++;
+			//结束坐标写入完成，空4个字节
+			*temp_float = 0;
+			temp_float++;
+			//更换指针为单字节并写入1
+			temp_byte = (unsigned char*)temp_float;
+			*temp_byte = 1;
+
+			//重设缓存指针至坐标地址A0处
+			int* tempCoordinateTailData = offsetPtr<int>(CalculationCoordinates, 0xA0);
+			//写入坐标数据尾部信息
+			*tempCoordinateTailData = 0x12;
+			tempCoordinateTailData++;
+			longlong* tempCoordinateTailData_longlong = (longlong*)tempCoordinateTailData;
+			*tempCoordinateTailData_longlong = -1;
+		}
+		//生成投射物
+		static bool CreateProjectiles(int Id, Vector3 startPoint, Vector3 endPoint) {
+			//创建投射物路径数据缓存指针
+			float* CoordinatesData = new float[73];
+			//填充缓存区数据
+			memset(CoordinatesData, 0, 73 * 4);
+			//处理投射物路径数据
+			GenerateProjectilesCoordinateData(CoordinatesData, startPoint, endPoint);
+			//执行生成投射物
+			bool GenerateResults = CallProjectilesGenerate(Id, CoordinatesData);
+			//清理缓冲区
+			delete[]CoordinatesData;
+			return GenerateResults;
+		}
+	}
+#pragma endregion
+
 	//初始化
 	static bool Init() {
 		if (!ModConfig::GameDataInit) {
