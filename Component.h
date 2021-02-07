@@ -355,8 +355,8 @@ namespace Component {
 		if (monster != nullptr) {
 			return Base::Vector3(
 				*offsetPtr<float>(monster, 0x160),
-				*offsetPtr<float>(monster, 0x160),
-				*offsetPtr<float>(monster, 0x160)
+				*offsetPtr<float>(monster, 0x164),
+				*offsetPtr<float>(monster, 0x168)
 			);
 		}
 		return Base::Vector3();
@@ -371,8 +371,8 @@ namespace Component {
 		if (monster != nullptr) {
 			return Base::Vector3(
 				*offsetPtr<float>(monster, 0x160),
-				*offsetPtr<float>(monster, 0x160),
-				*offsetPtr<float>(monster, 0x160)
+				*offsetPtr<float>(monster, 0x164),
+				*offsetPtr<float>(monster, 0x168)
 			);
 		}
 		return Base::Vector3();
@@ -386,8 +386,8 @@ namespace Component {
 		if (Base::PlayerData::AttackMonsterPlot != nullptr) {
 			return Base::Vector3(
 				*offsetPtr<float>(Base::PlayerData::AttackMonsterPlot, 0x160),
-				*offsetPtr<float>(Base::PlayerData::AttackMonsterPlot, 0x160),
-				*offsetPtr<float>(Base::PlayerData::AttackMonsterPlot, 0x160)
+				*offsetPtr<float>(Base::PlayerData::AttackMonsterPlot, 0x164),
+				*offsetPtr<float>(Base::PlayerData::AttackMonsterPlot, 0x168)
 			);
 		}
 		return Base::Vector3();

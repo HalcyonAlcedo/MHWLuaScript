@@ -525,10 +525,10 @@ namespace Base {
 				AimingState = *offsetPtr<bool>(AimingStatePlot, 0xC28);
 			else
 				AimingState = false;
-			void* AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x4C0);
-			void* AttackMonsterOffset1 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterPlot, 0x98);
-			void* AttackMonsterOffset2 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset1, 0xD8);
-			AttackMonsterPlot = *offsetPtr<void*>(AttackMonsterOffset2, 0x4298);
+			void* AttackMonsterOffset1 = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x4C0);
+			void* AttackMonsterOffset2 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset1, 0x98);
+			void* AttackMonsterOffset3 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset2, 0xD8);
+			AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset3, 0x4298);
 			ActionId = *offsetPtr<int>(BasicGameData::ActionPlot, 0xE9C4);
 			void* WeaponPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0xc0);
 			void* WeaponOffset1 = *offsetPtr<undefined**>((undefined(*)())WeaponPlot, 0x8);
