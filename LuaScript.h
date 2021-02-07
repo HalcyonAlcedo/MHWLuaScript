@@ -287,7 +287,10 @@ static int System_Keyboard_CheckDoubleKey(lua_State* pL) {
 }
 static int System_Keyboard_CheckKeyIsPressed(lua_State* pL) {
     int key = (int)lua_tointeger(pL, -1);
-    lua_pushboolean(pL, GetKeyState(key) < 0);
+    bool ret = GetKeyState(key) < 0;
+    if (!Base::Keyboard::CheckWindows())
+        ret = false;
+    lua_pushboolean(pL, ret);
     return 1;
 }
 static int System_Chronoscope_AddChronoscope(lua_State* pL) {
