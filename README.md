@@ -75,7 +75,9 @@
 |Gmae_Player_SetPlayerCurrentEndurance    |`Gmae_Player_SetPlayerCurrentEndurance(50)`               |设置玩家当前耐力   |
 |Gmae_Player_SetPlayerMaxEndurance        |`Gmae_Player_SetPlayerMaxEndurance(25)`                   |设置玩家最大耐力25-150  |
 |Gmae_Player_GetPlayerRoleInfo            |`local name,hr,mr = Gmae_Player_GetPlayerRoleInfo()`      |获取玩家角色信息   |
-|Gmae_Player_CreateProjectiles            |`Gmae_Player_CreateProjectiles(12,startX,startY,startZ,endX,endY,endZ)`|生成玩家投射物（投射物id,起始坐标,结束坐标） |
+|~~Gmae_Player_CreateProjectiles~~        |`Gmae_Player_CreateProjectiles(12,startX,startY,startZ,endX,endY,endZ)`|1.0.7弃用，请使用特定对象的方法 |
+|Gmae_Player_CreateWeaponProjectiles      |`Gmae_Player_CreateWeaponProjectiles(12,startX,startY,startZ,endX,endY,endZ)`|生成玩家武器投射物（投射物id,起始坐标,结束坐标） |
+|Gmae_Player_CreateBowgunProjectiles      |`Gmae_Player_CreateBowgunProjectiles(12,startX,startY,startZ,endX,endY,endZ)`|生成玩家手弩投射物（投射物id,起始坐标,结束坐标） |
 |Gmae_World_GetMapId                      |`Gmae_World_GetMapId()`                                   |获取地图ID        |
 
 ### 怪物

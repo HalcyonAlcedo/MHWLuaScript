@@ -259,7 +259,7 @@ static int Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange(lua_State* p
     Component::SetAllEnvironmentalCoordinates(Base::Vector3(x,y,z), min, max);
     return 0;
 }
-static int Gmae_Player_CreateProjectiles(lua_State* pL) {
+static int Gmae_Player_CreateWeaponProjectiles(lua_State* pL) {
     int id = (int)lua_tointeger(pL, 1);
     float startx = (float)lua_tonumber(pL, 2);
     float starty = (float)lua_tonumber(pL, 3);
@@ -268,11 +268,23 @@ static int Gmae_Player_CreateProjectiles(lua_State* pL) {
     float endy = (float)lua_tonumber(pL, 6);
     float endz = (float)lua_tonumber(pL, 7);
     lua_pushboolean(pL, Base::ProjectilesOperation::CreateProjectiles(
-        id, Base::Vector3(startx, starty, startz), Base::Vector3(endx, endy, endz)
+        id, Base::Vector3(startx, starty, startz), Base::Vector3(endx, endy, endz),0
     ));
     return 1;
 }
-
+static int Gmae_Player_CreateBowgunProjectiles(lua_State* pL) {
+    int id = (int)lua_tointeger(pL, 1);
+    float startx = (float)lua_tonumber(pL, 2);
+    float starty = (float)lua_tonumber(pL, 3);
+    float startz = (float)lua_tonumber(pL, 4);
+    float endx = (float)lua_tonumber(pL, 5);
+    float endy = (float)lua_tonumber(pL, 6);
+    float endz = (float)lua_tonumber(pL, 7);
+    lua_pushboolean(pL, Base::ProjectilesOperation::CreateProjectiles(
+        id, Base::Vector3(startx, starty, startz), Base::Vector3(endx, endy, endz),1
+    ));
+    return 1;
+}
 #pragma endregion
 #pragma region SystemFun
 static int System_Keyboard_CheckKey(lua_State* pL) {    
@@ -449,8 +461,10 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Gmae_Player_SetPlayerMaxEndurance", Gmae_Player_SetPlayerMaxEndurance);
     //获取玩家角色信息
     lua_register(L, "Gmae_Player_GetPlayerRoleInfo", Gmae_Player_GetPlayerRoleInfo);
-    //生成玩家投射物
-    lua_register(L, "Gmae_Player_CreateProjectiles", Gmae_Player_CreateProjectiles);
+    //生成玩家武器投射物
+    lua_register(L, "Gmae_Player_CreateWeaponProjectiles", Gmae_Player_CreateWeaponProjectiles);
+    //生成玩家手弩投射物
+    lua_register(L, "Gmae_Player_CreateBowgunProjectiles", Gmae_Player_CreateBowgunProjectiles);
 
     #pragma endregion
     //获取当前地图Id

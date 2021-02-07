@@ -32,7 +32,7 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.0.6";
+		string ModVersion = "v1.0.7";
 		string Version = "421470";
 	}
 #pragma endregion
@@ -626,11 +626,28 @@ namespace Base {
 #pragma region ProjectilesOperation
 	namespace ProjectilesOperation {
 		//执行投射物生成
-		static bool CallProjectilesGenerate(int Id, float* Coordinate) {
+		static bool CallProjectilesGenerate(int Id, float* Coordinate, int From = 0) {
+			//武器发出的投射物
 			void* Weapon = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x76B0);
-			void* ShlpPlot= *offsetPtr<void*>(Weapon, 0x1D90);
-			if (ShlpPlot == nullptr)
+			void* WeaponShlpPlot= *offsetPtr<void*>(Weapon, 0x1D90);
+			//手弩发出的投射物
+			void* BowgunShlpPlot = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x56E8);
+			if (WeaponShlpPlot == nullptr || BowgunShlpPlot == nullptr)
 				return false;
+
+			void* ShlpPlot = nullptr;
+			switch (From)
+			{
+			case 0:
+				ShlpPlot = WeaponShlpPlot;
+				break;
+			case 1:
+				ShlpPlot = BowgunShlpPlot;
+				break;
+			default:
+				return false;
+			}
+
 			void* ShlpRoute = MH::Shlp::GetShlp(ShlpPlot, Id);
 			if (ShlpRoute == nullptr)
 				return false;
@@ -681,7 +698,7 @@ namespace Base {
 			*tempCoordinateTailData_longlong = -1;
 		}
 		//生成投射物
-		static bool CreateProjectiles(int Id, Vector3 startPoint, Vector3 endPoint) {
+		static bool CreateProjectiles(int Id, Vector3 startPoint, Vector3 endPoint, int From = 0) {
 			//创建投射物路径数据缓存指针
 			float* CoordinatesData = new float[73];
 			//填充缓存区数据
@@ -689,7 +706,7 @@ namespace Base {
 			//处理投射物路径数据
 			GenerateProjectilesCoordinateData(CoordinatesData, startPoint, endPoint);
 			//执行生成投射物
-			bool GenerateResults = CallProjectilesGenerate(Id, CoordinatesData);
+			bool GenerateResults = CallProjectilesGenerate(Id, CoordinatesData, From);
 			//清理缓冲区
 			delete[]CoordinatesData;
 			return GenerateResults;
