@@ -94,6 +94,43 @@ static int Gmae_Player_CheckRunFsmActionOver(lua_State* pL) {
     lua_pushboolean(pL, Base::PlayerData::CheckDerivedAction());
     return 1;
 }
+static int Gmae_Player_GetPlayerHealth(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::BasicHealth);
+    lua_pushnumber(pL, Base::PlayerData::MaxHealth);
+    lua_pushnumber(pL, Base::PlayerData::CurrentHealth);
+    return 3;
+}
+static int Gmae_Player_SetPlayerCurrentHealth(lua_State* pL) {
+    float health = (float)lua_tonumber(pL, 1);
+    Component::SetPlayerHealth(health);
+    return 0;
+}
+static int Gmae_Player_SetPlayerBasicHealth(lua_State* pL) {
+    float health = (float)lua_tonumber(pL, 1);
+    Component::SetPlayerBasicHealth(health);
+    return 0;
+}
+static int Gmae_Player_GetPlayerEndurance(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::MaxEndurance);
+    lua_pushnumber(pL, Base::PlayerData::CurrentEndurance);
+    return 2;
+}
+static int Gmae_Player_SetPlayerCurrentEndurance(lua_State* pL) {
+    float endurance = (float)lua_tonumber(pL, 1);
+    Component::SetPlayerEndurance(endurance);
+    return 0;
+}
+static int Gmae_Player_SetPlayerMaxEndurance(lua_State* pL) {
+    float endurance = (float)lua_tonumber(pL, 1);
+    Component::SetPlayerMaxEndurance(endurance);
+    return 0;
+}
+static int Gmae_Player_GetPlayerRoleInfo(lua_State* pL) {
+    lua_pushstring(pL, Base::PlayerData::Name.c_str());
+    lua_pushinteger(pL, Base::PlayerData::Hr);
+    lua_pushinteger(pL, Base::PlayerData::Mr);
+    return 3;
+}
 static int Gmae_World_GetMapId(lua_State* pL) {
     lua_pushinteger(pL, Base::World::MapId);
     return 1;
@@ -327,7 +364,7 @@ static int Lua_Variable_DestroyVariable(lua_State* pL) {
 //==============================================
 // Main Functions
 //==============================================
-int Lua_Main()
+int Lua_Main(string LuaFile)
 {
     lua_State* L = luaL_newstate();
     luaopen_base(L);
@@ -369,6 +406,21 @@ int Lua_Main()
     lua_register(L, "Gmae_Player_RunFsmAction", Gmae_Player_RunFsmAction);
     //检查执行的派生动作是否结束
     lua_register(L, "Gmae_Player_CheckRunFsmActionOver", Gmae_Player_CheckRunFsmActionOver);
+    //获取玩家血量信息
+    lua_register(L, "Gmae_Player_GetPlayerHealth", Gmae_Player_GetPlayerHealth);
+    //设置玩家当前血量
+    lua_register(L, "Gmae_Player_SetPlayerCurrentHealth", Gmae_Player_SetPlayerCurrentHealth);
+    //设置玩家基础血量
+    lua_register(L, "Gmae_Player_SetPlayerBasicHealth", Gmae_Player_SetPlayerBasicHealth);
+    //获取玩家耐力信息
+    lua_register(L, "Gmae_Player_GetPlayerEndurance", Gmae_Player_GetPlayerEndurance);
+    //设置玩家当前耐力
+    lua_register(L, "Gmae_Player_SetPlayerCurrentEndurance", Gmae_Player_SetPlayerCurrentEndurance);
+    //设置玩家最大耐力
+    lua_register(L, "Gmae_Player_SetPlayerMaxEndurance", Gmae_Player_SetPlayerMaxEndurance);
+    //获取玩家角色信息
+    lua_register(L, "Gmae_Player_GetPlayerRoleInfo", Gmae_Player_GetPlayerRoleInfo);
+
     #pragma endregion
     //获取当前地图Id
     lua_register(L, "Gmae_World_GetMapId", Gmae_World_GetMapId);
@@ -452,7 +504,7 @@ int Lua_Main()
     lua_register(L, "Lua_Variable_DestroyVariable", Lua_Variable_DestroyVariable);
 #pragma endregion
 
-    int error = luaL_dofile(L, "nativePC/LuaScript/MainScript.lua");
+    int error = luaL_dofile(L, LuaFile.c_str());
     if (error)
     {
         //LOG(ERR) << "dofile error";
@@ -461,5 +513,6 @@ int Lua_Main()
     lua_getglobal(L, "run");
     lua_pcall(L, 0, 0, 0);
     lua_close(L);
+
     return 1;
 }

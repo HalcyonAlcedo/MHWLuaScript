@@ -32,13 +32,13 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.0.4";
+		string ModVersion = "v1.0.5";
 		string Version = "421470";
 	}
 	//游戏基址数据
 	namespace BasicGameData {
 		void* PlayerPlot = nullptr;
-		void* PlayerFsmPlot = nullptr;
+		void* PlayerInfoPlot = nullptr;
 		void* ActionPlot = nullptr;
 		void* MapPlot = nullptr;
 		void* GameTimePlot = nullptr;
@@ -424,6 +424,8 @@ namespace Base {
 		float Angle;
 		//朝向弧度
 		float Radian;
+		//相机距离
+		float VisualDistance;
 		//是否处于瞄准状态
 		bool AimingState;
 		//最后一次击中的怪物地址
@@ -436,6 +438,22 @@ namespace Base {
 		int WeaponId;
 		//派生信息
 		FsmData Fsm;
+		//玩家名称
+		string Name;
+		//hr等级
+		int Hr;
+		//mr等级
+		int Mr;
+		//当前血量
+		float CurrentHealth;
+		//基础血量（0-150）
+		float BasicHealth;
+		//血量上限
+		float MaxHealth;
+		//当前耐力
+		float CurrentEndurance;
+		//耐力上限（25-150）
+		float MaxEndurance;
 
 		//执行派生动作(执行对象,执行Id)
 		static void RunDerivedAction(int type, int id) {
@@ -472,6 +490,7 @@ namespace Base {
 			Coordinate::Collimator.x = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D30);
 			Coordinate::Collimator.y = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D34);
 			Coordinate::Collimator.z = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D38);
+			VisualDistance = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7690);
 			void* IncrementPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
 			if (IncrementPlot != nullptr) {
 				Coordinate::Increment.x = *offsetPtr<float>(IncrementPlot, 0x7D30);
@@ -502,6 +521,23 @@ namespace Base {
 				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x628C),
 				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6290)
 			);
+			BasicHealth = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7628);
+			void* StatusManagementPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7630);
+			if (StatusManagementPlot != nullptr) {
+				CurrentHealth = *offsetPtr<float>(StatusManagementPlot, 0x64);
+				MaxHealth = *offsetPtr<float>(StatusManagementPlot, 0x60);
+				CurrentEndurance = *offsetPtr<float>(StatusManagementPlot, 0x13C);
+				MaxEndurance = *offsetPtr<float>(StatusManagementPlot, 0x144);
+			}
+			else {
+				CurrentHealth = 0;
+				MaxHealth = 0;
+				CurrentEndurance = 0;
+				MaxEndurance = 0;
+			}
+			Name = *offsetPtr<string>(BasicGameData::PlayerInfoPlot, 0x50);
+			Hr = *offsetPtr<int>(BasicGameData::PlayerInfoPlot, 0x90);
+			Mr = *offsetPtr<int>(BasicGameData::PlayerInfoPlot, 0xD4);
 		}
 	}
 #pragma endregion
@@ -570,10 +606,13 @@ namespace Base {
 	static bool Init() {
 		if (!ModConfig::GameDataInit) {
 			void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
+			void* PlayerInfoPlot = *(undefined**)MH::Player::BasePtr;
 			BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
+			BasicGameData::PlayerInfoPlot = *offsetPtr<undefined**>((undefined(*)())PlayerInfoPlot, 0xA8);
 			BasicGameData::ActionPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
 			BasicGameData::GameTimePlot = (undefined(*)())MH::World::GmaeClock;
 			BasicGameData::MapPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7D20);
+			
 			if (
 				BasicGameData::PlayerPlot != nullptr and
 				BasicGameData::ActionPlot != nullptr and

@@ -1,6 +1,6 @@
 # MHWLua脚本载入Mod
 
-可用于载入Lua脚本来控制游戏行为，脚本从nativePC\LuaScript\MainScript.lua中的run函数开始执行。
+可用于载入Lua脚本来控制游戏行为，初始化完成后将加载Monster Hunter World\nativePC\LuaScript中的全部lua文件并运行其中的run函数。
 
 ## 示例
 
@@ -66,6 +66,13 @@
 |Gmae_Player_GetFsmData                   |`local type,id = Gmae_Player_GetFsmData()`                |获取玩家当前派生动作信息   |
 |Gmae_Player_RunFsmAction                 |`Gmae_Player_RunFsmAction(3,5)`                           |执行指定对象的派生动作，第一个参数为对象（玩家1，武器3）第二个参数为派生动作Id   |
 |Gmae_Player_CheckRunFsmActionOver        |`Gmae_Player_CheckRunFsmActionOver()`                     |检查执行的派生动作是否结束  |
+|Gmae_Player_GetPlayerHealth              |`local BasicHealth,MaxHealth,Health = Gmae_Player_GetPlayerHealth()`|获取玩家血量信息（基础，最大，当前）   |
+|Gmae_Player_SetPlayerCurrentHealth       |`Gmae_Player_SetPlayerCurrentHealth(10)`                  |设置玩家当前血量   |
+|Gmae_Player_SetPlayerBasicHealth         |`Gmae_Player_SetPlayerBasicHealth(100)`                   |设置玩家基础血量0-150   |
+|Gmae_Player_GetPlayerEndurance           |`local MaxEndurance,Endurance = Gmae_Player_GetPlayerEndurance()` |获取玩家耐力信息（最大，当前）   |
+|Gmae_Player_SetPlayerCurrentEndurance    |`Gmae_Player_SetPlayerCurrentEndurance(50)`               |设置玩家当前耐力   |
+|Gmae_Player_SetPlayerMaxEndurance        |`Gmae_Player_SetPlayerMaxEndurance(25)`                   |设置玩家最大耐力25-150  |
+|Gmae_Player_GetPlayerRoleInfo            |`local name,hr,mr = Gmae_Player_GetPlayerRoleInfo()`      |获取玩家角色信息   |
 |Gmae_World_GetMapId                      |`Gmae_World_GetMapId()`                                   |获取地图ID        |
 
 ### 怪物

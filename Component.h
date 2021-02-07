@@ -1,4 +1,5 @@
 #pragma once
+#include <io.h>
 
 using namespace std;
 using namespace loader;
@@ -75,7 +76,7 @@ namespace Component {
 		}
 
 		if (Instant) {
-			Base::PlayerData::Coordinate::TransportCoordinate(Point.x,Point.y,Point.z);
+			Base::PlayerData::Coordinate::TransportCoordinate(Point.x,Point.y,Point.z,true);
 		}
 		else {
 			MoveTargetToPoint(Base::BasicGameData::PlayerPlot, Point, false, speed);
@@ -438,6 +439,49 @@ namespace Component {
 		}
 	}
 #pragma endregion
+	/*
+		设置玩家血量和耐力
+	*/
+#pragma region SetPlayerHealthAndEndurance
+		static void SetPlayerBasicHealth(float health) {
+			*offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0x7628) = health;
+		}
+		static void SetPlayerHealth(float health) {
+			void* StatusManagementPlot = *offsetPtr<undefined**>((undefined(*)())Base::BasicGameData::PlayerPlot, 0x7630);
+			if (StatusManagementPlot != nullptr)
+				*offsetPtr<float>(StatusManagementPlot, 0x64) = health;
+		}
+		static void SetPlayerMaxEndurance(float endurance) {
+			void* StatusManagementPlot = *offsetPtr<undefined**>((undefined(*)())Base::BasicGameData::PlayerPlot, 0x7630);
+			if (StatusManagementPlot != nullptr)
+				*offsetPtr<float>(StatusManagementPlot, 0x144) = endurance;
+		}
+		static void SetPlayerEndurance(float endurance) {
+			void* StatusManagementPlot = *offsetPtr<undefined**>((undefined(*)())Base::BasicGameData::PlayerPlot, 0x7630);
+			if (StatusManagementPlot != nullptr)
+				*offsetPtr<float>(StatusManagementPlot, 0x13C) = endurance;
+		}
+#pragma endregion
+
+		void getFiles(string path, vector<string>& files)
+		{
+			//文件句柄
+			long   hFile = 0;
+			//文件信息
+			struct _finddata_t fileinfo;
+			string p;
+			if ((hFile = _findfirst(p.assign(path).append("\\*.lua").c_str(), &fileinfo)) != -1)
+			{
+				do
+				{
+					if (!(fileinfo.attrib & _A_SUBDIR))
+					{
+						files.push_back(p.assign(path).append("\\").append(fileinfo.name));
+					}
+				} while (_findnext(hFile, &fileinfo) == 0);
+				_findclose(hFile);
+			}
+		}
 }
 
 

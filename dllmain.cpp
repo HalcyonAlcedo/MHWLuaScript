@@ -22,6 +22,7 @@
 #include "LuaScript.h"
 
 using namespace loader;
+vector<string> LuaFiles;
 
 __declspec(dllexport) extern bool Load()
 {
@@ -29,6 +30,12 @@ __declspec(dllexport) extern bool Load()
 	if (std::string(GameVersion) != Base::ModConfig::Version) {
 		LOG(WARN) << Base::ModConfig::ModName << " : Wrong version";
 		return false;
+	}
+
+	Component::getFiles("nativePC\\LuaScript\\", LuaFiles);
+	LOG(INFO) << "Lua file load:";
+	for (string file_name : LuaFiles) {
+		LOG(INFO) << file_name;
 	}
 	//初始化钩子
 	MH_Initialize();
@@ -38,7 +45,10 @@ __declspec(dllexport) extern bool Load()
 			if (Base::Init()) {
 				Base::RealTimeUpdate();
 				//Execution::Main();
-				Lua_Main();
+				for (string file_name : LuaFiles) {
+					Lua_Main(file_name);
+				}
+				
 			}
 			return ret;
 		});
