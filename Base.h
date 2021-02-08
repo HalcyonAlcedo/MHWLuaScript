@@ -4,6 +4,7 @@
 #include "loader.h"
 #include <map>
 #include "MonsterBuff.h"
+#include "PlayerBuff.h"
 
 using namespace std;
 using namespace loader;
@@ -32,7 +33,7 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.0.7";
+		string ModVersion = "v1.0.8";
 		string Version = "421470";
 	}
 #pragma endregion
@@ -111,7 +112,14 @@ namespace Base {
 				ChronoscopeList.erase(name);
 			}
 		}
-		//检查计时器
+		//检查计时器是否存在
+		static bool CheckPresenceChronoscope(string name) {
+			if (ChronoscopeList.find(name) != ChronoscopeList.end()) {
+				return true;
+			}
+			return false;
+		}
+		//检查计时器是否还在运行
 		static bool CheckChronoscope(string name) {
 			if (ChronoscopeList.find(name) != ChronoscopeList.end()) {
 				if (ChronoscopeList[name].EndTime > NowTime)
@@ -486,6 +494,18 @@ namespace Base {
 		static void ChangeWeapons(int type, int id) {
 			if(type <= 13 and type >= 0 and id >= 0)
 				MH::Weapon::ChangeWeapon(BasicGameData::PlayerPlot, type, id);
+		}
+		//获取玩家Buff持续时间
+		static float GetPlayerBuff(string buff) {
+			void* BuffsPlot = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x7D20);
+			int buffPtr = PlayerBuff::GetBuffPtr(buff);
+			return *offsetPtr<float>(BuffsPlot, buffPtr);
+		}
+		//设置玩家Buff持续时间
+		static void SetPlayerBuff(string buff, float duration) {
+			void* BuffsPlot = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x7D20);
+			int buffPtr = PlayerBuff::GetBuffPtr(buff);
+			*offsetPtr<float>(BuffsPlot, buffPtr) = duration;
 		}
 		//玩家数据更新
 		static void Updata() {

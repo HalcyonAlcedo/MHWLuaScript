@@ -318,8 +318,44 @@ static int Game_Monster_GetAllMonsterCoordinatesInRange(lua_State* pL)
     }
     return 1;
 }
-
-
+static int Game_Environmental_GetAllEnvironmentalCoordinatesInRange(lua_State* pL)
+{
+    float min = (float)lua_tonumber(pL, 1);
+    float max = (float)lua_tonumber(pL, 2);
+    lua_newtable(pL);//创建一个表格，放在栈顶
+    for (auto [id, environmentalData] : Component::GetAllEnvironmentalCoordinates(min, max)) {
+        lua_pushinteger(pL, id);//压入编号
+        lua_newtable(pL);//压入编号信息表
+        lua_pushstring(pL, "X");//X坐标
+        lua_pushnumber(pL, environmentalData.CoordinatesX);//value
+        lua_settable(pL, -3);//弹出X坐标
+        lua_pushstring(pL, "Y");//Y坐标
+        lua_pushnumber(pL, environmentalData.CoordinatesY);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Z");//Z坐标
+        lua_pushnumber(pL, environmentalData.CoordinatesZ);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Id");//怪物Id
+        lua_pushinteger(pL, environmentalData.Id);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "SubId");//怪物SubId
+        lua_pushinteger(pL, environmentalData.SubId);
+        lua_settable(pL, -3);
+        lua_settable(pL, -3);//弹出到顶层
+    }
+    return 1;
+}
+static int Gmae_Player_GetPlayerBuffDuration(lua_State* pL) {
+    string buff = (string)lua_tostring(pL, -1);
+    lua_pushnumber(pL, Base::PlayerData::GetPlayerBuff(buff));
+    return 1;
+}
+static int Gmae_Player_SetPlayerBuffDuration(lua_State* pL) {
+    string buff = (string)lua_tostring(pL, 1);
+    float duration = (float)lua_tonumber(pL, 2);
+    Base::PlayerData::SetPlayerBuff(buff, duration);
+    return 0;
+}
 #pragma endregion
 #pragma region SystemFun
 static int System_Keyboard_CheckKey(lua_State* pL) {    
@@ -344,6 +380,16 @@ static int System_Chronoscope_AddChronoscope(lua_State* pL) {
     float time = (float)lua_tonumber(pL, 1);
     string name = (string)lua_tostring(pL, 2);
     Base::Chronoscope::AddChronoscope(time, name, true);
+    return 0;
+}
+static int System_Chronoscope_CheckPresenceChronoscope(lua_State* pL) {
+    string name = (string)lua_tostring(pL, -1);
+    lua_pushboolean(pL, Base::Chronoscope::CheckPresenceChronoscope(name));
+    return 1;
+}
+static int System_Chronoscope_DelChronoscope(lua_State* pL) {
+    string name = (string)lua_tostring(pL, -1);
+    Base::Chronoscope::DelChronoscope(name);
     return 0;
 }
 static int System_Chronoscope_CheckChronoscope(lua_State* pL) {
@@ -502,6 +548,10 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Gmae_Player_CreateWeaponProjectiles", Gmae_Player_CreateWeaponProjectiles);
     //生成玩家手弩投射物
     lua_register(L, "Gmae_Player_CreateBowgunProjectiles", Gmae_Player_CreateBowgunProjectiles);
+    //获取玩家Buff剩余时间
+    lua_register(L, "Gmae_Player_GetPlayerBuffDuration", Gmae_Player_GetPlayerBuffDuration);
+    //设置玩家Buff剩余时间
+    lua_register(L, "Gmae_Player_SetPlayerBuffDuration", Gmae_Player_SetPlayerBuffDuration);
     
     #pragma endregion
     //获取当前地图Id
@@ -547,12 +597,14 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Monster_GetAllMonsterCoordinatesInRange", Game_Monster_GetAllMonsterCoordinatesInRange);
     #pragma endregion
     #pragma region Environmental
-    //设置怪物筛选器
+    //设置环境生物筛选器
     lua_register(L, "Game_Environmental_SetFilter", Game_Environmental_SetFilter);
-    //清除怪物筛选器
+    //清除环境生物筛选器
     lua_register(L, "Game_Environmental_DisableFilter", Game_Environmental_DisableFilter);
     //设置范围内所有环境生物的坐标
     lua_register(L, "Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange", Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange);
+    //获取范围内所有环境生物的坐标
+    lua_register(L, "Game_Environmental_GetAllEnvironmentalCoordinatesInRange", Game_Environmental_GetAllEnvironmentalCoordinatesInRange);
     #pragma endregion
 #pragma endregion
 #pragma region System
@@ -566,6 +618,10 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_Chronoscope_AddChronoscope", System_Chronoscope_AddChronoscope);
     //检查计时器
     lua_register(L, "System_Chronoscope_CheckChronoscope", System_Chronoscope_CheckChronoscope);
+    //检查计时器是否存在
+    lua_register(L, "System_Chronoscope_CheckPresenceChronoscope", System_Chronoscope_CheckPresenceChronoscope);
+    //删除计时器
+    lua_register(L, "System_Chronoscope_DelChronoscope", System_Chronoscope_DelChronoscope);
     //向游戏内发送消息
     lua_register(L, "System_Message_ShowMessage", System_Message_ShowMessage);
     //向控制台发送消息

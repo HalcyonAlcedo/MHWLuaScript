@@ -489,6 +489,33 @@ namespace Component {
 			return monsterList;
 		}
 #pragma endregion
+/*
+	获取范围内所有环境生物的坐标
+*/
+#pragma region GetAllEnvironmentalCoordinates
+		static map<int, Base::World::EnvironmentalData::EnvironmentalData> GetAllEnvironmentalCoordinates(float MinRange = 0, float MaxRange = 9999999.0) {
+			map<int, Base::World::EnvironmentalData::EnvironmentalData> environmentaList;
+			int installcount = 0;
+			for (auto [environmental, environmentalData] : Base::World::EnvironmentalData::Environmentals) {
+				if (environmental != nullptr) {
+					if (
+						environmentalData.Id != Base::World::EnvironmentalData::Filter.first and
+						environmentalData.SubId != Base::World::EnvironmentalData::Filter.second and
+						Base::World::EnvironmentalData::Filter.first != 255 and
+						Base::World::EnvironmentalData::Filter.second != 255
+						)
+						continue;
+					float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Base::PlayerData::Coordinate::Entity,
+						Base::Vector3(environmentalData.CoordinatesX, environmentalData.CoordinatesY, environmentalData.CoordinatesZ));
+					if (distance < MaxRange and distance > MinRange) {
+						environmentaList[installcount] = environmentalData;
+						installcount++;
+					}
+				}
+			}
+			return environmentaList;
+		}
+#pragma endregion
 		//获取目录中的文件
 		void getFiles(string path, vector<string>& files)
 		{

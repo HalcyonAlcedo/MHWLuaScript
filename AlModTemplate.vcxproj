@@ -178,6 +178,7 @@
     <ClInclude Include="LuaData.h" />
     <ClInclude Include="LuaScript.h" />
     <ClInclude Include="MonsterBuff.h" />
+    <ClInclude Include="PlayerBuff.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
