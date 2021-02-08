@@ -33,7 +33,7 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.0.8";
+		string ModVersion = "v1.0.9";
 		string Version = "421470";
 	}
 #pragma endregion
@@ -534,6 +534,11 @@ namespace Base {
 					*offsetPtr<float>(WeaponEntityPlot, 0x168)
 				);
 			VisualDistance = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7690);
+			Coordinate::Increment = Vector3(
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x1530),
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x1534),
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x1538));
+			/*
 			void* IncrementPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
 			if (IncrementPlot != nullptr) {
 				Coordinate::Increment.x = *offsetPtr<float>(IncrementPlot, 0x7D30);
@@ -545,6 +550,7 @@ namespace Base {
 				Coordinate::Increment.y = 0.0;
 				Coordinate::Increment.z = 0.0;
 			}
+			*/
 			void* AimingStatePlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0xC0);
 			if (AimingStatePlot != nullptr)
 				AimingState = *offsetPtr<bool>(AimingStatePlot, 0xC28);

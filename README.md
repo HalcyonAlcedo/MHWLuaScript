@@ -7,9 +7,9 @@
 示例脚本为盾斧的瞬移脚本，可在持有盾斧时双击w瞬移至瞄准的目标点
 
     function run ()
-	    if System_Chronoscope_CheckChronoscope('BlinkCD') == 0 then
-	        if System_Keyboard_CheckDoubleKey(87) == 1  and
-	            Gmae_Player_CheckAimingStatus() == 1 and
+	    if not System_Chronoscope_CheckChronoscope('BlinkCD') then
+	        if System_Keyboard_CheckDoubleKey(87) and
+	            Gmae_Player_CheckAimingStatus() and
 	            Gmae_Player_Weapon_GetWeaponType() == 9
 	        then 
 	            local x,y,z = Gmae_Player_GetPlayerCollimatorCoordinate()
