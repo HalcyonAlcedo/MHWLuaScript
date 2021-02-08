@@ -466,7 +466,7 @@ namespace Component {
 		获取范围内所有怪物的坐标
 	*/
 #pragma region GetAllMonsterCoordinates
-		static map<int, Base::Monster::MonsterData> GetAllMonsterCoordinates(float MinRange = 0, float MaxRange = 9999999.0) {
+		static map<int, Base::Monster::MonsterData> GetAllMonsterCoordinates(Base::Vector3 Target, float MinRange = 0, float MaxRange = 9999999.0) {
 			map<int, Base::Monster::MonsterData> monsterList;
 			int installcount = 0;
 			for (auto [monster, monsterData] : Base::Monster::Monsters) {
@@ -478,7 +478,29 @@ namespace Component {
 						Base::Monster::Filter.second != 255
 						)
 						continue;
-					float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Base::PlayerData::Coordinate::Entity, 
+					float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Target,
+						Base::Vector3(monsterData.CoordinatesX, monsterData.CoordinatesY, monsterData.CoordinatesZ));
+					if (distance < MaxRange and distance > MinRange) {
+						monsterList[installcount] = monsterData;
+						installcount++;
+					}
+				}
+			}
+			return monsterList;
+		}
+		static map<int, Base::Monster::MonsterData> GetAllMonsterCoordinatesRelativeToPlayers(float MinRange = 0, float MaxRange = 9999999.0) {
+			map<int, Base::Monster::MonsterData> monsterList;
+			int installcount = 0;
+			for (auto [monster, monsterData] : Base::Monster::Monsters) {
+				if (monster != nullptr) {
+					if (
+						monsterData.Id != Base::Monster::Filter.first and
+						monsterData.SubId != Base::Monster::Filter.second and
+						Base::Monster::Filter.first != 255 and
+						Base::Monster::Filter.second != 255
+						)
+						continue;
+					float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Base::PlayerData::Coordinate::Entity,
 						Base::Vector3(monsterData.CoordinatesX, monsterData.CoordinatesY, monsterData.CoordinatesZ));
 					if (distance < MaxRange and distance > MinRange) {
 						monsterList[installcount] = monsterData;
@@ -516,8 +538,9 @@ namespace Component {
 			return environmentaList;
 		}
 #pragma endregion
-		//获取目录中的文件
-		void getFiles(string path, vector<string>& files)
+
+//获取目录中的文件
+	void getFiles(string path, vector<string>& files)
 		{
 			//文件句柄
 			long   hFile = 0;

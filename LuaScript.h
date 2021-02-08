@@ -296,7 +296,37 @@ static int Game_Monster_GetAllMonsterCoordinatesInRange(lua_State* pL)
     float min = (float)lua_tonumber(pL, 1);
     float max = (float)lua_tonumber(pL, 2);
     lua_newtable(pL);//创建一个表格，放在栈顶
-    for (auto [id, monsterData] : Component::GetAllMonsterCoordinates(min, max)) {
+    for (auto [id, monsterData] : Component::GetAllMonsterCoordinatesRelativeToPlayers(min, max)) {
+        lua_pushinteger(pL, id);//压入编号
+        lua_newtable(pL);//压入编号信息表
+        lua_pushstring(pL, "X");//X坐标
+        lua_pushnumber(pL, monsterData.CoordinatesX);//value
+        lua_settable(pL, -3);//弹出X坐标
+        lua_pushstring(pL, "Y");//Y坐标
+        lua_pushnumber(pL, monsterData.CoordinatesY);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Z");//Z坐标
+        lua_pushnumber(pL, monsterData.CoordinatesZ);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Id");//怪物Id
+        lua_pushinteger(pL, monsterData.Id);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "SubId");//怪物SubId
+        lua_pushinteger(pL, monsterData.SubId);
+        lua_settable(pL, -3);
+        lua_settable(pL, -3);//弹出到顶层
+    }
+    return 1;
+}
+static int Game_Monster_GetAllMonsterCoordinatesInTargetPointRange(lua_State* pL)
+{
+    float x = (float)lua_tonumber(pL, 1);
+    float y = (float)lua_tonumber(pL, 2);
+    float z = (float)lua_tonumber(pL, 3);
+    float min = (float)lua_tonumber(pL, 4);
+    float max = (float)lua_tonumber(pL, 5);
+    lua_newtable(pL);//创建一个表格，放在栈顶
+    for (auto [id, monsterData] : Component::GetAllMonsterCoordinates(Base::Vector3(x,y,z),min, max)) {
         lua_pushinteger(pL, id);//压入编号
         lua_newtable(pL);//压入编号信息表
         lua_pushstring(pL, "X");//X坐标
@@ -470,8 +500,8 @@ static int Lua_Variable_ReadStringVariable(lua_State* pL) {
 }
 //销毁变量
 static int Lua_Variable_DestroyVariable(lua_State* pL) {
-    string variableTpye = (string)lua_tostring(pL, -1);
-    string variableName = (string)lua_tostring(pL, -1);
+    string variableTpye = (string)lua_tostring(pL, 1);
+    string variableName = (string)lua_tostring(pL, 2);
     if (variableTpye == "Int")
         LuaData::IntVariable.erase(variableName);
     else if (variableTpye == "Float")
@@ -480,6 +510,14 @@ static int Lua_Variable_DestroyVariable(lua_State* pL) {
         LuaData::StringVariable.erase(variableName);
     return 0;
 }
+//获取随机数
+static int Lua_Math_Rander(lua_State* pL) {
+    float min = (float)lua_tonumber(pL, 1);
+    float max = (float)lua_tonumber(pL, 2);
+    lua_pushnumber(pL, Base::Calculation::myRander(min, max));
+    return 1;
+}
+
 #pragma endregion
 //==============================================
 // Main Functions
@@ -595,6 +633,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Monster_GetLastHitMonsterCoordinates", Game_Monster_GetLastHitMonsterCoordinates);
     //获取范围内所有怪物的坐标
     lua_register(L, "Game_Monster_GetAllMonsterCoordinatesInRange", Game_Monster_GetAllMonsterCoordinatesInRange);
+    //获取目标点范围内所有怪物的坐标
+    lua_register(L, "Game_Monster_GetAllMonsterCoordinatesInTargetPointRange", Game_Monster_GetAllMonsterCoordinatesInTargetPointRange);
     #pragma endregion
     #pragma region Environmental
     //设置环境生物筛选器
@@ -644,6 +684,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Lua_Variable_ReadStringVariable", Lua_Variable_ReadStringVariable);
     //销毁变量
     lua_register(L, "Lua_Variable_DestroyVariable", Lua_Variable_DestroyVariable);
+    //获取随机数
+    lua_register(L, "Lua_Math_Rander", Lua_Math_Rander);
 #pragma endregion
 
     int error = luaL_dofile(L, LuaFile.c_str());

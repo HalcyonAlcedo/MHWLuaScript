@@ -34,6 +34,7 @@
 |Lua_Variable_ReadFloatVariable		|`local Variable = Lua_Variable_ReadFloatVariable('VariableName')`|读取浮点数变量                        |
 |Lua_Variable_ReadStringVariable	|`local Variable = Lua_Variable_ReadStringVariable('VariableName')`|读取字符串变量                        |
 |Lua_Variable_DestroyVariable		|`Lua_Variable_DestroyVariable('VariableName')`                 |销毁变量                             |
+|Lua_Math_Rander					|`Lua_Math_Rander(-10,10)`                                      |获取随机数                             |
 
 ### 系统
 |                                   |示例                                                           |说明                     |
@@ -106,7 +107,9 @@
 |Game_Monster_GetNavigationMonsterCoordinates|`local x,y,z = Game_Monster_GetNavigationMonsterCoordinates()`|获取导航的怪物的坐标       |
 |Game_Monster_GetNearestMonsterCoordinates|`local x,y,z = Game_Monster_GetNearestMonsterCoordinates()`|获取距离最近的怪物的坐标       |
 |Game_Monster_GetLastHitMonsterCoordinates|`local x,y,z = Game_Monster_GetLastHitMonsterCoordinates()`|获取最后一次击中的怪物的坐标       |
-|Game_Monster_GetAllMonsterCoordinatesInRange|`local monsterList = Game_Monster_GetAllMonsterCoordinatesInRange()`|获取范围内所有怪物的坐标，受筛选器影响，包含属性X,Y,Z,Id,SubId     |
+|Game_Monster_GetAllMonsterCoordinatesInRange|`local monsterList = Game_Monster_GetAllMonsterCoordinatesInRange(0,1000)`|获取范围内所有怪物的坐标，受筛选器影响，包含属性X,Y,Z,Id,SubId     |
+|Game_Monster_GetAllMonsterCoordinatesInTargetPointRange|`local monsterList = Game_Monster_GetAllMonsterCoordinatesInTargetPointRange(100,100,100,0,1000)`|获取指定点范围内所有怪物的坐标，受筛选器影响，包含属性X,Y,Z,Id,SubId     |
+
 
 ### 环境生物
 |                                         |示例                                                      |说明						   |
@@ -114,7 +117,7 @@
 |Game_Environmental_SetFilter             |`Game_Environmental_SetFilter(1,0)`                       |设置环境生物筛选器  |
 |Game_Environmental_DisableFilter         |`Game_Environmental_DisableFilter()`                      |清除环境生物筛选器  |
 |Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange|`Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange(100.0,100.0,100.0,0,1000)`|设置范围内所有环境生物的坐标,受筛选器影响  |
-|Game_Environmental_GetAllEnvironmentalCoordinatesInRange|`local environmentalList = Game_Environmental_GetAllEnvironmentalCoordinatesInRange()`|获取范围内所有环境生物的坐标，受筛选器影响，包含属性X,Y,Z,Id,SubId  |
+|Game_Environmental_GetAllEnvironmentalCoordinatesInRange|`local environmentalList = Game_Environmental_GetAllEnvironmentalCoordinatesInRange(0,1000)`|获取范围内所有环境生物的坐标，受筛选器影响，包含属性X,Y,Z,Id,SubId  |
 
 
 ## 数据表
