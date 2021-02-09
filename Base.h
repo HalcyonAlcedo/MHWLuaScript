@@ -569,8 +569,13 @@ namespace Base {
 			if (ActionPlot != nullptr) {
 				ActionId = *offsetPtr<int>(ActionPlot, 0xE9C4);
 				void* HookOffset1 = *offsetPtr<undefined**>((undefined(*)())ActionPlot, 0x70);
-				void* HookOffset2 = *offsetPtr<undefined**>((undefined(*)())HookOffset1, 0x10);
-				void* HookOffset3 = *offsetPtr<undefined**>((undefined(*)())HookOffset2, 0x18);
+				void* HookOffset2 = nullptr;
+				if(HookOffset1 != nullptr)
+					HookOffset2 = *offsetPtr<undefined**>((undefined(*)())HookOffset1, 0x10);
+				void* HookOffset3 = nullptr;
+				if (HookOffset2 != nullptr)
+					HookOffset3 = *offsetPtr<undefined**>((undefined(*)())HookOffset2, 0x18);
+				if (HookOffset3 != nullptr)
 				Coordinate::Hook = Vector3(
 					*offsetPtr<float>(HookOffset3, 0x160),
 					*offsetPtr<float>(HookOffset3, 0x164),

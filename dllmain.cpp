@@ -45,7 +45,7 @@ __declspec(dllexport) extern bool Load()
 			if (Base::Init()) {
 				Base::RealTimeUpdate();
 				//Execution::Main();
-				if (false and Base::ModConfig::GameDataInit) {
+				if (Base::ModConfig::GameDataInit) {
 					for (string file_name : LuaFiles) {
 						Lua_Main(file_name);
 					}
