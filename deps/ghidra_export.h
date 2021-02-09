@@ -42,8 +42,7 @@ namespace MH {
         static undefined(*Visual)() = (undefined(*)())0x141FBB736;
     }
     namespace EnvironmentalBiological {
-        static undefined* (*ctor)(undefined*, undefined*, undefined*, undefined*) = (undefined * (*)(undefined*, undefined*, undefined*, undefined*))0x141D45935;
-        static undefined* (*ctor_)(undefined) = (undefined * (*)(undefined))0x141d45d39;
+        static undefined * (*ctor)(undefined*, undefined4, undefined4) = (undefined * (*)(undefined*, undefined4, undefined4))0x141D442C0;
     }
     namespace World {
         static undefined8(*WaypointZLocal)(float*, float*) = (undefined8(*)(float*, float*))0x141DBF55F;
