@@ -910,8 +910,8 @@ namespace Base {
 				BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
 			}
 			//更新玩家数据
-			PlayerData::Updata();
 			/*
+			PlayerData::Updata();
 			//清除死亡的环境生物
 			for (auto [Environmental, EData] : World::EnvironmentalData::Environmentals) {
 				if (EData.Plot == nullptr) {
@@ -953,7 +953,6 @@ namespace Base {
 					Base::Monster::Monsters[monster].CoordinatesZ = *offsetPtr<float>(monster, 0x168);
 				}
 			}
-			*/
 			//更新计时器时间
 			Chronoscope::NowTime = *offsetPtr<float>(BasicGameData::MapPlot, 0xC24);
 			//检查相机计时器
@@ -974,6 +973,7 @@ namespace Base {
 			}
 			//运行委托
 			Commission::Run();
+			*/
 		}
 	}
 }
