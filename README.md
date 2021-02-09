@@ -79,6 +79,7 @@
 |Gmae_Player_SetPlayerCoordinate          |`Gmae_Player_SetPlayerCoordinate(1.0,1.0,1.0)`            |设置玩家坐标       |
 |Gmae_Player_GetPlayerHookCoordinate      |`local x,y,z = Gmae_Player_GetPlayerHookCoordinate()`     |获取玩家钩爪坐标   |
 |Gmae_Player_GetPlayerCollimatorCoordinate|`local x,y,z = Gmae_Player_GetPlayerCollimatorCoordinate()`|获取准星坐标      |
+|Gmae_Player_GetPlayerParabolaCollimatorCoordinate|`local x,y,z = Gmae_Player_GetPlayerParabolaCollimatorCoordinate()`|获取抛物线准星坐标      |
 |Gmae_Player_GetPlayerWeaponCoordinate    |`local x,y,z = Gmae_Player_GetPlayerWeaponCoordinate()`   |获取武器坐标       |
 |Gmae_Player_GetPlayerIncrementCoordinate |`local x,y,z = Gmae_Player_GetPlayerIncrementCoordinate()`|获取坐标运动增量   |
 |Gmae_Player_GetPlayerNavigationCoordinate|`local x,y,z = Gmae_Player_GetPlayerNavigationCoordinate()`|获取导航坐标      |

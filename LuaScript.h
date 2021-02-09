@@ -23,6 +23,12 @@ static int Gmae_Player_GetPlayerCollimatorCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Collimator.z);
     return 3;
 }
+static int Gmae_Player_GetPlayerParabolaCollimatorCoordinate(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Parabola.x);
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Parabola.y);
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Parabola.z);
+    return 3;
+}
 static int Gmae_Player_GetPlayerWeaponCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Weapon.x);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Weapon.y);
@@ -542,6 +548,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Gmae_Player_SetPlayerCoordinate", Gmae_Player_SetPlayerCoordinate);
     //获取准星坐标
     lua_register(L, "Gmae_Player_GetPlayerCollimatorCoordinate", Gmae_Player_GetPlayerCollimatorCoordinate);
+    //获取抛物线准星坐标
+    lua_register(L, "Gmae_Player_GetPlayerParabolaCollimatorCoordinate", Gmae_Player_GetPlayerParabolaCollimatorCoordinate);
     //获取武器坐标
     lua_register(L, "Gmae_Player_GetPlayerWeaponCoordinate", Gmae_Player_GetPlayerWeaponCoordinate);
     //检查瞄准状态

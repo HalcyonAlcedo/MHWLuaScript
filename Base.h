@@ -370,6 +370,8 @@ namespace Base {
 			Vector3 Entity = Vector3();
 			//准星坐标
 			Vector3 Collimator = Vector3();
+			//抛物线准星坐标
+			Vector3 Parabola = Vector3();
 			//碰撞返回坐标
 			Vector3 Collision = Vector3();
 			//增量坐标
@@ -524,6 +526,11 @@ namespace Base {
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D30),
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D34),
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D38)
+			);
+			Coordinate::Parabola = Vector3(
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D40),
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D44),
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D48)
 			);
 			void* WeaponEntityPlot = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x76B0);
 			if(WeaponEntityPlot != nullptr)
