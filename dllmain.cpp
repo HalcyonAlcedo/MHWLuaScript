@@ -19,7 +19,7 @@
 
 #include "Base.h"
 #include "Execution.h"
-//#include "LuaScript.h"
+#include "LuaScript.h"
 
 using namespace loader;
 vector<string> LuaFiles;
@@ -45,13 +45,11 @@ __declspec(dllexport) extern bool Load()
 			if (Base::Init()) {
 				Base::RealTimeUpdate();
 				//Execution::Main();
-				/*
 				if (Base::ModConfig::GameDataInit) {
 					for (string file_name : LuaFiles) {
 						Lua_Main(file_name);
 					}
 				}
-				*/
 			}
 			return ret;
 		});

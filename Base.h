@@ -775,7 +775,10 @@ namespace Base {
 
 	//初始化
 	static bool Init() {
-		if (!ModConfig::GameDataInit) {
+		if (ModConfig::GameDataInit) 
+			return true;
+		else
+		{
 			void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 			void* PlayerInfoPlot = *(undefined**)MH::Player::BasePtr;
 			BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
@@ -800,6 +803,7 @@ namespace Base {
 						);
 						return original(x1, x2);
 					});
+				/*
 				//环境生物地址获取
 				HookLambda(MH::EnvironmentalBiological::ctor,
 					[](auto rcx, auto rdx, auto r8, auto r9) {
@@ -810,15 +814,20 @@ namespace Base {
 					[](auto unkn1) {
 						bool addEnvironmental = true;
 						vector<void*>::iterator it;
-						for (it = Base::World::EnvironmentalData::TempData::t_environmentalMessages.begin(); it != Base::World::EnvironmentalData::TempData::t_environmentalMessages.end(); it++)
+						for (it = Base::World::EnvironmentalData::TempData::t_environmentalMessages.begin(); 
+							it != Base::World::EnvironmentalData::TempData::t_environmentalMessages.end(); 
+							it++
+							)
 						{
 							if (*it == Base::World::EnvironmentalData::TempData::t_environmental)
 								addEnvironmental = false;
 						}
 						if (addEnvironmental)
-							Base::World::EnvironmentalData::TempData::t_environmentalMessages.push_back(Base::World::EnvironmentalData::TempData::t_environmental);
+							Base::World::EnvironmentalData::TempData::t_environmentalMessages.push_back(
+							Base::World::EnvironmentalData::TempData::t_environmental);
 						return original(unkn1);
 					});
+				*/
 				//怪物地址获取
 				HookLambda(MH::Monster::ctor,
 					[](auto monster, auto id, auto subId) {
@@ -875,8 +884,6 @@ namespace Base {
 				return false;
 			}
 		}
-		else
-			return true;
 	}
 	//实时更新的数据
 	static void RealTimeUpdate() {
@@ -910,7 +917,6 @@ namespace Base {
 				BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
 			}
 			//更新玩家数据
-			/*
 			PlayerData::Updata();
 			//清除死亡的环境生物
 			for (auto [Environmental, EData] : World::EnvironmentalData::Environmentals) {
@@ -953,8 +959,10 @@ namespace Base {
 					Base::Monster::Monsters[monster].CoordinatesZ = *offsetPtr<float>(monster, 0x168);
 				}
 			}
+
 			//更新计时器时间
 			Chronoscope::NowTime = *offsetPtr<float>(BasicGameData::MapPlot, 0xC24);
+
 			//检查相机计时器
 			if (!Chronoscope::CheckChronoscope("SetVisual")) {
 				if(!PlayerData::Coordinate::TempData::t_LockVisual)
@@ -973,7 +981,6 @@ namespace Base {
 			}
 			//运行委托
 			Commission::Run();
-			*/
 		}
 	}
 }
