@@ -52,12 +52,6 @@ namespace Base {
 	namespace World {
 		//环境生物
 		namespace EnvironmentalData {
-			//缓存数据
-			namespace TempData {
-				void* t_environmental = nullptr;
-				vector<void*> t_environmentalMessages;
-			}
-
 			struct EnvironmentalData {
 				void* Plot = nullptr;
 				float CoordinatesX = 0;
@@ -803,31 +797,15 @@ namespace Base {
 						);
 						return original(x1, x2);
 					});
-				/*
 				//环境生物地址获取
 				HookLambda(MH::EnvironmentalBiological::ctor,
-					[](auto rcx, auto rdx, auto r8, auto r9) {
-						Base::World::EnvironmentalData::TempData::t_environmental = rcx;
-						return original(rcx, rdx, r8, r9);
+					[](auto environmental, auto id, auto subId) {
+						auto ret = original(environmental, id, subId);
+						Base::World::EnvironmentalData::Environmentals[environmental] = Base::World::EnvironmentalData::EnvironmentalData(
+							environmental, 0, 0, 0, id, subId
+						);
+						return ret;
 					});
-				HookLambda(MH::EnvironmentalBiological::ctor_,
-					[](auto unkn1) {
-						bool addEnvironmental = true;
-						vector<void*>::iterator it;
-						for (it = Base::World::EnvironmentalData::TempData::t_environmentalMessages.begin(); 
-							it != Base::World::EnvironmentalData::TempData::t_environmentalMessages.end(); 
-							it++
-							)
-						{
-							if (*it == Base::World::EnvironmentalData::TempData::t_environmental)
-								addEnvironmental = false;
-						}
-						if (addEnvironmental)
-							Base::World::EnvironmentalData::TempData::t_environmentalMessages.push_back(
-							Base::World::EnvironmentalData::TempData::t_environmental);
-						return original(unkn1);
-					});
-				*/
 				//怪物地址获取
 				HookLambda(MH::Monster::ctor,
 					[](auto monster, auto id, auto subId) {
@@ -896,7 +874,6 @@ namespace Base {
 				//清除计时器数据
 				Chronoscope::ChronoscopeList.clear();
 				//清除环境生物数据
-				World::EnvironmentalData::TempData::t_environmentalMessages.clear();
 				World::EnvironmentalData::Environmentals.clear();
 				//清除相机数据
 				PlayerData::Coordinate::TempData::t_SetVisualBind = nullptr;
@@ -918,37 +895,18 @@ namespace Base {
 			}
 			//更新玩家数据
 			PlayerData::Updata();
-			//清除死亡的环境生物
+			//清除死亡的环境生物,此处最好能找到环境生物吊销的地址，目前先这样用着
 			for (auto [Environmental, EData] : World::EnvironmentalData::Environmentals) {
 				if (EData.Plot == nullptr) {
 					World::EnvironmentalData::Environmentals.erase(Environmental);
 				}
 			}
 			//更新环境生物数据
-			vector<void*>::iterator it;
-			for (it = World::EnvironmentalData::TempData::t_environmentalMessages.begin(); it != World::EnvironmentalData::TempData::t_environmentalMessages.end(); it++)
-			{
-				if (*it != nullptr) {
-					if (Base::World::EnvironmentalData::Environmentals.find(*it) == Base::World::EnvironmentalData::Environmentals.end()) {
-						Base::World::EnvironmentalData::Environmentals[*it] = 
-						Base::World::EnvironmentalData::EnvironmentalData(
-							*it,
-							0,
-							0, 
-							0,
-							*offsetPtr<int>(*it, 0x1AF0),
-							*offsetPtr<int>(*it, 0x1AF4)
-						);
-					}
-					else {
-						//如果生物存在列表中就只更新坐标数据
-						Base::World::EnvironmentalData::Environmentals[*it].CoordinatesX = *offsetPtr<float>(*it, 0x160);
-						Base::World::EnvironmentalData::Environmentals[*it].CoordinatesY = *offsetPtr<float>(*it, 0x164);
-						Base::World::EnvironmentalData::Environmentals[*it].CoordinatesZ = *offsetPtr<float>(*it, 0x168);
-					}
-				}
-				else {
-					World::EnvironmentalData::TempData::t_environmentalMessages.erase(it);
+			for (auto [environmental, environmentalData] : Base::World::EnvironmentalData::Environmentals) {
+				if (environmental != nullptr) {
+					Base::World::EnvironmentalData::Environmentals[environmental].CoordinatesX = *offsetPtr<float>(environmental, 0x160);
+					Base::World::EnvironmentalData::Environmentals[environmental].CoordinatesY = *offsetPtr<float>(environmental, 0x164);
+					Base::World::EnvironmentalData::Environmentals[environmental].CoordinatesZ = *offsetPtr<float>(environmental, 0x168);
 				}
 			}
 			//更新怪物信息
