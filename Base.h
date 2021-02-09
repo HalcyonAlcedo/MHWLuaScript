@@ -43,7 +43,6 @@ namespace Base {
 	namespace BasicGameData {
 		void* PlayerPlot = nullptr;
 		void* PlayerInfoPlot = nullptr;
-		void* ActionPlot = nullptr;
 		void* MapPlot = nullptr;
 		void* GameTimePlot = nullptr;
 	}
@@ -119,11 +118,15 @@ namespace Base {
 			}
 			return false;
 		}
-		//检查计时器是否还在运行
+		//检查计时器是否结束
 		static bool CheckChronoscope(string name) {
 			if (ChronoscopeList.find(name) != ChronoscopeList.end()) {
-				if (ChronoscopeList[name].EndTime > NowTime)
+				if (ChronoscopeList[name].EndTime < NowTime) {
+					DelChronoscope(name);
 					return true;
+				}
+				else
+					return false;
 			}
 			return false;
 		}
@@ -370,19 +373,21 @@ namespace Base {
 			}
 
 			//玩家坐标
-			Vector3 Entity;
+			Vector3 Entity = Vector3();
 			//准星坐标
-			Vector3 Collimator;
+			Vector3 Collimator = Vector3();
 			//碰撞返回坐标
-			Vector3 Collision;
+			Vector3 Collision = Vector3();
 			//增量坐标
-			Vector3 Increment;
+			Vector3 Increment = Vector3();
 			//导航坐标
-			Vector3 Navigation;
+			Vector3 Navigation = Vector3();
 			//相机坐标
-			Vector3 Visual;
+			Vector3 Visual = Vector3();
 			//武器坐标
-			Vector3 Weapon;
+			Vector3 Weapon = Vector3();
+			//钩爪坐标
+			Vector3 Hook = Vector3();
 			//玩家传送(X坐标,Y坐标,Z坐标,是否穿墙)
 			static void TransportCoordinate(float X, float Y, float Z, bool Across = false) {
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x160) = X;
@@ -434,39 +439,39 @@ namespace Base {
 			Coordinate::TempData::t_SetVisual = true;
 		}
 		//朝向角度
-		float Angle;
+		float Angle = 0;
 		//朝向弧度
-		float Radian;
+		float Radian = 0;
 		//相机距离
-		float VisualDistance;
+		float VisualDistance = 0;
 		//是否处于瞄准状态
-		bool AimingState;
+		bool AimingState = false;
 		//最后一次击中的怪物地址
 		void* AttackMonsterPlot = nullptr;
 		//动作id
-		float ActionId;
+		float ActionId = 0;
 		//武器类型
-		int WeaponType;
+		int WeaponType = 0;
 		//武器ID
-		int WeaponId;
+		int WeaponId = 0;
 		//派生信息
-		FsmData Fsm;
+		FsmData Fsm = FsmData();
 		//玩家名称
-		string Name;
+		string Name = "";
 		//hr等级
-		int Hr;
+		int Hr = 0;
 		//mr等级
-		int Mr;
+		int Mr = 0;
 		//当前血量
-		float CurrentHealth;
+		float CurrentHealth = 0;
 		//基础血量（0-150）
-		float BasicHealth;
+		float BasicHealth = 0;
 		//血量上限
-		float MaxHealth;
+		float MaxHealth = 0;
 		//当前耐力
-		float CurrentEndurance;
+		float CurrentEndurance = 0;
 		//耐力上限（25-150）
-		float MaxEndurance;
+		float MaxEndurance = 0;
 
 		//执行派生动作(执行对象,执行Id)
 		static void RunDerivedAction(int type, int id) {
@@ -560,7 +565,23 @@ namespace Base {
 			void* AttackMonsterOffset2 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset1, 0x98);
 			void* AttackMonsterOffset3 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset2, 0xD8);
 			AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset3, 0x4298);
-			ActionId = *offsetPtr<int>(BasicGameData::ActionPlot, 0xE9C4);
+			void* ActionPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
+			if (ActionPlot != nullptr) {
+				ActionId = *offsetPtr<int>(ActionPlot, 0xE9C4);
+				void* HookOffset1 = *offsetPtr<undefined**>((undefined(*)())ActionPlot, 0x70);
+				void* HookOffset2 = *offsetPtr<undefined**>((undefined(*)())HookOffset1, 0x10);
+				void* HookOffset3 = *offsetPtr<undefined**>((undefined(*)())HookOffset2, 0x18);
+				Coordinate::Hook = Vector3(
+					*offsetPtr<float>(HookOffset3, 0x160),
+					*offsetPtr<float>(HookOffset3, 0x164),
+					*offsetPtr<float>(HookOffset3, 0x168)
+				);
+				
+			}
+			else {
+				ActionId = 0;
+				Coordinate::Hook = Vector3();
+			}
 			void* WeaponPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0xc0);
 			void* WeaponOffset1 = *offsetPtr<undefined**>((undefined(*)())WeaponPlot, 0x8);
 			void* WeaponOffset2 = *offsetPtr<undefined**>((undefined(*)())WeaponOffset1, 0x78);
@@ -608,6 +629,7 @@ namespace Base {
 				return false;
 		}
 		//清理缓存
+		/*
 		static void ClearKey() {
 			for (auto [Environmental, EData] : World::EnvironmentalData::Environmentals) {
 				if (EData.Plot == nullptr) {
@@ -615,6 +637,7 @@ namespace Base {
 				}
 			}
 		}
+		*/
 		//按键检查
 		static bool CheckKey(int vk, int ComboClick = 1,float Duration = 0.3) {
 			if (!CheckWindows())
@@ -752,13 +775,11 @@ namespace Base {
 			void* PlayerInfoPlot = *(undefined**)MH::Player::BasePtr;
 			BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
 			BasicGameData::PlayerInfoPlot = *offsetPtr<undefined**>((undefined(*)())PlayerInfoPlot, 0xA8);
-			BasicGameData::ActionPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
 			BasicGameData::GameTimePlot = (undefined(*)())MH::World::GmaeClock;
 			BasicGameData::MapPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7D20);
 			
 			if (
 				BasicGameData::PlayerPlot != nullptr and
-				BasicGameData::ActionPlot != nullptr and
 				BasicGameData::MapPlot != nullptr and
 				BasicGameData::GameTimePlot != nullptr
 				) {
@@ -837,8 +858,6 @@ namespace Base {
 					LOG(ERR) << "The following address failed to complete the initialization. We will try again later. If the address is still not initialized successfully, please contact the mod author for solution.";
 					if (BasicGameData::PlayerPlot == nullptr)
 						LOG(ERR) << " |  PlayerPlot";
-					if (BasicGameData::ActionPlot == nullptr)
-						LOG(ERR) << " |  ActionPlot";
 					if (BasicGameData::MapPlot == nullptr)
 						LOG(ERR) << " |  MapPlot";
 					if (BasicGameData::GameTimePlot == nullptr)
@@ -884,16 +903,15 @@ namespace Base {
 				//更新地址信息
 				void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 				BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
-				BasicGameData::ActionPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
 			}
+			//更新玩家数据
+			PlayerData::Updata();
 			//清除死亡的环境生物
 			for (auto [Environmental, EData] : World::EnvironmentalData::Environmentals) {
 				if (EData.Plot == nullptr) {
 					World::EnvironmentalData::Environmentals.erase(Environmental);
 				}
 			}
-			//更新玩家数据
-			PlayerData::Updata();
 			//更新环境生物数据
 			vector<void*>::iterator it;
 			for (it = World::EnvironmentalData::TempData::t_environmentalMessages.begin(); it != World::EnvironmentalData::TempData::t_environmentalMessages.end(); it++)

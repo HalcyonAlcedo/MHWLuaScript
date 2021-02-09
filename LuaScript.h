@@ -386,6 +386,12 @@ static int Gmae_Player_SetPlayerBuffDuration(lua_State* pL) {
     Base::PlayerData::SetPlayerBuff(buff, duration);
     return 0;
 }
+static int Gmae_Player_GetPlayerHookCoordinate(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Hook.x);
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Hook.y);
+    lua_pushnumber(pL, Base::PlayerData::Coordinate::Hook.z);
+    return 3;
+}
 #pragma endregion
 #pragma region SystemFun
 static int System_Keyboard_CheckKey(lua_State* pL) {    
@@ -590,6 +596,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Gmae_Player_GetPlayerBuffDuration", Gmae_Player_GetPlayerBuffDuration);
     //设置玩家Buff剩余时间
     lua_register(L, "Gmae_Player_SetPlayerBuffDuration", Gmae_Player_SetPlayerBuffDuration);
+    //获取玩家钩爪坐标
+    lua_register(L, "Gmae_Player_GetPlayerHookCoordinate", Gmae_Player_GetPlayerHookCoordinate);
     
     #pragma endregion
     //获取当前地图Id

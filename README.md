@@ -43,9 +43,9 @@
 |System_Keyboard_CheckDoubleKey		|`System_Keyboard_CheckDoubleKey(87)`                           |检查是否双击按键，按键为VK码           |
 |System_Keyboard_CheckKeyIsPressed	|`System_Keyboard_CheckKeyIsPressed(87)`                        |检查按键是否处于按下状态，按键为VK码           |
 |System_Chronoscope_AddChronoscope	|`System_Chronoscope_AddChronoscope(1.0,'ChronoscopeName')`     |创建计时器，需设定时间和计时器名称      |
-|System_Chronoscope_CheckChronoscope|`System_Chronoscope_CheckChronoscope('ChronoscopeName')`       |检查指定名称的计时器是否到期 |
+|System_Chronoscope_CheckChronoscope|`System_Chronoscope_CheckChronoscope('ChronoscopeName')`       |检查指定名称的计时器是否到期,如果到期则删除计时器 |
 |System_Chronoscope_CheckPresenceChronoscope|`System_Chronoscope_CheckPresenceChronoscope('ChronoscopeName')`|检查指定名称的计时器是存在 |
-|System_Chronoscope_DelChronoscope  |`System_Chronoscope_DelChronoscope('ChronoscopeName')`           |删除指定名称的计时器    |
+|System_Chronoscope_DelChronoscope|`System_Chronoscope_DelChronoscope('ChronoscopeName')`           |删除指定名称的计时器    |
 |System_Message_ShowMessage			|`System_Message_ShowMessage('Message')`       	                |向游戏内发送消息                      |
 |System_Console_Info				|`System_Console_Info('Message')`       	                    |向控制台发送消息                      |
 |System_Console_Error				|`System_Console_Error('Message')`       	                    |向控制台发送错误消息                  |
@@ -55,6 +55,7 @@
 |-----------------------------------------|----------------------------------------------------------|------------------|
 |Gmae_Player_GetPlayerCoordinate          |`local x,y,z = Gmae_Player_GetPlayerCoordinate()`         |获取玩家坐标       |
 |Gmae_Player_SetPlayerCoordinate          |`Gmae_Player_SetPlayerCoordinate(1.0,1.0,1.0)`            |设置玩家坐标       |
+|Gmae_Player_GetPlayerHookCoordinate      |`local x,y,z = Gmae_Player_GetPlayerHookCoordinate()`     |获取玩家钩爪坐标   |
 |Gmae_Player_GetPlayerCollimatorCoordinate|`local x,y,z = Gmae_Player_GetPlayerCollimatorCoordinate()`|获取准星坐标      |
 |Gmae_Player_GetPlayerWeaponCoordinate    |`local x,y,z = Gmae_Player_GetPlayerWeaponCoordinate()`   |获取武器坐标       |
 |Gmae_Player_GetPlayerIncrementCoordinate |`local x,y,z = Gmae_Player_GetPlayerIncrementCoordinate()`|获取坐标运动增量   |
