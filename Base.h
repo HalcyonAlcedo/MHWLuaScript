@@ -11,6 +11,7 @@ using namespace loader;
 
 extern "C" long long _stdcall Navigation(float*, float*, float*);
 extern "C" void* _stdcall GetVisualPtr(void*);
+extern "C" void* _stdcall GetWeaponOrnamentsPtr(void*);
 
 namespace Base {
 	//常用结构
@@ -33,7 +34,7 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.0.9";
+		string ModVersion = "v1.0.10";
 		string Version = "421470";
 	}
 #pragma endregion
@@ -394,6 +395,40 @@ namespace Base {
 					*offsetPtr<float>(BasicGameData::PlayerPlot, 0xA54) = Y;
 					*offsetPtr<float>(BasicGameData::PlayerPlot, 0xA58) = Z;
 				}
+			}
+		}
+		//武器装饰物
+		namespace WeaponOrnaments {
+			//缓存数据
+			namespace TempData {
+				void* t_ornaments = nullptr;
+				bool t_setOrnamentsCoordinate = false;
+				Vector3 t_SetOrnamentsCoordinate;
+				bool t_setOrnamentsSize = false;
+				Vector3 t_SetOrnamentsSize;
+			}
+			//装饰物坐标
+			Vector3 OrnamentsCoordinate = Vector3();
+			//装饰物模型大小
+			Vector3 OrnamentsSize = Vector3();
+
+			//解除装饰物坐标控制
+			static void DecontrolOrnamentsCoordinate() {
+				TempData::t_setOrnamentsCoordinate = false;
+			}
+			//解除装饰物大小控制
+			static void DecontrolOrnamentsSize() {
+				TempData::t_setOrnamentsSize = false;
+			}
+			//装饰物坐标设置(X坐标,Y坐标,Z坐标)
+			static void SetOrnamentsCoordinate(float X, float Y, float Z) {
+				TempData::t_SetOrnamentsCoordinate = Vector3(X,Y,Z);
+				TempData::t_setOrnamentsCoordinate = true;
+			}
+			//装饰物大小设置(X坐标,Y坐标,Z坐标)
+			static void SetOrnamentsSize(float X, float Y, float Z) {
+				TempData::t_SetOrnamentsSize = Vector3(X, Y, Z);
+				TempData::t_setOrnamentsSize = true;
 			}
 		}
 		//特效
@@ -839,6 +874,30 @@ namespace Base {
 								*offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x0) = Base::PlayerData::Coordinate::TempData::t_SetVisualCoordinate.x;
 								*offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x4) = Base::PlayerData::Coordinate::TempData::t_SetVisualCoordinate.y;
 								*offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x8) = Base::PlayerData::Coordinate::TempData::t_SetVisualCoordinate.z;
+							}
+						}
+						return original();
+					});
+				//武器装饰物修改
+				HookLambda(MH::Weapon::WeaponOrnaments,
+					[]() {
+						GetWeaponOrnamentsPtr(&Base::PlayerData::WeaponOrnaments::TempData::t_ornaments);
+						if (Base::PlayerData::WeaponOrnaments::TempData::t_ornaments != nullptr) {
+							Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.x = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x160);
+							Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.y = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x164);
+							Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.z = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x168);
+							Base::PlayerData::WeaponOrnaments::OrnamentsSize.x = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x180);
+							Base::PlayerData::WeaponOrnaments::OrnamentsSize.y = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x184);
+							Base::PlayerData::WeaponOrnaments::OrnamentsSize.z = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x188);
+							if (Base::PlayerData::WeaponOrnaments::TempData::t_setOrnamentsCoordinate) {
+								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x160) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsCoordinate.x;
+								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x164) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsCoordinate.y;
+								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x168) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsCoordinate.z;
+							}
+							if (Base::PlayerData::WeaponOrnaments::TempData::t_setOrnamentsSize) {
+								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x180) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsSize.x;
+								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x184) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsSize.y;
+								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x188) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsSize.z;
 							}
 						}
 						return original();

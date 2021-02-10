@@ -97,6 +97,40 @@ static int Gmae_Player_Weapon_ChangeWeapons(lua_State* pL) {
     Base::PlayerData::ChangeWeapons(type, id);
     return 0;
 }
+static int Gmae_Player_Weapon_GetOrnamentsCoordinate(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.x);
+    lua_pushnumber(pL, Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.y);
+    lua_pushnumber(pL, Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.z);
+    return 3;
+}
+static int Gmae_Player_Weapon_GetOrnamentsSize(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::WeaponOrnaments::OrnamentsSize.x);
+    lua_pushnumber(pL, Base::PlayerData::WeaponOrnaments::OrnamentsSize.y);
+    lua_pushnumber(pL, Base::PlayerData::WeaponOrnaments::OrnamentsSize.z);
+    return 3;
+}
+static int Gmae_Player_Weapon_SetOrnamentsCoordinate(lua_State* pL) {
+    float x = (float)lua_tonumber(pL, 1);
+    float y = (float)lua_tonumber(pL, 2);
+    float z = (float)lua_tonumber(pL, 3);
+    Base::PlayerData::WeaponOrnaments::SetOrnamentsCoordinate(x, y, z);
+    return 0;
+}
+static int Gmae_Player_Weapon_SetOrnamentsSize(lua_State* pL) {
+    float x = (float)lua_tonumber(pL, 1);
+    float y = (float)lua_tonumber(pL, 2);
+    float z = (float)lua_tonumber(pL, 3);
+    Base::PlayerData::WeaponOrnaments::SetOrnamentsSize(x, y, z);
+    return 0;
+}
+static int Gmae_Player_Weapon_DecontrolOrnamentsCoordinate(lua_State* pL) {
+    Base::PlayerData::WeaponOrnaments::DecontrolOrnamentsCoordinate();
+    return 0;
+}
+static int Gmae_Player_Weapon_DecontrolOrnamentsSize(lua_State* pL) {
+    Base::PlayerData::WeaponOrnaments::DecontrolOrnamentsSize();
+    return 0;
+}
 static int Gmae_Player_GetFsmData(lua_State* pL) {
     lua_pushinteger(pL, Base::PlayerData::Fsm.Target);
     lua_pushinteger(pL, Base::PlayerData::Fsm.Id);
@@ -576,6 +610,18 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Gmae_Player_Weapon_GetWeaponType", Gmae_Player_Weapon_GetWeaponType);
     //更换玩家的武器
     lua_register(L, "Gmae_Player_Weapon_ChangeWeapons", Gmae_Player_Weapon_ChangeWeapons);
+    //获取玩家武器装饰物坐标
+    lua_register(L, "Gmae_Player_Weapon_GetOrnamentsCoordinate", Gmae_Player_Weapon_GetOrnamentsCoordinate);
+    //获取玩家武器装饰物模型大小
+    lua_register(L, "Gmae_Player_Weapon_GetOrnamentsSize", Gmae_Player_Weapon_GetOrnamentsSize);
+    //设置玩家武器装饰物坐标
+    lua_register(L, "Gmae_Player_Weapon_SetOrnamentsCoordinate", Gmae_Player_Weapon_SetOrnamentsCoordinate);
+    //设置玩家武器装饰物模型大小
+    lua_register(L, "Gmae_Player_Weapon_SetOrnamentsSize", Gmae_Player_Weapon_SetOrnamentsSize);
+    //解除玩家武器装饰物坐标设置
+    lua_register(L, "Gmae_Player_Weapon_DecontrolOrnamentsCoordinate", Gmae_Player_Weapon_DecontrolOrnamentsCoordinate);
+    //解除玩家武器装饰物模型大小设置
+    lua_register(L, "Gmae_Player_Weapon_DecontrolOrnamentsSize", Gmae_Player_Weapon_DecontrolOrnamentsSize);
     //获取玩家派生信息
     lua_register(L, "Gmae_Player_GetFsmData", Gmae_Player_GetFsmData);
     //执行指定的派生动作

@@ -20,4 +20,9 @@ GetVisualPtr proc
 	ret
 GetVisualPtr endp
 
+GetWeaponOrnamentsPtr proc
+    mov [rcx], rbx
+	ret
+GetWeaponOrnamentsPtr endp
+
 end

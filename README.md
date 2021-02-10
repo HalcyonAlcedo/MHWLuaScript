@@ -93,6 +93,12 @@
 |Gmae_Player_Weapon_GetWeaponId           |`Gmae_Player_Weapon_GetWeaponId()`                        |获取玩家武器ID     |
 |Gmae_Player_Weapon_GetWeaponType         |`Gmae_Player_Weapon_GetWeaponType()`                      |获取玩家武器类型   |
 |Gmae_Player_Weapon_ChangeWeapons         |`Gmae_Player_Weapon_ChangeWeapons(0,20)`                  |更换玩家的武器（武器类型，武器id）   |
+|Gmae_Player_Weapon_GetOrnamentsCoordinate|`local x,y,z = Gmae_Player_Weapon_GetOrnamentsCoordinate()`|获取玩家武器装饰物坐标|
+|Gmae_Player_Weapon_GetOrnamentsSize      |`local x,y,z = Gmae_Player_Weapon_GetOrnamentsSize()`     |获取玩家武器装饰物模型大小|
+|Gmae_Player_Weapon_SetOrnamentsCoordinate|`Gmae_Player_Weapon_SetOrnamentsCoordinate(100,100,100)`  |设置玩家武器装饰物坐标|
+|Gmae_Player_Weapon_SetOrnamentsSize      |`Gmae_Player_Weapon_SetOrnamentsSize(1.5,1.5,1.5)`        |设置玩家武器装饰物模型大小|
+|Gmae_Player_Weapon_DecontrolOrnamentsCoordinate|`Gmae_Player_Weapon_DecontrolOrnamentsCoordinate()` |解除玩家武器装饰物坐标设置|
+|Gmae_Player_Weapon_DecontrolOrnamentsSize|`Gmae_Player_Weapon_DecontrolOrnamentsSize()`             |解除玩家武器装饰物模型大小设置|
 |Gmae_Player_GetFsmData                   |`local type,id = Gmae_Player_GetFsmData()`                |获取玩家当前派生动作信息   |
 |Gmae_Player_RunFsmAction                 |`Gmae_Player_RunFsmAction(3,5)`                           |执行指定对象的派生动作，第一个参数为对象（玩家1，武器3）第二个参数为派生动作Id   |
 |Gmae_Player_CheckRunFsmActionOver        |`Gmae_Player_CheckRunFsmActionOver()`                     |检查执行的派生动作是否结束  |

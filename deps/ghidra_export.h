@@ -82,6 +82,8 @@ namespace MH {
             static undefined8(*CalcElementalBloat)() = (undefined8(*)())0x1419900a0;
         }
         static void* (*ChangeWeapon)(void*, int, int) = (void* (*)(void*, int, int))0x141F76CE0;//¸ü»»ÎäÆ÷
+
+        static undefined(*WeaponOrnaments)() = (undefined(*)())0x1421300f1;
         namespace MainWeapon {
             static undefined(*coordinateX)(float) = (undefined(*)(float))0x142135ADB;
             static undefined(*coordinateY)(float, float) = (undefined(*)(float, float))0x142135AF6;
