@@ -3,6 +3,7 @@
 #include "loader.h"
 #include "LuaData.h"
 lua_State* L;
+string Nowlua;
 #pragma region GameFun
 static int Gmae_Player_GetPlayerCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Entity.x);
@@ -84,17 +85,17 @@ static int Gmae_Player_GetPlayerAngle(lua_State* pL) {
     return 1;
 }
 static int Gmae_Player_Weapon_GetWeaponId(lua_State* pL) {
-    lua_pushinteger(pL, Base::PlayerData::WeaponId);
+    lua_pushinteger(pL, Base::PlayerData::Weapons::WeaponId);
     return 1;
 }
 static int Gmae_Player_Weapon_GetWeaponType(lua_State* pL) {
-    lua_pushinteger(pL, Base::PlayerData::WeaponType);
+    lua_pushinteger(pL, Base::PlayerData::Weapons::WeaponType);
     return 1;
 }
 static int Gmae_Player_Weapon_ChangeWeapons(lua_State* pL) {
     int type = (int)lua_tointeger(pL, 1);
     int id = (int)lua_tointeger(pL, 2);
-    Base::PlayerData::ChangeWeapons(type, id);
+    Base::PlayerData::Weapons::ChangeWeapons(type, id);
     return 0;
 }
 static int Gmae_Player_Weapon_GetOrnamentsCoordinate(lua_State* pL) {
@@ -492,21 +493,42 @@ static int System_Console_Error(lua_State* pL) {
 #pragma region LuaFun
 //存入整数变量
 static int Lua_Variable_SaveIntVariable(lua_State* pL) {
-    string variableName = (string)lua_tostring(pL, 1);
+    string variableName = Nowlua + (string)lua_tostring(pL, 1);
+    int variableValue = (int)lua_tointeger(pL, 2);
+    LuaData::IntVariable[variableName] = variableValue;
+    return 0;
+}
+//存入全局整数变量
+static int Lua_Variable_SaveGlobalIntVariable(lua_State* pL) {
+    string variableName = "G_" + (string)lua_tostring(pL, 1);
     int variableValue = (int)lua_tointeger(pL, 2);
     LuaData::IntVariable[variableName] = variableValue;
     return 0;
 }
 //存入浮点数变量
 static int Lua_Variable_SaveFloatVariable(lua_State* pL) {
-    string variableName = (string)lua_tostring(pL, 1);
+    string variableName = Nowlua + (string)lua_tostring(pL, 1);
+    float variableValue = (float)lua_tonumber(pL, 2);
+    LuaData::FloatVariable[variableName] = variableValue;
+    return 0;
+}
+//存入全局浮点数变量
+static int Lua_Variable_SaveGlobalFloatVariable(lua_State* pL) {
+    string variableName = "G_" + (string)lua_tostring(pL, 1);
     float variableValue = (float)lua_tonumber(pL, 2);
     LuaData::FloatVariable[variableName] = variableValue;
     return 0;
 }
 //存入字符串变量
 static int Lua_Variable_SaveStringVariable(lua_State* pL) {
-    string variableName = (string)lua_tostring(pL, 1);
+    string variableName = Nowlua + (string)lua_tostring(pL, 1);
+    string variableValue = (string)lua_tostring(pL, 2);
+    LuaData::StringVariable[variableName] = variableValue;
+    return 0;
+}
+//存入全局字符串变量
+static int Lua_Variable_SaveGlobalStringVariable(lua_State* pL) {
+    string variableName = "G_" + (string)lua_tostring(pL, 1);
     string variableValue = (string)lua_tostring(pL, 2);
     LuaData::StringVariable[variableName] = variableValue;
     return 0;
@@ -522,9 +544,31 @@ static int Lua_Variable_ReadIntVariable(lua_State* pL) {
     lua_pushinteger(pL, ret);
     return 1;
 }
+//读取全局整数变量
+static int Lua_Variable_ReadGlobalIntVariable(lua_State* pL) {
+    string variableName = "G_" + (string)lua_tostring(pL, -1);
+    int ret;
+    if (LuaData::IntVariable.find(variableName) == LuaData::IntVariable.end())
+        ret = 0;
+    else
+        ret = LuaData::IntVariable[variableName];
+    lua_pushinteger(pL, ret);
+    return 1;
+}
 //读取浮点数变量
 static int Lua_Variable_ReadFloatVariable(lua_State* pL) {
-    string variableName = (string)lua_tostring(pL, -1);
+    string variableName = Nowlua + (string)lua_tostring(pL, -1);
+    float ret;
+    if (LuaData::FloatVariable.find(variableName) == LuaData::FloatVariable.end())
+        ret = 0;
+    else
+        ret = LuaData::FloatVariable[variableName];
+    lua_pushnumber(pL, ret);
+    return 1;
+}
+//读取全局浮点数变量
+static int Lua_Variable_ReadGlobalFloatVariable(lua_State* pL) {
+    string variableName = "G_" + (string)lua_tostring(pL, -1);
     float ret;
     if (LuaData::FloatVariable.find(variableName) == LuaData::FloatVariable.end())
         ret = 0;
@@ -535,7 +579,18 @@ static int Lua_Variable_ReadFloatVariable(lua_State* pL) {
 }
 //读取字符串变量
 static int Lua_Variable_ReadStringVariable(lua_State* pL) {
-    string variableName = (string)lua_tostring(pL, -1);
+    string variableName = Nowlua + (string)lua_tostring(pL, -1);
+    string ret;
+    if (LuaData::StringVariable.find(variableName) == LuaData::StringVariable.end())
+        ret = "";
+    else
+        ret = LuaData::StringVariable[variableName];
+    lua_pushstring(pL, ret.c_str());
+    return 1;
+}
+//读取全局字符串变量
+static int Lua_Variable_ReadGlobalStringVariable(lua_State* pL) {
+    string variableName = "G_" + (string)lua_tostring(pL, -1);
     string ret;
     if (LuaData::StringVariable.find(variableName) == LuaData::StringVariable.end())
         ret = "";
@@ -546,7 +601,19 @@ static int Lua_Variable_ReadStringVariable(lua_State* pL) {
 }
 //销毁变量
 static int Lua_Variable_DestroyVariable(lua_State* pL) {
-    string variableTpye = (string)lua_tostring(pL, 1);
+    string variableTpye = Nowlua + (string)lua_tostring(pL, 1);
+    string variableName = (string)lua_tostring(pL, 2);
+    if (variableTpye == "Int")
+        LuaData::IntVariable.erase(variableName);
+    else if (variableTpye == "Float")
+        LuaData::FloatVariable.erase(variableName);
+    else if (variableTpye == "String")
+        LuaData::StringVariable.erase(variableName);
+    return 0;
+}
+//销毁全局变量
+static int Lua_Variable_DestroyGlobalVariable(lua_State* pL) {
+    string variableTpye = "G_" + (string)lua_tostring(pL, 1);
     string variableName = (string)lua_tostring(pL, 2);
     if (variableTpye == "Int")
         LuaData::IntVariable.erase(variableName);
@@ -748,6 +815,20 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Lua_Variable_DestroyVariable", Lua_Variable_DestroyVariable);
     //获取随机数
     lua_register(L, "Lua_Math_Rander", Lua_Math_Rander);
+    //存入全局整数变量
+    lua_register(L, "Lua_Variable_SaveGlobalIntVariable", Lua_Variable_SaveGlobalIntVariable);
+    //存入全局浮点数变量
+    lua_register(L, "Lua_Variable_SaveGlobalFloatVariable", Lua_Variable_SaveGlobalFloatVariable);
+    //存入全局字符串变量
+    lua_register(L, "Lua_Variable_SaveGlobalStringVariable", Lua_Variable_SaveGlobalStringVariable);
+    //读取全局整数变量
+    lua_register(L, "Lua_Variable_ReadGlobalIntVariable", Lua_Variable_ReadGlobalIntVariable);
+    //读取全局浮点数变量
+    lua_register(L, "Lua_Variable_ReadGlobalFloatVariable", Lua_Variable_ReadGlobalFloatVariable);
+    //读取全局字符串变量
+    lua_register(L, "Lua_Variable_ReadGlobalStringVariable", Lua_Variable_ReadGlobalStringVariable);
+    //销毁全局变量
+    lua_register(L, "Lua_Variable_DestroyGlobalVariable", Lua_Variable_DestroyGlobalVariable);
 #pragma endregion
 
     int error = luaL_dofile(L, LuaFile.c_str());
@@ -756,6 +837,7 @@ int Lua_Main(string LuaFile)
         //LOG(ERR) << "dofile error";
         return -1;
     }
+    Nowlua = LuaFile;
     lua_getglobal(L, "run");
     lua_pcall(L, 0, 0, 0);
     lua_close(L);

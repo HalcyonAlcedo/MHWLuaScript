@@ -9,7 +9,7 @@ namespace Execution {
 		//¼ì²éCD
 		if (!Base::Chronoscope::CheckChronoscope("BlinkCD")) {
 			//Ãé×¼×´Ì¬ÏÂË«»÷W
-			if (Base::Keyboard::CheckKey(87, 2) and Base::PlayerData::AimingState and Base::PlayerData::WeaponType != 9) {
+			if (Base::Keyboard::CheckKey(87, 2) and Base::PlayerData::AimingState and Base::PlayerData::Weapons::WeaponType != 9) {
 				Component::MovePlayerToPoint(
 					Base::Vector3(
 					Base::PlayerData::Coordinate::Collimator.x,

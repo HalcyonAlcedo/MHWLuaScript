@@ -34,7 +34,7 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.0.10";
+		string ModVersion = "v1.0.11";
 		string Version = "421470";
 	}
 #pragma endregion
@@ -431,6 +431,17 @@ namespace Base {
 				TempData::t_setOrnamentsSize = true;
 			}
 		}
+		namespace Weapons {
+			//武器类型
+			int WeaponType = 0;
+			//武器ID
+			int WeaponId = 0;
+			//更换武器（武器类型，武器ID）
+			static void ChangeWeapons(int type, int id) {
+				if (type <= 13 and type >= 0 and id >= 0)
+					MH::Weapon::ChangeWeapon(BasicGameData::PlayerPlot, type, id);
+			}
+		}
 		//特效
 		namespace Effects {
 			//生成特效(特效组，特效id)
@@ -481,10 +492,6 @@ namespace Base {
 		void* AttackMonsterPlot = nullptr;
 		//动作id
 		float ActionId = 0;
-		//武器类型
-		int WeaponType = 0;
-		//武器ID
-		int WeaponId = 0;
 		//派生信息
 		FsmData Fsm = FsmData();
 		//玩家名称
@@ -503,7 +510,6 @@ namespace Base {
 		float CurrentEndurance = 0;
 		//耐力上限（25-150）
 		float MaxEndurance = 0;
-
 		//执行派生动作(执行对象,执行Id)
 		static void RunDerivedAction(int type, int id) {
 			TempData::t_ManualFsmAction = FsmData(type, id);
@@ -525,11 +531,6 @@ namespace Base {
 					return false;
 			}
 			return false;
-		}
-		//更换武器（武器类型，武器ID）
-		static void ChangeWeapons(int type, int id) {
-			if(type <= 13 and type >= 0 and id >= 0)
-				MH::Weapon::ChangeWeapon(BasicGameData::PlayerPlot, type, id);
 		}
 		//获取玩家Buff持续时间
 		static float GetPlayerBuff(string buff) {
@@ -626,8 +627,8 @@ namespace Base {
 			void* WeaponPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0xc0);
 			void* WeaponOffset1 = *offsetPtr<undefined**>((undefined(*)())WeaponPlot, 0x8);
 			void* WeaponOffset2 = *offsetPtr<undefined**>((undefined(*)())WeaponOffset1, 0x78);
-			WeaponType = *offsetPtr<int>(WeaponOffset2, 0x2E8);
-			WeaponId = *offsetPtr<int>(WeaponOffset2, 0x2EC);
+			Weapons::WeaponType = *offsetPtr<int>(WeaponOffset2, 0x2E8);
+			Weapons::WeaponId = *offsetPtr<int>(WeaponOffset2, 0x2EC);
 			Fsm = FsmData(
 				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x628C),
 				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6290)

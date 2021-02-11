@@ -53,9 +53,16 @@
 |Lua_Variable_SaveFloatVariable		|`Lua_Variable_SaveFloatVariable('VariableName',1.0)`            |存入浮点数变量                       |
 |Lua_Variable_SaveStringVariable	|`Lua_Variable_SaveStringVariable('VariableName','VariableValue')`|存入字符串变量                      |
 |Lua_Variable_ReadIntVariable       |`local Variable = Lua_Variable_ReadIntVariable('VariableName')`|读取整数变量                          |
-|Lua_Variable_ReadFloatVariable		|`local Variable = Lua_Variable_ReadFloatVariable('VariableName')`|读取浮点数变量                        |
-|Lua_Variable_ReadStringVariable	|`local Variable = Lua_Variable_ReadStringVariable('VariableName')`|读取字符串变量                        |
+|Lua_Variable_ReadFloatVariable		|`local Variable = Lua_Variable_ReadFloatVariable('VariableName')`|读取浮点数变量                      |
+|Lua_Variable_ReadStringVariable	|`local Variable = Lua_Variable_ReadStringVariable('VariableName')`|读取字符串变量                     |
 |Lua_Variable_DestroyVariable		|`Lua_Variable_DestroyVariable('VariableName')`                 |销毁变量                             |
+|Lua_Variable_SaveGlobalIntVariable     |`Lua_Variable_SaveGlobalIntVariable('VariableName',10)`              |存入全局整数变量              |
+|Lua_Variable_SaveGlobalFloatVariable	|`Lua_Variable_SaveGlobalFloatVariable('VariableName',1.0)`            |存入全局浮点数变量         |
+|Lua_Variable_SaveGlobalStringVariable	|`Lua_Variable_SaveGlobalStringVariable('VariableName','VariableValue')`|存入全局字符串变量            |
+|Lua_Variable_ReadGlobalIntVariable     |`local Variable = Lua_Variable_ReadGlobalIntVariable('VariableName')`|读取全局整数变量              |
+|Lua_Variable_ReadGlobalFloatVariable	|`local Variable = Lua_Variable_ReadGlobalFloatVariable('VariableName')`|读取全局浮点数变量        |
+|Lua_Variable_ReadGlobalStringVariable	|`local Variable = Lua_Variable_ReadGlobalStringVariable('VariableName')`|读取全局字符串变量           |
+|Lua_Variable_DestroyGlobalVariable		|`Lua_Variable_DestroyGlobalVariable('VariableName')`                 |销毁全局变量                   |
 |Lua_Math_Rander					|`Lua_Math_Rander(-10,10)`                                      |获取随机数                             |
 
 ### 系统
