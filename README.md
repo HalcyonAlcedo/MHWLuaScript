@@ -106,6 +106,18 @@
 |Gmae_Player_Weapon_SetOrnamentsSize      |`Gmae_Player_Weapon_SetOrnamentsSize(1.5,1.5,1.5)`        |设置玩家武器装饰物模型大小|
 |Gmae_Player_Weapon_DecontrolOrnamentsCoordinate|`Gmae_Player_Weapon_DecontrolOrnamentsCoordinate()` |解除玩家武器装饰物坐标设置|
 |Gmae_Player_Weapon_DecontrolOrnamentsSize|`Gmae_Player_Weapon_DecontrolOrnamentsSize()`             |解除玩家武器装饰物模型大小设置|
+|Gmae_Player_Weapon_GetMainWeaponCoordinate|`local x,y,z = Gmae_Player_Weapon_GetMainWeaponCoordinate()`|获取玩家主武器坐标|
+|Gmae_Player_Weapon_GetMainWeaponSize      |`local x,y,z = Gmae_Player_Weapon_GetMainWeaponSize()`     |获取玩家主武器模型大小|
+|Gmae_Player_Weapon_SetMainWeaponCoordinate|`Gmae_Player_Weapon_SetMainWeaponCoordinate(100,100,100)`  |设置玩家主武器坐标|
+|Gmae_Player_Weapon_SetMainWeaponSize      |`Gmae_Player_Weapon_SetMainWeaponSize(1.5,1.5,1.5)`        |设置玩家主武器模型大小|
+|Gmae_Player_Weapon_DecontrolMainWeaponCoordinate|`Gmae_Player_Weapon_DecontrolMainWeaponCoordinate()` |解除玩家主武器坐标设置|
+|Gmae_Player_Weapon_DecontrolMainWeaponSize|`Gmae_Player_Weapon_DecontrolMainWeaponSize()`             |解除玩家主武器模型大小设置|
+|Gmae_Player_Weapon_GetSecondaryWeaponCoordinate|`local x,y,z = Gmae_Player_Weapon_GetSecondaryWeaponCoordinate()`|获取玩家副武器坐标|
+|Gmae_Player_Weapon_GetSecondaryWeaponSize|`local x,y,z = Gmae_Player_Weapon_GetSecondaryWeaponSize()`     |获取玩家副武器模型大小|
+|Gmae_Player_Weapon_SetSecondaryWeaponCoordinate|`Gmae_Player_Weapon_SetSecondaryWeaponCoordinate(100,100,100)`  |设置玩家副武器坐标|
+|Gmae_Player_Weapon_SetSecondaryWeaponSize|`Gmae_Player_Weapon_SetSecondaryWeaponSize(1.5,1.5,1.5)`        |设置玩家副武器模型大小|
+|Gmae_Player_Weapon_DecontrolSecondaryWeaponCoordinate|`Gmae_Player_Weapon_DecontrolSecondaryWeaponCoordinate()` |解除玩家副武器坐标设置|
+|Gmae_Player_Weapon_DecontrolSecondaryWeaponSize|`Gmae_Player_Weapon_DecontrolSecondaryWeaponSize()`             |解除玩家副武器模型大小设置|
 |Gmae_Player_GetFsmData                   |`local type,id = Gmae_Player_GetFsmData()`                |获取玩家当前派生动作信息   |
 |Gmae_Player_RunFsmAction                 |`Gmae_Player_RunFsmAction(3,5)`                           |执行指定对象的派生动作，第一个参数为对象（玩家1，武器3）第二个参数为派生动作Id   |
 |Gmae_Player_CheckRunFsmActionOver        |`Gmae_Player_CheckRunFsmActionOver()`                     |检查执行的派生动作是否结束  |

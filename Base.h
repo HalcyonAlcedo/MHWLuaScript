@@ -11,7 +11,7 @@ using namespace loader;
 
 extern "C" long long _stdcall Navigation(float*, float*, float*);
 extern "C" void* _stdcall GetVisualPtr(void*);
-extern "C" void* _stdcall GetWeaponOrnamentsPtr(void*);
+extern "C" void* _stdcall GetWeaponPtr(void*);
 
 namespace Base {
 	//常用结构
@@ -431,15 +431,74 @@ namespace Base {
 				TempData::t_setOrnamentsSize = true;
 			}
 		}
+		//武器
 		namespace Weapons {
+			//缓存数据
+			namespace TempData {
+				void* t_mainWeapon = nullptr;
+				void* t_secondaryWeapon = nullptr;
+				bool t_setMainWeaponCoordinate = false;
+				Vector3 t_SetMainWeaponCoordinate;
+				bool t_setMainWeaponSize = false;
+				Vector3 t_SetMainWeaponSize;
+				bool t_setSecondaryWeaponCoordinate = false;
+				Vector3 t_SetSecondaryWeaponCoordinate;
+				bool t_setSecondaryWeaponSize = false;
+				Vector3 t_SetSecondaryWeaponSize;
+			}
 			//武器类型
 			int WeaponType = 0;
 			//武器ID
 			int WeaponId = 0;
+			//主武器坐标
+			Vector3 MainWeaponCoordinate = Vector3();
+			//主武器模型大小
+			Vector3 MainWeaponSize = Vector3();
+			//副武器坐标
+			Vector3 SecondaryWeaponCoordinate = Vector3();
+			//副武器模型大小
+			Vector3 SecondaryWeaponSize = Vector3();
 			//更换武器（武器类型，武器ID）
 			static void ChangeWeapons(int type, int id) {
 				if (type <= 13 and type >= 0 and id >= 0)
 					MH::Weapon::ChangeWeapon(BasicGameData::PlayerPlot, type, id);
+			}
+			//解除主武器坐标控制
+			static void DecontrolMainWeaponCoordinate() {
+				TempData::t_setMainWeaponCoordinate = false;
+			}
+			//解除主武器大小控制
+			static void DecontrolMainWeaponSize() {
+				TempData::t_setMainWeaponSize = false;
+			}
+			//主武器坐标设置(X坐标,Y坐标,Z坐标)
+			static void SetMainWeaponCoordinate(float X, float Y, float Z) {
+				TempData::t_SetMainWeaponCoordinate = Vector3(X, Y, Z);
+				TempData::t_setMainWeaponCoordinate = true;
+			}
+			//主武器大小设置(X坐标,Y坐标,Z坐标)
+			static void SetMainWeaponSize(float X, float Y, float Z) {
+				TempData::t_SetMainWeaponSize = Vector3(X, Y, Z);
+				TempData::t_setMainWeaponSize = true;
+			}
+
+			//解除副武器坐标控制
+			static void DecontrolSecondaryWeaponCoordinate() {
+				TempData::t_setSecondaryWeaponCoordinate = false;
+			}
+			//解除副武器大小控制
+			static void DecontrolSecondaryWeaponSize() {
+				TempData::t_setSecondaryWeaponSize = false;
+			}
+			//副武器坐标设置(X坐标,Y坐标,Z坐标)
+			static void SetSecondaryWeaponCoordinate(float X, float Y, float Z) {
+				TempData::t_SetSecondaryWeaponCoordinate = Vector3(X, Y, Z);
+				TempData::t_setSecondaryWeaponCoordinate = true;
+			}
+			//副武器大小设置(X坐标,Y坐标,Z坐标)
+			static void SetSecondaryWeaponSize(float X, float Y, float Z) {
+				TempData::t_SetSecondaryWeaponSize = Vector3(X, Y, Z);
+				TempData::t_setSecondaryWeaponSize = true;
 			}
 		}
 		//特效
@@ -882,7 +941,7 @@ namespace Base {
 				//武器装饰物修改
 				HookLambda(MH::Weapon::WeaponOrnaments,
 					[]() {
-						GetWeaponOrnamentsPtr(&Base::PlayerData::WeaponOrnaments::TempData::t_ornaments);
+						GetWeaponPtr(&Base::PlayerData::WeaponOrnaments::TempData::t_ornaments);
 						if (Base::PlayerData::WeaponOrnaments::TempData::t_ornaments != nullptr) {
 							Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.x = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x160);
 							Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.y = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x164);
@@ -899,6 +958,61 @@ namespace Base {
 								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x180) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsSize.x;
 								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x184) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsSize.y;
 								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x188) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsSize.z;
+							}
+						}
+						return original();
+					});
+				//武器坐标修改
+				HookLambda(MH::Weapon::MainWeaponPtr,
+					[]() {
+						GetWeaponPtr(&Base::PlayerData::Weapons::TempData::t_mainWeapon);
+						if (Base::PlayerData::Weapons::TempData::t_mainWeapon != nullptr) {
+							Base::PlayerData::Weapons::MainWeaponCoordinate = Vector3(
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x160),
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x164),
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x168)
+							);
+							Base::PlayerData::Weapons::MainWeaponSize = Vector3(
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x180),
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x184),
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x188)
+							);
+							if (Base::PlayerData::Weapons::TempData::t_setMainWeaponCoordinate) {
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x160) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponCoordinate.x;
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x164) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponCoordinate.y;
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x168) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponCoordinate.z;
+							}
+							if (Base::PlayerData::Weapons::TempData::t_setMainWeaponSize) {
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x160) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.x;
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x164) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.y;
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x168) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.z;
+							}
+						}
+						return original();
+					});
+				HookLambda(MH::Weapon::SecondaryWeaponPtr,
+					[]() {
+						GetWeaponPtr(&Base::PlayerData::Weapons::TempData::t_secondaryWeapon);
+						if (Base::PlayerData::Weapons::TempData::t_secondaryWeapon != nullptr) {
+							Base::PlayerData::Weapons::SecondaryWeaponCoordinate = Vector3(
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x160),
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x164),
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x168)
+							);
+							Base::PlayerData::Weapons::SecondaryWeaponSize = Vector3(
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x180),
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x184),
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x188)
+							);
+							if (Base::PlayerData::Weapons::TempData::t_setSecondaryWeaponCoordinate) {
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x160) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponCoordinate.x;
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x164) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponCoordinate.y;
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x168) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponCoordinate.z;
+							}
+							if (Base::PlayerData::Weapons::TempData::t_setSecondaryWeaponSize) {
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x160) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.x;
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x164) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.y;
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x168) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.z;
 							}
 						}
 						return original();

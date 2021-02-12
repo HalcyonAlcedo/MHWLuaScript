@@ -84,16 +84,8 @@ namespace MH {
         static void* (*ChangeWeapon)(void*, int, int) = (void* (*)(void*, int, int))0x141F76CE0;//¸ü»»ÎäÆ÷
 
         static undefined(*WeaponOrnaments)() = (undefined(*)())0x1421300f1;
-        namespace MainWeapon {
-            static undefined(*coordinateX)(float) = (undefined(*)(float))0x142135ADB;
-            static undefined(*coordinateY)(float, float) = (undefined(*)(float, float))0x142135AF6;
-            static undefined(*coordinateZ)(float) = (undefined(*)(float))0x142135AE9;
-        }
-        namespace SecondaryWeapon {
-            static undefined(*coordinateX)(float, float, float) = (undefined(*)(float, float, float))0x14216E7BF;
-            static undefined(*coordinateY)(float) = (undefined(*)(float))0x14216E7D7;
-            static undefined(*coordinateZ)(float, float, float) = (undefined(*)(float, float, float))0x14216E7CF;
-        }
+        static undefined(*MainWeaponPtr)() = (undefined(*)())0x142135B29;
+        static undefined(*SecondaryWeaponPtr)() = (undefined(*)())0x14216ECFD;
     }
     namespace EmSetter {
         static undefined8(*CreateMonster)() = (undefined8(*)())0x141a7f4e0;
