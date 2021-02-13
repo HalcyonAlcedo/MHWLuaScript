@@ -657,10 +657,20 @@ namespace Base {
 				AimingState = *offsetPtr<bool>(AimingStatePlot, 0xC28);
 			else
 				AimingState = false;
-			void* AttackMonsterOffset1 = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x4C0);
-			void* AttackMonsterOffset2 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset1, 0x98);
-			void* AttackMonsterOffset3 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset2, 0xD8);
-			AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset3, 0x4298);
+
+			void* AttackMonsterPlot = *(undefined**)MH::Player::AttackMonster;
+			void* AttackMonsterOffset1 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterPlot, 0x128);
+			void* AttackMonsterOffset2 = nullptr;
+			if(AttackMonsterOffset1 != nullptr)
+				AttackMonsterOffset2 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset1, 0x70);
+			void* AttackMonsterOffset3 = nullptr;
+			if (AttackMonsterOffset2 != nullptr)
+				AttackMonsterOffset3 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset2, 0x400);
+			void* AttackMonsterOffset4 = nullptr;
+			if (AttackMonsterOffset3 != nullptr)
+				AttackMonsterOffset4 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset3, 0xD0);
+			if (AttackMonsterOffset4 != nullptr)
+				AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset4, 0x46F8);
 			void* ActionPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
 			if (ActionPlot != nullptr) {
 				ActionId = *offsetPtr<int>(ActionPlot, 0xE9C4);
@@ -677,7 +687,6 @@ namespace Base {
 					*offsetPtr<float>(HookOffset3, 0x164),
 					*offsetPtr<float>(HookOffset3, 0x168)
 				);
-				
 			}
 			else {
 				ActionId = 0;
@@ -709,6 +718,7 @@ namespace Base {
 			Name = *offsetPtr<string>(BasicGameData::PlayerInfoPlot, 0x50);
 			Hr = *offsetPtr<int>(BasicGameData::PlayerInfoPlot, 0x90);
 			Mr = *offsetPtr<int>(BasicGameData::PlayerInfoPlot, 0xD4);
+			
 		}
 	}
 #pragma endregion
