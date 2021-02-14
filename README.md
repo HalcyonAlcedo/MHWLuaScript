@@ -91,8 +91,12 @@
 |Gmae_Player_GetPlayerIncrementCoordinate |`local x,y,z = Gmae_Player_GetPlayerIncrementCoordinate()`|获取坐标运动增量   |
 |Gmae_Player_GetPlayerNavigationCoordinate|`local x,y,z = Gmae_Player_GetPlayerNavigationCoordinate()`|获取导航坐标      |
 |Gmae_Player_GetPlayerVisualCoordinate    |`local x,y,z = Gmae_Player_GetPlayerVisualCoordinate()`   |获取视角相机坐标    |
-|Gmae_Player_SetPlayerVisualCoordinate    |`Gmae_Player_SetPlayerVisualCoordinate(1.0,1.0,1.0,0)`    |设置玩家视角相机坐标，最后一位参数为持续时间，0为锁定|
+|Gmae_Player_SetPlayerVisualCoordinate    |`Gmae_Player_SetPlayerVisualCoordinate(1.0,1.0,1.0)`      |设置玩家视角相机坐标|
 |Gmae_Player_UnbindPlayerVisualCoordinate |`Gmae_Player_UnbindPlayerVisualCoordinate()`              |解除玩家视角相机坐标设置|
+|Gmae_Player_GetPlayerVisualDistance      |`Gmae_Player_GetPlayerVisualDistance()`                   |获取视角相机距离    |
+|Gmae_Player_GetPlayerVisualHeight        |`Gmae_Player_GetPlayerVisualHeight()`                     |获取视角相机高度    |
+|Gmae_Player_SetPlayerVisualDistance      |`Gmae_Player_SetPlayerVisualDistance()`                   |设置视角相机距离    |
+|Gmae_Player_SetPlayerVisualHeight        |`Gmae_Player_SetPlayerVisualHeight()`                     |设置视角相机高度    |
 |Gmae_Player_CheckAimingStatus            |`Gmae_Player_CheckAimingStatus()`                         |检查是否处于瞄准状态|
 |Gmae_Player_AddEffect                    |`Gmae_Player_AddEffect(0,0)`                              |为玩家添加特效     |
 |Gmae_Player_GetPlayerActionId            |`Gmae_Player_GetPlayerActionId()`                         |获取玩家动作ID     |

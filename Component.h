@@ -538,7 +538,6 @@ namespace Component {
 			return environmentaList;
 		}
 #pragma endregion
-
 //获取目录中的文件
 	void getFiles(string path, vector<string>& files)
 		{

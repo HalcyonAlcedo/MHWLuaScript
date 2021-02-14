@@ -3,7 +3,7 @@
 #include "loader.h"
 #include "LuaData.h"
 lua_State* L;
-string Nowlua;
+static string Nowlua;
 #pragma region GameFun
 static int Gmae_Player_GetPlayerCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Entity.x);
@@ -68,8 +68,7 @@ static int Gmae_Player_SetPlayerVisualCoordinate(lua_State* pL) {
     float x = (float)lua_tonumber(pL, 1);
     float y = (float)lua_tonumber(pL, 2);
     float z = (float)lua_tonumber(pL, 3);
-    float duration = (float)lua_tonumber(pL, 3);
-    Base::PlayerData::SetVisual(x,y,z, duration);
+    Base::PlayerData::SetVisual(x,y,z);
     return 0;
 }
 static int Gmae_Player_UnbindPlayerVisualCoordinate(lua_State* pL) {
@@ -501,6 +500,29 @@ static int Gmae_Player_GetPlayerHookCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Hook.z);
     return 3;
 }
+static int Gmae_Player_GetPlayerVisualDistance(lua_State* pL) {
+    void* VisualOffset = *offsetPtr<undefined**>((undefined(*)())Base::BasicGameData::PlayerPlot, 0x7690);
+    lua_pushnumber(pL, *offsetPtr<float>(VisualOffset, 0x5E8));
+    return 1;
+}
+static int Gmae_Player_GetPlayerVisualHeight(lua_State* pL) {
+    void* VisualOffset = *offsetPtr<undefined**>((undefined(*)())Base::BasicGameData::PlayerPlot, 0x7690);
+    lua_pushnumber(pL, *offsetPtr<float>(VisualOffset, 0x5E4));
+    return 1;
+}
+static int Gmae_Player_SetPlayerVisualDistance(lua_State* pL) {
+    float distance = (float)lua_tonumber(pL, -1);
+    void* VisualOffset = *offsetPtr<undefined**>((undefined(*)())Base::BasicGameData::PlayerPlot, 0x7690);
+    *offsetPtr<float>(VisualOffset, 0x5E8) = distance;
+    return 0;
+}
+static int Gmae_Player_SetPlayerVisualHeight(lua_State* pL) {
+    float height = (float)lua_tonumber(pL, -1);
+    void* VisualOffset = *offsetPtr<undefined**>((undefined(*)())Base::BasicGameData::PlayerPlot, 0x7690);
+    *offsetPtr<float>(VisualOffset, 0x5E4) = height;
+    return 0;
+}
+
 #pragma endregion
 #pragma region SystemFun
 static int System_Keyboard_CheckKey(lua_State* pL) {    
@@ -603,7 +625,7 @@ static int Lua_Variable_SaveGlobalStringVariable(lua_State* pL) {
 }
 //读取整数变量
 static int Lua_Variable_ReadIntVariable(lua_State* pL) {
-    string variableName = (string)lua_tostring(pL, -1);
+    string variableName = Nowlua + (string)lua_tostring(pL, -1);
     int ret;
     if (LuaData::IntVariable.find(variableName) == LuaData::IntVariable.end())
         ret = 0;
@@ -669,8 +691,8 @@ static int Lua_Variable_ReadGlobalStringVariable(lua_State* pL) {
 }
 //销毁变量
 static int Lua_Variable_DestroyVariable(lua_State* pL) {
-    string variableTpye = Nowlua + (string)lua_tostring(pL, 1);
-    string variableName = (string)lua_tostring(pL, 2);
+    string variableTpye = (string)lua_tostring(pL, 1);
+    string variableName = Nowlua + (string)lua_tostring(pL, 2);
     if (variableTpye == "Int")
         LuaData::IntVariable.erase(variableName);
     else if (variableTpye == "Float")
@@ -708,6 +730,13 @@ int Lua_Main(string LuaFile)
     lua_State* L = luaL_newstate();
     luaopen_base(L);
     luaL_openlibs(L);
+    int error = luaL_dofile(L, LuaFile.c_str());
+    if (error)
+    {
+        //LOG(ERR) << "dofile error";
+        return -1;
+    }
+    Nowlua = LuaFile;
 
 #pragma region Game
     #pragma region Player
@@ -733,6 +762,14 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Gmae_Player_SetPlayerVisualCoordinate", Gmae_Player_SetPlayerVisualCoordinate);
     //解除相机坐标绑定
     lua_register(L, "Gmae_Player_UnbindPlayerVisualCoordinate", Gmae_Player_UnbindPlayerVisualCoordinate);
+    //获取相机距离
+    lua_register(L, "Gmae_Player_GetPlayerVisualDistance", Gmae_Player_GetPlayerVisualDistance);
+    //获取相机高度
+    lua_register(L, "Gmae_Player_GetPlayerVisualHeight", Gmae_Player_GetPlayerVisualHeight);
+    //设置相机距离
+    lua_register(L, "Gmae_Player_SetPlayerVisualDistance", Gmae_Player_SetPlayerVisualDistance);
+    //设置相机高度
+    lua_register(L, "Gmae_Player_SetPlayerVisualHeight", Gmae_Player_SetPlayerVisualHeight);
     //获取玩家动作id
     lua_register(L, "Gmae_Player_GetPlayerActionId", Gmae_Player_GetPlayerActionId);
     //获取面向角度
@@ -925,13 +962,6 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Lua_Variable_DestroyGlobalVariable", Lua_Variable_DestroyGlobalVariable);
 #pragma endregion
 
-    int error = luaL_dofile(L, LuaFile.c_str());
-    if (error)
-    {
-        //LOG(ERR) << "dofile error";
-        return -1;
-    }
-    Nowlua = LuaFile;
     lua_getglobal(L, "run");
     lua_pcall(L, 0, 0, 0);
     lua_close(L);

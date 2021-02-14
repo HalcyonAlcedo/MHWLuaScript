@@ -7,7 +7,7 @@ using namespace loader;
 namespace Execution {
 	void Main() {
 		//¼ì²éCD
-		if (!Base::Chronoscope::CheckChronoscope("BlinkCD")) {
+		if (Base::Chronoscope::CheckChronoscope("BlinkCD")) {
 			//Ãé×¼×´Ì¬ÏÂË«»÷W
 			if (Base::Keyboard::CheckKey(87, 2) and Base::PlayerData::AimingState and Base::PlayerData::Weapons::WeaponType != 9) {
 				Component::MovePlayerToPoint(

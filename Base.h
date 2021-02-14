@@ -34,7 +34,7 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.0.12";
+		string ModVersion = "v1.0.13";
 		string Version = "421470";
 	}
 #pragma endregion
@@ -365,7 +365,6 @@ namespace Base {
 				Vector3 t_SetVisualCoordinate;
 				void* t_SetVisualBind = nullptr;
 				bool t_SetVisual = false;
-				bool t_LockVisual = false;
 			}
 
 			//玩家坐标
@@ -514,27 +513,16 @@ namespace Base {
 		}
 		//相机绑定
 		static void SetVisual(void* bind, float Duration = 0) {
-			if (Duration != 0)
-				Chronoscope::AddChronoscope(Duration, "SetVisual", true);
-			else
-				Coordinate::TempData::t_LockVisual = true;
 			Coordinate::TempData::t_SetVisualBind = bind;
 			Coordinate::TempData::t_SetVisual = true;
 		}
 		//解除相机设置
 		static void UnbindVisual() {
-			Coordinate::TempData::t_LockVisual = false;
 			Coordinate::TempData::t_SetVisual = false;
 			Coordinate::TempData::t_SetVisualBind = nullptr;
 		}
 		//相机设置(X坐标,Y坐标,Z坐标,持续时间0=长期)
 		static void SetVisual(float X, float Y, float Z, float Duration = 0) {
-			if (Duration != 0) {
-				UnbindVisual();
-				Chronoscope::AddChronoscope(Duration, "SetVisual", true);
-			}
-			else
-				Coordinate::TempData::t_LockVisual = true;
 			Coordinate::TempData::t_SetVisualCoordinate.x = X;
 			Coordinate::TempData::t_SetVisualCoordinate.y = Y;
 			Coordinate::TempData::t_SetVisualCoordinate.z = Z;
@@ -729,16 +717,6 @@ namespace Base {
 			else
 				return false;
 		}
-		//清理缓存
-		/*
-		static void ClearKey() {
-			for (auto [Environmental, EData] : World::EnvironmentalData::Environmentals) {
-				if (EData.Plot == nullptr) {
-					World::EnvironmentalData::Environmentals.erase(Environmental);
-				}
-			}
-		}
-		*/
 		//按键检查
 		static bool CheckKey(int vk, int ComboClick = 1,float Duration = 0.3) {
 			if (!CheckWindows())
@@ -755,7 +733,7 @@ namespace Base {
 					//计时器检查
 					if(TempData::t_KeyCount[vk] == 1)
 						Chronoscope::AddChronoscope(Duration, "KEY_" + to_string(vk), true);
-					if (!Chronoscope::CheckChronoscope("KEY_" + to_string(vk))) {
+					if (Chronoscope::CheckChronoscope("KEY_" + to_string(vk))) {
 						TempData::t_KeyCount[vk] = 0;
 					}
 					TempData::t_KeyCount[vk]++;
@@ -1071,7 +1049,6 @@ namespace Base {
 				//清除相机数据
 				PlayerData::Coordinate::TempData::t_SetVisualBind = nullptr;
 				PlayerData::Coordinate::TempData::t_SetVisual = false;
-				PlayerData::Coordinate::TempData::t_LockVisual = false;
 				//清理委托
 				Commission::CleanCommission();
 				//清理怪物筛选器
@@ -1085,6 +1062,9 @@ namespace Base {
 				//更新地址信息
 				void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 				BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
+				//清除按键数据
+				Keyboard::TempData::t_KeyCount.clear();
+				Keyboard::TempData::t_KeyDown.clear();
 			}
 			//更新玩家数据
 			PlayerData::Updata();
@@ -1114,12 +1094,6 @@ namespace Base {
 			//更新计时器时间
 			Chronoscope::NowTime = *offsetPtr<float>(BasicGameData::MapPlot, 0xC24);
 
-			//检查相机计时器
-			if (!Chronoscope::CheckChronoscope("SetVisual")) {
-				if(!PlayerData::Coordinate::TempData::t_LockVisual)
-					PlayerData::Coordinate::TempData::t_SetVisual = false;
-				Chronoscope::DelChronoscope("SetVisual");
-			}
 			//清除相机绑定数据
 			if (!PlayerData::Coordinate::TempData::t_SetVisual) {
 				PlayerData::Coordinate::TempData::t_SetVisualBind = nullptr;
