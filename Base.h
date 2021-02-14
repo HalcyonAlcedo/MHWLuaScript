@@ -34,7 +34,7 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.0.11";
+		string ModVersion = "v1.0.12";
 		string Version = "421470";
 	}
 #pragma endregion
@@ -44,6 +44,7 @@ namespace Base {
 	namespace BasicGameData {
 		void* PlayerPlot = nullptr;
 		void* PlayerInfoPlot = nullptr;
+		void* PlayerDataPlot = nullptr;
 		void* MapPlot = nullptr;
 		void* GameTimePlot = nullptr;
 	}
@@ -605,8 +606,6 @@ namespace Base {
 		}
 		//玩家数据更新
 		static void Updata() {
-			Angle = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x198) * 180.0;
-			Radian = 4 * atan(1.0) / 180 * PlayerData::Angle;
 			Coordinate::Entity = Vector3(
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x160),
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x164),
@@ -657,20 +656,11 @@ namespace Base {
 				AimingState = *offsetPtr<bool>(AimingStatePlot, 0xC28);
 			else
 				AimingState = false;
-
-			void* AttackMonsterPlot = *(undefined**)MH::Player::AttackMonster;
-			void* AttackMonsterOffset1 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterPlot, 0x128);
-			void* AttackMonsterOffset2 = nullptr;
-			if(AttackMonsterOffset1 != nullptr)
-				AttackMonsterOffset2 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset1, 0x70);
-			void* AttackMonsterOffset3 = nullptr;
-			if (AttackMonsterOffset2 != nullptr)
-				AttackMonsterOffset3 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset2, 0x400);
-			void* AttackMonsterOffset4 = nullptr;
-			if (AttackMonsterOffset3 != nullptr)
-				AttackMonsterOffset4 = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset3, 0xD0);
-			if (AttackMonsterOffset4 != nullptr)
-				AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())AttackMonsterOffset4, 0x46F8);
+			if (BasicGameData::PlayerDataPlot != nullptr) {
+				AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerDataPlot, 0x46F8);
+				Angle = *offsetPtr<float>(BasicGameData::PlayerDataPlot, 0x4628) * 180.0;
+				Radian = 4 * atan(1.0) / 180 * PlayerData::Angle;
+			}
 			void* ActionPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
 			if (ActionPlot != nullptr) {
 				ActionId = *offsetPtr<int>(ActionPlot, 0xE9C4);
@@ -888,6 +878,16 @@ namespace Base {
 			void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 			void* PlayerInfoPlot = *(undefined**)MH::Player::BasePtr;
 			BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
+			void* PlayerDataPlot = *(undefined**)MH::Player::PlayerDataPlot;
+			void* PlayerDataOffset1 = *offsetPtr<undefined**>((undefined(*)())PlayerDataPlot, 0x128);
+			void* PlayerDataOffset2 = nullptr;
+			if (PlayerDataOffset1 != nullptr)
+				PlayerDataOffset2 = *offsetPtr<undefined**>((undefined(*)())PlayerDataOffset1, 0x70);
+			void* PlayerDataOffset3 = nullptr;
+			if (PlayerDataOffset2 != nullptr)
+				PlayerDataOffset3 = *offsetPtr<undefined**>((undefined(*)())PlayerDataOffset2, 0x400);
+			if (PlayerDataOffset3 != nullptr)
+				BasicGameData::PlayerDataPlot = *offsetPtr<undefined**>((undefined(*)())PlayerDataOffset3, 0xD0);
 			BasicGameData::PlayerInfoPlot = *offsetPtr<undefined**>((undefined(*)())PlayerInfoPlot, 0xA8);
 			BasicGameData::GameTimePlot = (undefined(*)())MH::World::GmaeClock;
 			BasicGameData::MapPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7D20);
@@ -1041,6 +1041,8 @@ namespace Base {
 					LOG(ERR) << "The following address failed to complete the initialization. We will try again later. If the address is still not initialized successfully, please contact the mod author for solution.";
 					if (BasicGameData::PlayerPlot == nullptr)
 						LOG(ERR) << " |  PlayerPlot";
+					if (BasicGameData::PlayerDataPlot == nullptr)
+						LOG(ERR) << " |  PlayerDataPlot";
 					if (BasicGameData::MapPlot == nullptr)
 						LOG(ERR) << " |  MapPlot";
 					if (BasicGameData::GameTimePlot == nullptr)
