@@ -34,7 +34,7 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.0.13";
+		string ModVersion = "v1.1.0";
 		string Version = "421470";
 	}
 #pragma endregion
@@ -47,6 +47,7 @@ namespace Base {
 		void* PlayerDataPlot = nullptr;
 		void* MapPlot = nullptr;
 		void* GameTimePlot = nullptr;
+		void* XboxPadPlot = nullptr;
 	}
 #pragma endregion
 	//世界信息
@@ -846,6 +847,156 @@ namespace Base {
 		}
 	}
 #pragma endregion
+	//Xbox手柄信息
+#pragma region XboxPad
+	namespace XboxPad {
+		namespace TempData {
+			map<int, bool> t_KeyDown;
+			map<int, int> t_KeyCount;
+		}
+		namespace KeyState {
+			bool LJoystickUp = false;
+			bool LJoystickRight = false;
+			bool LJoystickDown = false;
+			bool LJoystickLeft = false;
+			bool LJoystickPress = false;
+			bool RJoystickUp = false;
+			bool RJoystickRight = false;
+			bool RJoystickDown = false;
+			bool RJoystickLeft = false;
+			bool RJoystickPress = false;
+			bool LT = false;
+			bool RT = false;
+			bool LB = false;
+			bool RB = false;
+			bool Up = false;
+			bool Right = false;
+			bool Down = false;
+			bool Left = false;
+			bool Y = false;
+			bool B = false;
+			bool A = false;
+			bool X = false;
+			bool Window = false;
+			bool Menu = false;
+		}
+		static bool KeyIdHandle(int Id) {
+			switch (Id)
+			{
+			case 0:
+				return KeyState::LJoystickUp;
+			case 1:
+				return KeyState::LJoystickRight;
+			case 2:
+				return KeyState::LJoystickDown;
+			case 3:
+				return KeyState::LJoystickLeft;
+			case 4:
+				return KeyState::LJoystickPress;
+			case 5:
+				return KeyState::RJoystickUp;
+			case 6:
+				return KeyState::RJoystickRight;
+			case 7:
+				return KeyState::RJoystickDown;
+			case 8:
+				return KeyState::RJoystickLeft;
+			case 9:
+				return KeyState::RJoystickPress;
+			case 10:
+				return KeyState::LT;
+			case 11:
+				return KeyState::RT;
+			case 12:
+				return KeyState::LB;
+			case 13:
+				return KeyState::RB;
+			case 14:
+				return KeyState::Up;
+			case 15:
+				return KeyState::Right;
+			case 16:
+				return KeyState::Down;
+			case 17:
+				return KeyState::Left;
+			case 18:
+				return KeyState::Y;
+			case 19:
+				return KeyState::B;
+			case 20:
+				return KeyState::A;
+			case 21:
+				return KeyState::X;
+			case 22:
+				return KeyState::Window;
+			case 23:
+				return KeyState::Menu;
+			default:
+				return false;
+			}
+		}
+		//按键检查
+		static bool CheckKey(int Key, int ComboClick = 1, float Duration = 0.3) {
+			//建立按键档案
+			if (TempData::t_KeyDown.find(Key) == TempData::t_KeyDown.end()) {
+				TempData::t_KeyDown[Key] = false;
+			}
+			//按键检查
+			if (KeyIdHandle(Key) and !TempData::t_KeyDown[Key]) {
+				TempData::t_KeyDown[Key] = true;
+				//连击检查
+				if (TempData::t_KeyCount.find(Key) != TempData::t_KeyCount.end()) {
+					//计时器检查
+					if (TempData::t_KeyCount[Key] == 1)
+						Chronoscope::AddChronoscope(Duration, "XKEY_" + to_string(Key), true);
+					if (Chronoscope::CheckChronoscope("XKEY_" + to_string(Key))) {
+						TempData::t_KeyCount[Key] = 0;
+					}
+					TempData::t_KeyCount[Key]++;
+				}
+				else {
+					Chronoscope::AddChronoscope(Duration, "XKEY_" + to_string(Key), true);
+					TempData::t_KeyCount[Key] = 1;
+				}
+
+				//检查结果
+				if (TempData::t_KeyCount[Key] == ComboClick)
+					return true;
+				else
+					return false;
+			}
+			else
+				TempData::t_KeyDown[Key] = false;
+			return false;
+		}
+		static void Updata() {
+			KeyState::LJoystickUp = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC44) > 0.0;
+			KeyState::LJoystickRight = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC40) > 0.0;
+			KeyState::LJoystickDown = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC44) < 0.0;
+			KeyState::LJoystickLeft = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC40) < 0.0;
+			KeyState::RJoystickUp = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC48) > 0.0;
+			KeyState::RJoystickRight = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC4C) > 0.0;
+			KeyState::RJoystickDown = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC48) < 0.0;
+			KeyState::RJoystickLeft = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC4C) < 0.0;
+			KeyState::LJoystickPress = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC64) != 0.0;
+			KeyState::RJoystickPress = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC68) != 0.0;
+			KeyState::LT = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC58) != 0.0;
+			KeyState::RT = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC5C) != 0.0;
+			KeyState::LB = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC80) != 0.0;
+			KeyState::RB = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC84) != 0.0;
+			KeyState::Up = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC70) != 0.0;
+			KeyState::Right = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC74) != 0.0;
+			KeyState::Down = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC78) != 0.0;
+			KeyState::Left = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC7C) != 0.0;
+			KeyState::Y = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC90) != 0.0;
+			KeyState::B = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC94) != 0.0;
+			KeyState::A = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC98) != 0.0;
+			KeyState::X = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC9C) != 0.0;
+			KeyState::Window = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC60) != 0.0;
+			KeyState::Menu = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC6C) != 0.0;
+		}
+	}
+#pragma endregion
 
 	//初始化
 	static bool Init() {
@@ -853,6 +1004,7 @@ namespace Base {
 			return true;
 		else
 		{
+			BasicGameData::XboxPadPlot = *(undefined**)MH::GamePad::XboxPadPtr;
 			void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 			void* PlayerInfoPlot = *(undefined**)MH::Player::BasePtr;
 			BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
@@ -1025,7 +1177,8 @@ namespace Base {
 						LOG(ERR) << " |  MapPlot";
 					if (BasicGameData::GameTimePlot == nullptr)
 						LOG(ERR) << " |  GameTimePlot";
-
+					if (BasicGameData::XboxPadPlot == nullptr)
+						LOG(ERR) << " |  XboxPadPlot";
 					ModConfig::InitErrCount++;
 					if (ModConfig::InitErrCount > 10)
 						ModConfig::InitErrInfo = false;
@@ -1065,6 +1218,9 @@ namespace Base {
 				//清除按键数据
 				Keyboard::TempData::t_KeyCount.clear();
 				Keyboard::TempData::t_KeyDown.clear();
+				//清除Xbox手柄数据
+				XboxPad::TempData::t_KeyCount.clear();
+				XboxPad::TempData::t_KeyDown.clear();
 			}
 			//更新玩家数据
 			PlayerData::Updata();
@@ -1106,6 +1262,8 @@ namespace Base {
 			}
 			//运行委托
 			Commission::Run();
+			//更新Xbox手柄信息
+			XboxPad::Updata();
 		}
 	}
 }

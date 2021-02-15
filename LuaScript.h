@@ -579,6 +579,22 @@ static int System_Console_Error(lua_State* pL) {
     LOG(ERR) << Base::ModConfig::ModName << " LUA ERR:"<< message;
     return 0;
 }
+static int System_XboxPad_CheckKey(lua_State* pL) {
+    int key = (int)lua_tointeger(pL, -1);
+    lua_pushboolean(pL, Base::XboxPad::CheckKey(key));
+    return 1;
+}
+static int System_XboxPad_CheckDoubleKey(lua_State* pL) {
+    int key = (int)lua_tointeger(pL, -1);
+    lua_pushboolean(pL, Base::XboxPad::CheckKey(key, 2));
+    return 1;
+}
+static int System_XboxPad_CheckKeyIsPressed(lua_State* pL) {
+    int key = (int)lua_tointeger(pL, -1);
+    bool ret = Base::XboxPad::KeyIdHandle(key);
+    lua_pushboolean(pL, ret);
+    return 1;
+}
 #pragma endregion
 #pragma region LuaFun
 //存入整数变量
@@ -914,6 +930,12 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_Keyboard_CheckDoubleKey", System_Keyboard_CheckDoubleKey);
     //检查按键是否处于按下状态
     lua_register(L, "System_Keyboard_CheckKeyIsPressed", System_Keyboard_CheckKeyIsPressed);
+    //检查Xbox按键
+    lua_register(L, "System_XboxPad_CheckKey", System_XboxPad_CheckKey);
+    //检查Xbox按键双击
+    lua_register(L, "System_XboxPad_CheckDoubleKey", System_XboxPad_CheckDoubleKey);
+    //检查Xbox按键是否处于按下状态
+    lua_register(L, "System_XboxPad_CheckKeyIsPressed", System_XboxPad_CheckKeyIsPressed);
     //添加计时器
     lua_register(L, "System_Chronoscope_AddChronoscope", System_Chronoscope_AddChronoscope);
     //检查计时器

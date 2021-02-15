@@ -70,7 +70,10 @@
 |-----------------------------------|---------------------------------------------------------------|-------------------------------------|
 |System_Keyboard_CheckKey			|`System_Keyboard_CheckKey(87)`                                 |检查按键是否按下，按键为VK码           |
 |System_Keyboard_CheckDoubleKey		|`System_Keyboard_CheckDoubleKey(87)`                           |检查是否双击按键，按键为VK码           |
-|System_Keyboard_CheckKeyIsPressed	|`System_Keyboard_CheckKeyIsPressed(87)`                        |检查按键是否处于按下状态，按键为VK码           |
+|System_Keyboard_CheckKeyIsPressed	|`System_Keyboard_CheckKeyIsPressed(87)`                        |检查按键是否处于按下状态，按键为VK码    |
+|System_XboxPad_CheckKey			|`System_XboxPad_CheckKey(20)`                                  |检查Xbox手柄按键是否按下，按键详见对照表           |
+|System_XboxPad_CheckDoubleKey		|`System_XboxPad_CheckDoubleKey(20)`                            |检查是否双击Xbox手柄按键，按键详见对照表           |
+|System_XboxPad_CheckKeyIsPressed	|`System_XboxPad_CheckKeyIsPressed(20)`                         |检查Xbox手柄按键是否处于按下状态，按键详见对照表    |
 |System_Chronoscope_AddChronoscope	|`System_Chronoscope_AddChronoscope(1.0,'ChronoscopeName')`     |创建计时器，需设定时间和计时器名称      |
 |System_Chronoscope_CheckChronoscope|`System_Chronoscope_CheckChronoscope('ChronoscopeName')`       |检查指定名称的计时器是否到期,如果到期则删除计时器 |
 |System_Chronoscope_CheckPresenceChronoscope|`System_Chronoscope_CheckPresenceChronoscope('ChronoscopeName')`|检查指定名称的计时器是存在 |
@@ -283,3 +286,31 @@
 |Cat Rest							|猫的休息术|
 |Snowman Head						|雪人头|
 |Snowman Head Duration				|雪人头持续时间|
+
+## Xbox手柄按键对应Id表
+|Id     |按键       |
+|-------|-----------|
+|0      |左摇杆上推  |
+|1      |左摇杆右推  |
+|2      |左摇杆下推  |
+|3      |左摇杆左推  |
+|4      |左摇杆按下  |
+|5      |右摇杆上推  |
+|6      |右摇杆右推  |
+|7      |右摇杆下推  |
+|8      |右摇杆左推  |
+|9      |右摇杆按下  |
+|10     |LT         |
+|11     |RT         |
+|12     |LB         |
+|13     |RB         |
+|14     |上         |
+|15     |右         |
+|16     |下         |
+|17     |左         |
+|18     |Y          |
+|19     |B          |
+|20     |A          |
+|21     |X          |
+|22     |窗口       |
+|23     |菜单       |
