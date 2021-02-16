@@ -25,6 +25,8 @@
     <RootNamespace>Template</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>LuaScript</ProjectName>
+    <VcpkgTriplet Condition="'$(Platform)'=='Win32'">x86-windows-static</VcpkgTriplet>
+    <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-static</VcpkgTriplet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -158,6 +160,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="HttpClient.cpp" />
+    <ClCompile Include="HttpClient.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="deps\loader.lib" />
@@ -175,12 +179,13 @@
     <ClInclude Include="Base.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Execution.h" />
+    <ClInclude Include="Http.h" />
+    <ClInclude Include="HttpRequest.h" />
     <ClInclude Include="LuaData.h" />
     <ClInclude Include="LuaScript.h" />
     <ClInclude Include="MonsterBuff.h" />
     <ClInclude Include="PlayerBuff.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

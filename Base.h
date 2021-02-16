@@ -5,6 +5,7 @@
 #include <map>
 #include "MonsterBuff.h"
 #include "PlayerBuff.h"
+#include "Http.h"
 
 using namespace std;
 using namespace loader;
@@ -34,7 +35,7 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.1.0";
+		string ModVersion = "v1.1.1";
 		string Version = "421470";
 	}
 #pragma endregion

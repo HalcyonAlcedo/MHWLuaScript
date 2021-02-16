@@ -17,6 +17,12 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>源代码</Filter>
     </ClCompile>
+    <ClCompile Include="HttpClient.h">
+      <Filter>源代码</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpClient.cpp">
+      <Filter>源代码</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="deps\minhook\libMinHook.x64.lib">
@@ -43,6 +49,12 @@
     </ClInclude>
     <ClInclude Include="PlayerBuff.h">
       <Filter>核心数据</Filter>
+    </ClInclude>
+    <ClInclude Include="Http.h">
+      <Filter>核心数据</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpRequest.h">
+      <Filter>源代码</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
