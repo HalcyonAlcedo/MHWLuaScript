@@ -19,9 +19,3 @@ namespace HttpServer {
 		return retString;
     }
 }
-
-
-
-
-
-

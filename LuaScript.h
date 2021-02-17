@@ -736,6 +736,12 @@ static int Lua_Math_Rander(lua_State* pL) {
     lua_pushnumber(pL, Base::Calculation::myRander(min, max));
     return 1;
 }
+//获取随机数
+static int Lua_Http_GetHttpData(lua_State* pL) {
+    string httpUrl = (string)lua_tostring(pL, -1);
+    lua_pushstring(pL, HttpServer::GetHttpData(httpUrl).c_str());
+    return 1;
+}
 
 #pragma endregion
 //==============================================
@@ -982,6 +988,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Lua_Variable_ReadGlobalStringVariable", Lua_Variable_ReadGlobalStringVariable);
     //销毁全局变量
     lua_register(L, "Lua_Variable_DestroyGlobalVariable", Lua_Variable_DestroyGlobalVariable);
+    //获取网络数据
+    lua_register(L, "Lua_Http_GetHttpData", Lua_Http_GetHttpData);
 #pragma endregion
 
     lua_getglobal(L, "run");
