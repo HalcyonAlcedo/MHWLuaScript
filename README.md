@@ -64,6 +64,7 @@
 |Lua_Variable_ReadGlobalStringVariable	|`local Variable = Lua_Variable_ReadGlobalStringVariable('VariableName')`|读取全局字符串变量           |
 |Lua_Variable_DestroyGlobalVariable		|`Lua_Variable_DestroyGlobalVariable('VariableName')`                 |销毁全局变量                   |
 |Lua_Math_Rander					|`Lua_Math_Rander(-10,10)`                                      |获取随机数                             |
+|Lua_Http_GetHttpData					|`local HttpData = Lua_Http_GetHttpData('http://luascript.alcedo.top/')`|获取指定网址的数据                      |
 
 ### 系统
 |                                   |示例                                                           |说明                     |
