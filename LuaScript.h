@@ -4,6 +4,7 @@
 #include "LuaData.h"
 lua_State* L;
 static string Nowlua;
+static string Sublua;
 #pragma region GameFun
 static int Gmae_Player_GetPlayerCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Entity.x);
@@ -599,7 +600,7 @@ static int System_XboxPad_CheckKeyIsPressed(lua_State* pL) {
 #pragma region LuaFun
 //存入整数变量
 static int Lua_Variable_SaveIntVariable(lua_State* pL) {
-    string variableName = Nowlua + (string)lua_tostring(pL, 1);
+    string variableName = Sublua + Nowlua + (string)lua_tostring(pL, 1);
     int variableValue = (int)lua_tointeger(pL, 2);
     LuaData::IntVariable[variableName] = variableValue;
     return 0;
@@ -613,7 +614,7 @@ static int Lua_Variable_SaveGlobalIntVariable(lua_State* pL) {
 }
 //存入浮点数变量
 static int Lua_Variable_SaveFloatVariable(lua_State* pL) {
-    string variableName = Nowlua + (string)lua_tostring(pL, 1);
+    string variableName = Sublua + Nowlua + (string)lua_tostring(pL, 1);
     float variableValue = (float)lua_tonumber(pL, 2);
     LuaData::FloatVariable[variableName] = variableValue;
     return 0;
@@ -627,7 +628,7 @@ static int Lua_Variable_SaveGlobalFloatVariable(lua_State* pL) {
 }
 //存入字符串变量
 static int Lua_Variable_SaveStringVariable(lua_State* pL) {
-    string variableName = Nowlua + (string)lua_tostring(pL, 1);
+    string variableName = Sublua + Nowlua + (string)lua_tostring(pL, 1);
     string variableValue = (string)lua_tostring(pL, 2);
     LuaData::StringVariable[variableName] = variableValue;
     return 0;
@@ -641,7 +642,7 @@ static int Lua_Variable_SaveGlobalStringVariable(lua_State* pL) {
 }
 //读取整数变量
 static int Lua_Variable_ReadIntVariable(lua_State* pL) {
-    string variableName = Nowlua + (string)lua_tostring(pL, -1);
+    string variableName = Sublua + Nowlua + (string)lua_tostring(pL, -1);
     int ret;
     if (LuaData::IntVariable.find(variableName) == LuaData::IntVariable.end())
         ret = 0;
@@ -663,7 +664,7 @@ static int Lua_Variable_ReadGlobalIntVariable(lua_State* pL) {
 }
 //读取浮点数变量
 static int Lua_Variable_ReadFloatVariable(lua_State* pL) {
-    string variableName = Nowlua + (string)lua_tostring(pL, -1);
+    string variableName = Sublua + Nowlua + (string)lua_tostring(pL, -1);
     float ret;
     if (LuaData::FloatVariable.find(variableName) == LuaData::FloatVariable.end())
         ret = 0;
@@ -685,7 +686,7 @@ static int Lua_Variable_ReadGlobalFloatVariable(lua_State* pL) {
 }
 //读取字符串变量
 static int Lua_Variable_ReadStringVariable(lua_State* pL) {
-    string variableName = Nowlua + (string)lua_tostring(pL, -1);
+    string variableName = Sublua + Nowlua + (string)lua_tostring(pL, -1);
     string ret;
     if (LuaData::StringVariable.find(variableName) == LuaData::StringVariable.end())
         ret = "";
@@ -708,7 +709,7 @@ static int Lua_Variable_ReadGlobalStringVariable(lua_State* pL) {
 //销毁变量
 static int Lua_Variable_DestroyVariable(lua_State* pL) {
     string variableTpye = (string)lua_tostring(pL, 1);
-    string variableName = Nowlua + (string)lua_tostring(pL, 2);
+    string variableName = Sublua + Nowlua + (string)lua_tostring(pL, 2);
     if (variableTpye == "Int")
         LuaData::IntVariable.erase(variableName);
     else if (variableTpye == "Float")
@@ -727,6 +728,12 @@ static int Lua_Variable_DestroyGlobalVariable(lua_State* pL) {
         LuaData::FloatVariable.erase(variableName);
     else if (variableTpye == "String")
         LuaData::StringVariable.erase(variableName);
+    return 0;
+}
+//设置子脚本变量前缀
+static int Lua_Variable_SetSubScriptVariablePrefix(lua_State* pL) {
+    string variablePrefix = (string)lua_tostring(pL, -1);
+    Sublua = variablePrefix;
     return 0;
 }
 //获取随机数
@@ -972,6 +979,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Lua_Variable_ReadStringVariable", Lua_Variable_ReadStringVariable);
     //销毁变量
     lua_register(L, "Lua_Variable_DestroyVariable", Lua_Variable_DestroyVariable);
+    //设置子脚本变量名
+    lua_register(L, "Lua_Variable_SetSubScriptVariablePrefix", Lua_Variable_SetSubScriptVariablePrefix);
     //获取随机数
     lua_register(L, "Lua_Math_Rander", Lua_Math_Rander);
     //存入全局整数变量
@@ -995,6 +1004,6 @@ int Lua_Main(string LuaFile)
     lua_getglobal(L, "run");
     lua_pcall(L, 0, 0, 0);
     lua_close(L);
-
+    Sublua = "";
     return 1;
 }

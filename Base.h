@@ -1,11 +1,9 @@
 #pragma once
-#include "ghidra_export.h"
-#include "util.h"
-#include "loader.h"
 #include <map>
 #include "MonsterBuff.h"
 #include "PlayerBuff.h"
 #include "Http.h"
+#include "AobAddress.h"
 
 using namespace std;
 using namespace loader;
@@ -541,7 +539,7 @@ namespace Base {
 		//最后一次击中的怪物地址
 		void* AttackMonsterPlot = nullptr;
 		//动作id
-		float ActionId = 0;
+		int ActionId = 0;
 		//派生信息
 		FsmData Fsm = FsmData();
 		//玩家名称

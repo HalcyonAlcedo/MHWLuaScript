@@ -56,6 +56,7 @@
 |Lua_Variable_ReadFloatVariable		|`local Variable = Lua_Variable_ReadFloatVariable('VariableName')`|读取浮点数变量                      |
 |Lua_Variable_ReadStringVariable	|`local Variable = Lua_Variable_ReadStringVariable('VariableName')`|读取字符串变量                     |
 |Lua_Variable_DestroyVariable		|`Lua_Variable_DestroyVariable('VariableName')`                 |销毁变量                             |
+|Lua_Variable_SetSubScriptVariablePrefix|`Lua_Variable_SetSubScriptVariablePrefix('SubScriptName')`  |设置子脚本变量前缀                             |
 |Lua_Variable_SaveGlobalIntVariable     |`Lua_Variable_SaveGlobalIntVariable('VariableName',10)`              |存入全局整数变量              |
 |Lua_Variable_SaveGlobalFloatVariable	|`Lua_Variable_SaveGlobalFloatVariable('VariableName',1.0)`            |存入全局浮点数变量         |
 |Lua_Variable_SaveGlobalStringVariable	|`Lua_Variable_SaveGlobalStringVariable('VariableName','VariableValue')`|存入全局字符串变量            |
