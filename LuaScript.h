@@ -400,6 +400,65 @@ static int Gmae_Player_CreateBowgunProjectiles(lua_State* pL) {
     ));
     return 1;
 }
+static int Game_Monster_GetAllMonsterCoordinates(lua_State* pL)
+{
+    lua_newtable(pL);//创建一个表格，放在栈顶
+    for (auto [id, monsterData] : Component::GetAllMonsterCoordinates()) {
+        lua_pushinteger(pL, id);//压入编号
+        lua_newtable(pL);//压入编号信息表
+        lua_pushstring(pL, "X");//X坐标
+        lua_pushnumber(pL, monsterData.CoordinatesX);//value
+        lua_settable(pL, -3);//弹出X坐标
+        lua_pushstring(pL, "Y");//Y坐标
+        lua_pushnumber(pL, monsterData.CoordinatesY);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Z");//Z坐标
+        lua_pushnumber(pL, monsterData.CoordinatesZ);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Id");//怪物Id
+        lua_pushinteger(pL, monsterData.Id);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "SubId");//怪物SubId
+        lua_pushinteger(pL, monsterData.SubId);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Ptr");//怪物指针
+        ostringstream ptr;
+        ptr << monsterData.Plot;
+        string ptrstr = ptr.str();
+        lua_pushstring(pL, ptrstr.c_str());
+        lua_settable(pL, -3);
+        lua_settable(pL, -3);//弹出到顶层
+    }
+    return 1;
+}
+static int Game_Monster_GetAllMonsterHealth(lua_State* pL)
+{
+    lua_newtable(pL);
+    for (auto [id, monsterData] : Component::GetAllMonsterHealth()) {
+        lua_pushinteger(pL, id);
+        lua_newtable(pL);
+        lua_pushstring(pL, "Health");
+        lua_pushnumber(pL, monsterData.Health);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "MaxHealth");
+        lua_pushnumber(pL, monsterData.MaxHealth);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Id");
+        lua_pushinteger(pL, monsterData.Id);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "SubId");
+        lua_pushinteger(pL, monsterData.SubId);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Ptr");//怪物指针
+        ostringstream ptr;
+        ptr << monsterData.Plot;
+        string ptrstr = ptr.str();
+        lua_pushstring(pL, ptrstr.c_str());
+        lua_settable(pL, -3);
+        lua_settable(pL, -3);
+    }
+    return 1;
+}
 static int Game_Monster_GetAllMonsterCoordinatesInRange(lua_State* pL)
 {
     float min = (float)lua_tonumber(pL, 1);
@@ -423,7 +482,43 @@ static int Game_Monster_GetAllMonsterCoordinatesInRange(lua_State* pL)
         lua_pushstring(pL, "SubId");//怪物SubId
         lua_pushinteger(pL, monsterData.SubId);
         lua_settable(pL, -3);
+        lua_pushstring(pL, "Ptr");//怪物指针
+        ostringstream ptr;
+        ptr << monsterData.Plot;
+        string ptrstr = ptr.str();
+        lua_pushstring(pL, ptrstr.c_str());
+        lua_settable(pL, -3);
         lua_settable(pL, -3);//弹出到顶层
+    }
+    return 1;
+}
+static int Game_Monster_GetAllMonsterHealthInRange(lua_State* pL)
+{
+    float min = (float)lua_tonumber(pL, 1);
+    float max = (float)lua_tonumber(pL, 2);
+    lua_newtable(pL);
+    for (auto [id, monsterData] : Component::GetAllMonsterHealthRelativeToPlayers(min, max)) {
+        lua_pushinteger(pL, id);
+        lua_newtable(pL);
+        lua_pushstring(pL, "Health");
+        lua_pushnumber(pL, monsterData.Health);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "MaxHealth");
+        lua_pushnumber(pL, monsterData.MaxHealth);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Id");
+        lua_pushinteger(pL, monsterData.Id);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "SubId");
+        lua_pushinteger(pL, monsterData.SubId);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Ptr");//怪物指针
+        ostringstream ptr;
+        ptr << monsterData.Plot;
+        string ptrstr = ptr.str();
+        lua_pushstring(pL, ptrstr.c_str());
+        lua_settable(pL, -3);
+        lua_settable(pL, -3);
     }
     return 1;
 }
@@ -435,7 +530,7 @@ static int Game_Monster_GetAllMonsterCoordinatesInTargetPointRange(lua_State* pL
     float min = (float)lua_tonumber(pL, 4);
     float max = (float)lua_tonumber(pL, 5);
     lua_newtable(pL);//创建一个表格，放在栈顶
-    for (auto [id, monsterData] : Component::GetAllMonsterCoordinates(Base::Vector3(x,y,z),min, max)) {
+    for (auto [id, monsterData] : Component::GetAllMonsterCoordinatesRelativeToTarget(Base::Vector3(x,y,z),min, max)) {
         lua_pushinteger(pL, id);//压入编号
         lua_newtable(pL);//压入编号信息表
         lua_pushstring(pL, "X");//X坐标
@@ -453,7 +548,46 @@ static int Game_Monster_GetAllMonsterCoordinatesInTargetPointRange(lua_State* pL
         lua_pushstring(pL, "SubId");//怪物SubId
         lua_pushinteger(pL, monsterData.SubId);
         lua_settable(pL, -3);
+        lua_pushstring(pL, "Ptr");//怪物指针
+        ostringstream ptr;
+        ptr << monsterData.Plot;
+        string ptrstr = ptr.str();
+        lua_pushstring(pL, ptrstr.c_str());
+        lua_settable(pL, -3);
         lua_settable(pL, -3);//弹出到顶层
+    }
+    return 1;
+}
+static int Game_Monster_GetAllMonsterHealthInTargetPointRange(lua_State* pL)
+{
+    float x = (float)lua_tonumber(pL, 1);
+    float y = (float)lua_tonumber(pL, 2);
+    float z = (float)lua_tonumber(pL, 3);
+    float min = (float)lua_tonumber(pL, 4);
+    float max = (float)lua_tonumber(pL, 5);
+    lua_newtable(pL);
+    for (auto [id, monsterData] : Component::GetAllMonsterHealthRelativeToTarget(Base::Vector3(x, y, z), min, max)) {
+        lua_pushinteger(pL, id);
+        lua_newtable(pL);
+        lua_pushstring(pL, "Health");
+        lua_pushnumber(pL, monsterData.Health);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "MaxHealth");
+        lua_pushnumber(pL, monsterData.MaxHealth);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Id");
+        lua_pushinteger(pL, monsterData.Id);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "SubId");
+        lua_pushinteger(pL, monsterData.SubId);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Ptr");//怪物指针
+        ostringstream ptr;
+        ptr << monsterData.Plot;
+        string ptrstr = ptr.str();
+        lua_pushstring(pL, ptrstr.c_str());
+        lua_settable(pL, -3);
+        lua_settable(pL, -3);
     }
     return 1;
 }
@@ -743,13 +877,22 @@ static int Lua_Math_Rander(lua_State* pL) {
     lua_pushnumber(pL, Base::Calculation::myRander(min, max));
     return 1;
 }
-//获取随机数
+//获取网络数据
 static int Lua_Http_GetHttpData(lua_State* pL) {
     string httpUrl = (string)lua_tostring(pL, -1);
-    lua_pushstring(pL, HttpServer::GetHttpData(httpUrl).c_str());
+    lua_pushstring(pL, NetworkServer::GetHttpData(httpUrl).c_str());
     return 1;
 }
-
+//获取LuaScript插件构建版本
+static int System_LuaScript_Build(lua_State* pL) {
+    lua_pushnumber(pL, Base::ModConfig::ModBuild);
+    return 1;
+}
+//获取LuaScript插件发行版本
+static int System_LuaScript_Version(lua_State* pL) {
+    lua_pushstring(pL, Base::ModConfig::ModVersion.c_str());
+    return 1;
+}
 #pragma endregion
 //==============================================
 // Main Functions
@@ -920,10 +1063,24 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Monster_GetNearestMonsterCoordinates", Game_Monster_GetNearestMonsterCoordinates);
     //获取最后一次击中的怪物的坐标
     lua_register(L, "Game_Monster_GetLastHitMonsterCoordinates", Game_Monster_GetLastHitMonsterCoordinates);
+    //获取所有怪物的坐标
+    lua_register(L, "Game_Monster_GetAllMonsterCoordinates", Game_Monster_GetAllMonsterCoordinates);
+    //获取所有怪物的生命
+    lua_register(L, "Game_Monster_GetAllMonsterHealth", Game_Monster_GetAllMonsterHealth);
+    //获取所有怪物的异常状态(计划中)
+    //lua_register(L, "Game_Monster_GetAllMonsterDebuff", Game_Monster_GetAllMonsterDebuff);
     //获取范围内所有怪物的坐标
     lua_register(L, "Game_Monster_GetAllMonsterCoordinatesInRange", Game_Monster_GetAllMonsterCoordinatesInRange);
+    //获取范围内所有怪物的生命
+    lua_register(L, "Game_Monster_GetAllMonsterHealthInRange", Game_Monster_GetAllMonsterHealthInRange);
+    //获取范围内所有怪物的异常状态(计划中)
+    //lua_register(L, "Game_Monster_GetAllMonsterDebuffInRange", Game_Monster_GetAllMonsterDebuffInRange);
     //获取目标点范围内所有怪物的坐标
     lua_register(L, "Game_Monster_GetAllMonsterCoordinatesInTargetPointRange", Game_Monster_GetAllMonsterCoordinatesInTargetPointRange);
+    //获取目标点范围内所有怪物的生命
+    lua_register(L, "Game_Monster_GetAllMonsterHealthInTargetPointRange", Game_Monster_GetAllMonsterHealthInTargetPointRange);
+    //获取目标点范围内所有怪物的异常状态(计划中)
+    //lua_register(L, "Game_Monster_GetAllMonsterDebuffInTargetPointRange", Game_Monster_GetAllMonsterDebuffInTargetPointRange);
     #pragma endregion
     #pragma region Environmental
     //设置环境生物筛选器
@@ -963,6 +1120,10 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_Console_Info", System_Console_Info);
     //向控制台发送错误消息
     lua_register(L, "System_Console_Error", System_Console_Error);
+    //获取LuaScript插件构建版本
+    lua_register(L, "System_LuaScript_Build", System_LuaScript_Build);
+    //获取LuaScript插件构建版本
+    lua_register(L, "System_LuaScript_Version", System_LuaScript_Version);
 #pragma endregion
 #pragma region Lua
     //存入整数变量

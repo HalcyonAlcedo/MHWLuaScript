@@ -180,7 +180,7 @@
     <ClInclude Include="Base.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Execution.h" />
-    <ClInclude Include="Http.h" />
+    <ClInclude Include="Network.h" />
     <ClInclude Include="HttpRequest.h" />
     <ClInclude Include="LuaData.h" />
     <ClInclude Include="LuaScript.h" />

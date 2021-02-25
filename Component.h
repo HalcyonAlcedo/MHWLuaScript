@@ -462,11 +462,29 @@ namespace Component {
 				*offsetPtr<float>(StatusManagementPlot, 0x13C) = endurance;
 		}
 #pragma endregion
-	/*
-		获取范围内所有怪物的坐标
-	*/
+/*
+	获取所有怪物的坐标
+*/
 #pragma region GetAllMonsterCoordinates
-		static map<int, Base::Monster::MonsterData> GetAllMonsterCoordinates(Base::Vector3 Target, float MinRange = 0, float MaxRange = 9999999.0) {
+		static map<int, Base::Monster::MonsterData> GetAllMonsterCoordinates() {
+			map<int, Base::Monster::MonsterData> monsterList;
+			int installcount = 0;
+			for (auto [monster, monsterData] : Base::Monster::Monsters) {
+				if (monster != nullptr) {
+					if (
+						monsterData.Id != Base::Monster::Filter.first and
+						monsterData.SubId != Base::Monster::Filter.second and
+						Base::Monster::Filter.first != 255 and
+						Base::Monster::Filter.second != 255
+						)
+						continue;
+					monsterList[installcount] = monsterData;
+					installcount++;
+				}
+			}
+			return monsterList;
+		}
+		static map<int, Base::Monster::MonsterData> GetAllMonsterCoordinatesRelativeToTarget(Base::Vector3 Target, float MinRange = 0, float MaxRange = 9999999.0) {
 			map<int, Base::Monster::MonsterData> monsterList;
 			int installcount = 0;
 			for (auto [monster, monsterData] : Base::Monster::Monsters) {
@@ -504,6 +522,98 @@ namespace Component {
 						Base::Vector3(monsterData.CoordinatesX, monsterData.CoordinatesY, monsterData.CoordinatesZ));
 					if (distance < MaxRange and distance > MinRange) {
 						monsterList[installcount] = monsterData;
+						installcount++;
+					}
+				}
+			}
+			return monsterList;
+		}
+#pragma endregion
+/*
+	获取所有怪物的生命
+*/
+#pragma region GetAllMonsterHealth
+		struct MonsterHealth {
+			void* Plot;
+			float Health;
+			float MaxHealth;
+			int Id;
+			int SubId;
+			MonsterHealth(
+				void* Plot = nullptr,
+				float Health = 0,
+				float MaxHealth = 0,
+				int Id = 0,
+				int SubId = 0)
+				:Plot(Plot), Health(Health), MaxHealth(MaxHealth), Id(Id), SubId(SubId) {
+			};
+		};
+
+		static map<int, MonsterHealth> GetAllMonsterHealth() {
+			map<int, MonsterHealth> monsterList;
+			int installcount = 0;
+			for (auto [monster, monsterData] : Base::Monster::Monsters) {
+				if (monster != nullptr) {
+					if (
+						monsterData.Id != Base::Monster::Filter.first and
+						monsterData.SubId != Base::Monster::Filter.second and
+						Base::Monster::Filter.first != 255 and
+						Base::Monster::Filter.second != 255
+						)
+						continue;
+					void* healthMgr = *offsetPtr<void*>(monster, 0x7670);
+					float health = *offsetPtr<float>(healthMgr, 0x64);
+					float maxHealth = *offsetPtr<float>(healthMgr, 0x60);
+					monsterList[installcount] = MonsterHealth(monster, health, maxHealth, monsterData.Id, monsterData.SubId);
+					installcount++;
+				}
+			}
+			return monsterList;
+		}
+		static map<int, MonsterHealth> GetAllMonsterHealthRelativeToTarget(Base::Vector3 Target, float MinRange = 0, float MaxRange = 9999999.0) {
+			map<int, MonsterHealth> monsterList;
+			int installcount = 0;
+			for (auto [monster, monsterData] : Base::Monster::Monsters) {
+				if (monster != nullptr) {
+					if (
+						monsterData.Id != Base::Monster::Filter.first and
+						monsterData.SubId != Base::Monster::Filter.second and
+						Base::Monster::Filter.first != 255 and
+						Base::Monster::Filter.second != 255
+						)
+						continue;
+					float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Target,
+						Base::Vector3(monsterData.CoordinatesX, monsterData.CoordinatesY, monsterData.CoordinatesZ));
+					if (distance < MaxRange and distance > MinRange) {
+						void* healthMgr = *offsetPtr<void*>(monster, 0x7670);
+						float health = *offsetPtr<float>(healthMgr, 0x64);
+						float maxHealth = *offsetPtr<float>(healthMgr, 0x60);
+						monsterList[installcount] = MonsterHealth(monster, health, maxHealth, monsterData.Id, monsterData.SubId);
+						installcount++;
+					}
+				}
+			}
+			return monsterList;
+		}
+		static map<int, MonsterHealth> GetAllMonsterHealthRelativeToPlayers(float MinRange = 0, float MaxRange = 9999999.0) {
+			map<int, MonsterHealth> monsterList;
+			int installcount = 0;
+			for (auto [monster, monsterData] : Base::Monster::Monsters) {
+				if (monster != nullptr) {
+					if (
+						monsterData.Id != Base::Monster::Filter.first and
+						monsterData.SubId != Base::Monster::Filter.second and
+						Base::Monster::Filter.first != 255 and
+						Base::Monster::Filter.second != 255
+						)
+						continue;
+					float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Base::PlayerData::Coordinate::Entity,
+						Base::Vector3(monsterData.CoordinatesX, monsterData.CoordinatesY, monsterData.CoordinatesZ));
+					if (distance < MaxRange and distance > MinRange) {
+						void* healthMgr = *offsetPtr<void*>(monster, 0x7670);
+						float health = *offsetPtr<float>(healthMgr, 0x64);
+						float maxHealth = *offsetPtr<float>(healthMgr, 0x60);
+						monsterList[installcount] = MonsterHealth(monster, health, maxHealth, monsterData.Id, monsterData.SubId);
 						installcount++;
 					}
 				}

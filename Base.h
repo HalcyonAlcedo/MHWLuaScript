@@ -2,7 +2,7 @@
 #include <map>
 #include "MonsterBuff.h"
 #include "PlayerBuff.h"
-#include "Http.h"
+#include "Network.h"
 #include "AobAddress.h"
 
 using namespace std;
@@ -33,7 +33,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.1.1";
+		string ModVersion = "v1.1.2";
+		long long ModBuild = 112002251417;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -332,6 +333,9 @@ namespace Base {
 			if (monsterBuff.MaxStateValue != 0) {
 				MonsterBuff::SetMonsterBuffState(monster, buff);
 			}
+		}//获取怪物buff状态
+		static MonsterBuff::MonsterBuffState GetBuff(void* monster, string buff) {
+			return MonsterBuff::GetMonsterBuffState(monster, buff);
 		}
 		static void BehaviorControl(void* monster, int Fsm) {
 			//感谢南风焓大佬提供的地址

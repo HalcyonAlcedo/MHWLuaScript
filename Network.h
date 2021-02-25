@@ -1,7 +1,7 @@
 #pragma once
 #include "HttpClient.h"
 
-namespace HttpServer {
+namespace NetworkServer {
     string GetHttpData(string url) {
 		HttpClient session;
 		HttpRequest req;

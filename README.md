@@ -78,10 +78,12 @@
 |System_Chronoscope_AddChronoscope	|`System_Chronoscope_AddChronoscope(1.0,'ChronoscopeName')`     |创建计时器，需设定时间和计时器名称      |
 |System_Chronoscope_CheckChronoscope|`System_Chronoscope_CheckChronoscope('ChronoscopeName')`       |检查指定名称的计时器是否到期,如果到期则删除计时器 |
 |System_Chronoscope_CheckPresenceChronoscope|`System_Chronoscope_CheckPresenceChronoscope('ChronoscopeName')`|检查指定名称的计时器是存在 |
-|System_Chronoscope_DelChronoscope|`System_Chronoscope_DelChronoscope('ChronoscopeName')`           |删除指定名称的计时器    |
+|System_Chronoscope_DelChronoscope	|`System_Chronoscope_DelChronoscope('ChronoscopeName')`           |删除指定名称的计时器    |
 |System_Message_ShowMessage			|`System_Message_ShowMessage('Message')`       	                |向游戏内发送消息                      |
 |System_Console_Info				|`System_Console_Info('Message')`       	                    |向控制台发送消息                      |
 |System_Console_Error				|`System_Console_Error('Message')`       	                    |向控制台发送错误消息                  |
+|System_LuaScript_Build				|`System_LuaScript_Build()`       	                            |获取LuaScript插件构建版本                  |
+|System_LuaScript_Version			|`System_LuaScript_Version()`       	                        |获取LuaScript插件发行版本                  |
 
 ### 玩家
 |                                         |示例							                                         |说明						   |
@@ -164,8 +166,15 @@
 |Game_Monster_GetNavigationMonsterCoordinates|`local x,y,z = Game_Monster_GetNavigationMonsterCoordinates()`|获取导航的怪物的坐标       |
 |Game_Monster_GetNearestMonsterCoordinates|`local x,y,z = Game_Monster_GetNearestMonsterCoordinates()`|获取距离最近的怪物的坐标       |
 |Game_Monster_GetLastHitMonsterCoordinates|`local x,y,z = Game_Monster_GetLastHitMonsterCoordinates()`|获取最后一次击中的怪物的坐标       |
-|Game_Monster_GetAllMonsterCoordinatesInRange|`local monsterList = Game_Monster_GetAllMonsterCoordinatesInRange(0,1000)`|获取范围内所有怪物的坐标，受筛选器影响，包含属性X,Y,Z,Id,SubId     |
-|Game_Monster_GetAllMonsterCoordinatesInTargetPointRange|`local monsterList = Game_Monster_GetAllMonsterCoordinatesInTargetPointRange(100,100,100,0,1000)`|获取指定点范围内所有怪物的坐标，受筛选器影响，包含属性X,Y,Z,Id,SubId     |
+|Game_Monster_GetAllMonsterCoordinatesInRange|`local monsterList = Game_Monster_GetAllMonsterCoordinatesInRange(0,1000)`|获取范围内所有怪物的坐标，受筛选器影响，包含属性X,Y,Z,Id,SubId,Ptr     |
+|Game_Monster_GetAllMonsterHealthInRange|`local monsterList = Game_Monster_GetAllMonsterHealthInRange(0,1000)`|获取范围内所有怪物的生命，受筛选器影响，包含属性Health,MaxHealth,Id,SubId,Ptr     |
+|~Game_Monster_GetAllMonsterDebuffInRange~|`local monsterList = Game_Monster_GetAllMonsterDebuffInRange(0,1000)`|获取范围内所有怪物的异常状态，受筛选器影响，包含属性异常状态表...,Id,SubId,Ptr     |
+|Game_Monster_GetAllMonsterCoordinatesInTargetPointRange|`local monsterList = Game_Monster_GetAllMonsterCoordinatesInTargetPointRange(100,100,100,0,1000)`|获取指定点范围内所有怪物的坐标，受筛选器影响，包含属性X,Y,Z,Id,SubId,Ptr     |
+|Game_Monster_GetAllMonsterHealthInTargetPointRange|`local monsterList = Game_Monster_GetAllMonsterHealthInTargetPointRange(100,100,100,0,1000)`|获取指定点范围内所有怪物的生命，受筛选器影响，包含属性Health,MaxHealth,Id,SubId,Ptr     |
+|~Game_Monster_GetAllMonsterDebuffInTargetPointRange~|`local monsterList = Game_Monster_GetAllMonsterDebuffInTargetPointRange(100,100,100,0,1000)`|获取指定点范围内所有怪物的异常状态，受筛选器影响，包含属性异常状态表...,Id,SubId,Ptr     |
+|Game_Monster_GetAllMonsterCoordinates|`local monsterList = Game_Monster_GetAllMonsterCoordinates()`|获取所有怪物的坐标，受筛选器影响，包含属性X,Y,Z,Id,SubId,Ptr     |
+|Game_Monster_GetAllMonsterHealth|`local monsterList = Game_Monster_GetAllMonsterHealth()`|获取所有怪物的生命，受筛选器影响，包含属性Health,MaxHealth,Id,SubId,Ptr     |
+|~Game_Monster_GetAllMonsterDebuff~|`local monsterList = Game_Monster_GetAllMonsterDebuff()`|获取所有怪物的异常状态，受筛选器影响，包含属性异常状态表...,Id,SubId,Ptr     |
 
 
 ### 环境生物

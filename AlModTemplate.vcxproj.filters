@@ -50,13 +50,13 @@
     <ClInclude Include="PlayerBuff.h">
       <Filter>核心数据</Filter>
     </ClInclude>
-    <ClInclude Include="Http.h">
-      <Filter>核心数据</Filter>
-    </ClInclude>
     <ClInclude Include="HttpRequest.h">
       <Filter>源代码</Filter>
     </ClInclude>
     <ClInclude Include="AobAddress.h">
+      <Filter>核心数据</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
       <Filter>核心数据</Filter>
     </ClInclude>
   </ItemGroup>
