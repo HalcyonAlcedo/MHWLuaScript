@@ -30,11 +30,13 @@ namespace Base {
 		bool GameDataInit = false;
 		bool InitErrInfo = true;
 		int InitErrCount = 0;
+		vector<string> LuaFiles;
+		bool ModConsole = false;
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.1.2";
-		long long ModBuild = 112002251417;
+		string ModVersion = "v1.1.3 Pre";
+		long long ModBuild = 113003042045;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -715,7 +717,7 @@ namespace Base {
 		static bool CheckWindows() {
 			string GameName = "MONSTER HUNTER: WORLD(" + ModConfig::Version + ")";
 			HWND wnd = GetForegroundWindow();;
-			HWND mhd = FindWindow(NULL, GameName.c_str());
+			HWND mhd = FindWindow("MT FRAMEWORK", GameName.c_str());
 			if (wnd == mhd)
 				return true;
 			else
@@ -1267,6 +1269,9 @@ namespace Base {
 			Commission::Run();
 			//更新Xbox手柄信息
 			XboxPad::Updata();
+			//设置控制台
+			if (Keyboard::CheckKey(0x79))
+				ModConfig::ModConsole = !ModConfig::ModConsole;
 		}
 	}
 }

@@ -12,6 +12,9 @@
     <Filter Include="核心数据">
       <UniqueIdentifier>{c61de45d-6340-4fc2-b5ab-c11a2faab43a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源代码\imgui">
+      <UniqueIdentifier>{1ebe948a-e1bb-4b85-bf1c-9581568ed5ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -22,6 +25,12 @@
     </ClCompile>
     <ClCompile Include="HttpClient.cpp">
       <Filter>源代码</Filter>
+    </ClCompile>
+    <ClCompile Include="deps\imgui_impl_dx11.cpp">
+      <Filter>源代码\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="deps\imgui_impl_win32.cpp">
+      <Filter>源代码\imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -57,6 +66,15 @@
       <Filter>核心数据</Filter>
     </ClInclude>
     <ClInclude Include="Network.h">
+      <Filter>核心数据</Filter>
+    </ClInclude>
+    <ClInclude Include="deps\imgui_impl_dx11.h">
+      <Filter>源代码\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="deps\imgui_impl_win32.h">
+      <Filter>源代码\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlProgram.h">
       <Filter>核心数据</Filter>
     </ClInclude>
   </ItemGroup>

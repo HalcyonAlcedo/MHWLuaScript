@@ -159,6 +159,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="deps\imgui_impl_dx11.cpp" />
+    <ClCompile Include="deps\imgui_impl_win32.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="HttpClient.cpp" />
     <ClCompile Include="HttpClient.h" />
@@ -179,6 +181,9 @@
     <ClInclude Include="AobAddress.h" />
     <ClInclude Include="Base.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="ControlProgram.h" />
+    <ClInclude Include="deps\imgui_impl_dx11.h" />
+    <ClInclude Include="deps\imgui_impl_win32.h" />
     <ClInclude Include="Execution.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="HttpRequest.h" />

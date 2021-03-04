@@ -730,6 +730,22 @@ static int System_XboxPad_CheckKeyIsPressed(lua_State* pL) {
     lua_pushboolean(pL, ret);
     return 1;
 }
+static int System_LuaScript_Build(lua_State* pL) {
+    lua_pushnumber(pL, Base::ModConfig::ModBuild);
+    return 1;
+}
+static int System_LuaScript_Version(lua_State* pL) {
+    lua_pushstring(pL, Base::ModConfig::ModVersion.c_str());
+    return 1;
+}
+static int System_DeBug_OpenDeBugConsole(lua_State* pL) {
+    Base::ModConfig::ModConsole = true;
+    return 0;
+}
+static int System_DeBug_CloseDeBugConsole(lua_State* pL) {
+    Base::ModConfig::ModConsole = false;
+    return 0;
+}
 #pragma endregion
 #pragma region LuaFun
 //存入整数变量
@@ -881,16 +897,6 @@ static int Lua_Math_Rander(lua_State* pL) {
 static int Lua_Http_GetHttpData(lua_State* pL) {
     string httpUrl = (string)lua_tostring(pL, -1);
     lua_pushstring(pL, NetworkServer::GetHttpData(httpUrl).c_str());
-    return 1;
-}
-//获取LuaScript插件构建版本
-static int System_LuaScript_Build(lua_State* pL) {
-    lua_pushnumber(pL, Base::ModConfig::ModBuild);
-    return 1;
-}
-//获取LuaScript插件发行版本
-static int System_LuaScript_Version(lua_State* pL) {
-    lua_pushstring(pL, Base::ModConfig::ModVersion.c_str());
     return 1;
 }
 #pragma endregion
@@ -1124,6 +1130,10 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_LuaScript_Build", System_LuaScript_Build);
     //获取LuaScript插件构建版本
     lua_register(L, "System_LuaScript_Version", System_LuaScript_Version);
+    //打开调试控制台
+    lua_register(L, "System_DeBug_OpenDeBugConsole", System_DeBug_OpenDeBugConsole);
+    //关闭调试控制台
+    lua_register(L, "System_DeBug_CloseDeBugConsole", System_DeBug_CloseDeBugConsole);
 #pragma endregion
 #pragma region Lua
     //存入整数变量

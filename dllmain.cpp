@@ -19,10 +19,10 @@
 
 #include "Base.h"
 #include "Execution.h"
+#include "ControlProgram.h"
 #include "LuaScript.h"
 
 using namespace loader;
-vector<string> LuaFiles;
 
 __declspec(dllexport) extern bool Load()
 {
@@ -31,10 +31,9 @@ __declspec(dllexport) extern bool Load()
 		LOG(WARN) << Base::ModConfig::ModName << " : Wrong version";
 		return false;
 	}
-
-	Component::getFiles("nativePC\\LuaScript\\", LuaFiles);
+	Component::getFiles("nativePC\\LuaScript\\", Base::ModConfig::LuaFiles);
 	LOG(INFO) << "Lua file load:";
-	for (string file_name : LuaFiles) {
+	for (string file_name : Base::ModConfig::LuaFiles) {
 		LOG(INFO) << file_name;
 	}
 	//初始化钩子
@@ -43,10 +42,11 @@ __declspec(dllexport) extern bool Load()
 		[](auto clock, auto clock2) {
 			auto ret = original(clock, clock2);
 			if (Base::Init()) {
+				ControlProgram::InitConsole();
 				Base::RealTimeUpdate();
 				//Execution::Main();
 				if (Base::ModConfig::GameDataInit) {
-					for (string file_name : LuaFiles) {
+					for (string file_name : Base::ModConfig::LuaFiles) {
 						Lua_Main(file_name);
 					}
 				}

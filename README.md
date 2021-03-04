@@ -84,6 +84,8 @@
 |System_Console_Error				|`System_Console_Error('Message')`       	                    |向控制台发送错误消息                  |
 |System_LuaScript_Build				|`System_LuaScript_Build()`       	                            |获取LuaScript插件构建版本                  |
 |System_LuaScript_Version			|`System_LuaScript_Version()`       	                        |获取LuaScript插件发行版本                  |
+|System_DeBug_OpenDeBugConsole		|`System_DeBug_OpenDeBugConsole()`       	                    |打开调试控制台                       |
+|System_DeBug_CloseDeBugConsole		|`System_DeBug_CloseDeBugConsole()`       	                    |关闭调试控制台                       |
 
 ### 玩家
 |                                         |示例							                                         |说明						   |
