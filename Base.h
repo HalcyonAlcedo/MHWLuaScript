@@ -188,6 +188,9 @@ namespace Base {
 			::LineTo(hdc, 0, rect.bottom);
 			::ReleaseDC(GameHandle, hdc);
 		}
+#pragma region imgui
+		string GameInitInfo = u8"LuaScript系统初始化";
+#pragma endregion
 	}
 #pragma endregion
 	//委托
@@ -1009,6 +1012,7 @@ namespace Base {
 			return true;
 		else
 		{
+			Draw::GameInitInfo += u8"\n 初始化数据指针";
 			BasicGameData::XboxPadPlot = *(undefined**)MH::GamePad::XboxPadPtr;
 			void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 			void* PlayerInfoPlot = *(undefined**)MH::Player::BasePtr;
@@ -1026,7 +1030,7 @@ namespace Base {
 			BasicGameData::PlayerInfoPlot = *offsetPtr<undefined**>((undefined(*)())PlayerInfoPlot, 0xA8);
 			BasicGameData::GameTimePlot = (undefined(*)())MH::World::GmaeClock;
 			BasicGameData::MapPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7D20);
-			
+			Draw::GameInitInfo += u8"\n 载入汇编数据";
 			if (
 				BasicGameData::PlayerPlot != nullptr and
 				BasicGameData::MapPlot != nullptr and
@@ -1044,6 +1048,7 @@ namespace Base {
 						);
 						return original(x1, x2);
 					});
+				Draw::GameInitInfo += u8"\n 坐标系统加载";
 				//环境生物地址获取
 				HookLambda(MH::EnvironmentalBiological::ctor,
 					[](auto environmental, auto id, auto subId) {
@@ -1053,6 +1058,7 @@ namespace Base {
 						);
 						return ret;
 					});
+				Draw::GameInitInfo += u8"\n 环境生物模块加载";
 				//怪物地址获取
 				HookLambda(MH::Monster::ctor,
 					[](auto monster, auto id, auto subId) {
@@ -1067,6 +1073,7 @@ namespace Base {
 						Base::Monster::Monsters.erase(monster);
 						return original(monster);
 					});
+				Draw::GameInitInfo += u8"\n 怪物模块加载";
 				//视角相机坐标修改
 				HookLambda(MH::Player::Visual,
 					[]() {
@@ -1083,6 +1090,7 @@ namespace Base {
 						}
 						return original();
 					});
+				Draw::GameInitInfo += u8"\n 视角模块加载";
 				//武器装饰物修改
 				HookLambda(MH::Weapon::WeaponOrnaments,
 					[]() {
@@ -1162,12 +1170,15 @@ namespace Base {
 						}
 						return original();
 					});
+				Draw::GameInitInfo += u8"\n 武器系统加载";
 				MH_ApplyQueued();
 				ModConfig::GameDataInit = true;
 				LOG(INFO) << ModConfig::ModName << " : Game data initialization complete!";
 				LOG(INFO) << " |  Mod：" << ModConfig::ModName;
 				LOG(INFO) << " |  Author：" << ModConfig::ModAuthor;
 				LOG(INFO) << " |  Version：" << ModConfig::ModVersion;
+				Draw::GameInitInfo += u8"\n 系统初始化完成";
+				//Draw::GameInit = true;
 				return true;
 			}
 			else {
@@ -1269,9 +1280,6 @@ namespace Base {
 			Commission::Run();
 			//更新Xbox手柄信息
 			XboxPad::Updata();
-			//设置控制台
-			if (Keyboard::CheckKey(0x79))
-				ModConfig::ModConsole = !ModConfig::ModConsole;
 		}
 	}
 }

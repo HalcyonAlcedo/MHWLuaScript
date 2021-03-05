@@ -41,8 +41,8 @@ __declspec(dllexport) extern bool Load()
 	HookLambda(MH::World::MapClockLocal,
 		[](auto clock, auto clock2) {
 			auto ret = original(clock, clock2);
+			ControlProgram::InitConsole();
 			if (Base::Init()) {
-				ControlProgram::InitConsole();
 				Base::RealTimeUpdate();
 				//Execution::Main();
 				if (Base::ModConfig::GameDataInit) {
