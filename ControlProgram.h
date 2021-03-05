@@ -28,16 +28,22 @@ namespace ControlProgram {
 
 	static bool CreateDeviceD3D(HWND hWnd)
 	{
+		RECT rcWnd;
+		GetWindowRect(hWnd, &rcWnd);
 		// Setup swap chain
 		DXGI_SWAP_CHAIN_DESC sd;
 		ZeroMemory(&sd, sizeof(sd));
 		sd.BufferCount = 2;
-		sd.BufferDesc.Width = 0;
-		sd.BufferDesc.Height = 0;
-		sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		//sd.BufferDesc.Width = 0;
+		//sd.BufferDesc.Height = 0;
+		//sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		sd.BufferDesc.Width = rcWnd.right - rcWnd.left;
+		sd.BufferDesc.Height = rcWnd.bottom - rcWnd.top;
+		sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		sd.BufferDesc.RefreshRate.Numerator = 60;
 		sd.BufferDesc.RefreshRate.Denominator = 1;
-		sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+		//sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+		sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH | DXGI_SWAP_CHAIN_FLAG_GDI_COMPATIBLE;
 		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		sd.OutputWindow = hWnd;
 		sd.SampleDesc.Count = 1;
@@ -125,7 +131,7 @@ namespace ControlProgram {
 			WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("LuaScrippt"), NULL };
 			::RegisterClassEx(&wc);
 			//在扩展样式中加入WS_EX_LAYERED
-			HWND hwnd = CreateWindowEx(WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TOOLWINDOW,
+			HWND hwnd = CreateWindowEx(WS_EX_LAYERED,
 				wc.lpszClassName,
 				_T("LuaScrpt 控制台"),
 				WS_POPUP,
@@ -138,11 +144,12 @@ namespace ControlProgram {
 				GetModuleHandle(NULL),
 				NULL);
 			//设置颜色过滤,使用改关键色刷新屏幕后颜色被过滤实现透明
-			SetLayeredWindowAttributes(hwnd, RGB(254, 254, 254), NULL, LWA_COLORKEY);
+			//SetLayeredWindowAttributes(hwnd, RGB(254, 254, 254), NULL, LWA_COLORKEY);
 
 			//设置dx11屏幕刷新颜色 注意这里的颜色要和设置透明关键色设置一样
-			ImVec4 clear_color = ImGui::ColorConvertU32ToFloat4(IM_COL32(254, 254, 254, 255));
-			
+			//ImVec4 clear_color = ImGui::ColorConvertU32ToFloat4(IM_COL32(254, 254, 254, 255));
+			float clear_color[] = { 0, 0, 0, 0 };
+
 			if (!CreateDeviceD3D(hwnd))
 			{
 				CleanupDeviceD3D();
@@ -173,6 +180,7 @@ namespace ControlProgram {
 			HWND gameHwnd = FindWindow("MT FRAMEWORK", NULL);
 			RECT rect1;
 			RECT rect2;
+			::SetWindowLongPtr(hwnd, GWLP_HWNDPARENT, (LONG)gameHwnd);
 			while (msg.message != WM_QUIT)
 			{
 				GetWindowRect(gameHwnd, &rect1);
@@ -259,13 +267,46 @@ namespace ControlProgram {
 					ImGui::End();
 				}
 
+				/*
+				* 或可用于加载、等待、血条等，待研究用法
+				* 
+				ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
+				if (ImGui::Begin(u8"进度条", NULL, window_flags))
+				{
+					static float progress = 0.0f, progress_dir = 1.0f;
+					progress += progress_dir * 0.4f * ImGui::GetIO().DeltaTime;
+					if (progress >= +1.1f) { progress = +1.1f; progress_dir *= -1.0f; }
+					if (progress <= -0.1f) { progress = -0.1f; progress_dir *= -1.0f; }
+					ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f), "");
+				}
+				ImGui::End();
+				*/
+				
 				ImGui::Render();
-				const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
+				//const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
 				g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, NULL);
-				g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
+				//g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);
+				g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color);
 				ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
+				BLENDFUNCTION blend = { AC_SRC_OVER, 0, 0, AC_SRC_ALPHA };
+				POINT pt = { 0, 0 };
+				SIZE sz = { 0, 0 };
+				IDXGISurface1* pSurface = NULL;
+				HDC hDC = NULL;
+
 				g_pSwapChain->Present(1, 0);
+
+				g_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pSurface));
+				DXGI_SURFACE_DESC desc;
+				pSurface->GetDesc(&desc);
+				sz.cx = desc.Width;
+				sz.cy = desc.Height;
+
+				pSurface->GetDC(FALSE, &hDC);
+				::UpdateLayeredWindow(hwnd, nullptr, nullptr, &sz, hDC, &pt, 0, &blend, ULW_COLORKEY);
+				pSurface->ReleaseDC(nullptr);
+				pSurface->Release();
 			}
 
 			// Cleanup
