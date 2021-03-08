@@ -19,6 +19,7 @@
 
 #include "Base.h"
 #include "Execution.h"
+#include "LuaData.h"
 #include "ControlProgram.h"
 #include "LuaScript.h"
 

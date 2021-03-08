@@ -123,7 +123,12 @@ namespace ControlProgram {
 			float& CurrentHealth,
 			Base::Vector3& PlayerCoordinate,
 			map<void*, Base::Monster::MonsterData>& Monsters,
-			string& GameInitInfo
+			string& GameInitInfo,
+			map<string, Base::Chronoscope::ChronoscopeData>& Chronoscope,
+			float &NowTime,
+			map<string, int>& IntVariable,
+			map<string, float>& FloatVariable,
+			map<string, string>& StringVariable
 			) {
 				bool GameInit = false;
 				WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("LuaScrippt"), NULL };
@@ -179,6 +184,7 @@ namespace ControlProgram {
 				RECT rect1;
 				RECT rect2;
 				::SetWindowLongPtr(hwnd, GWLP_HWNDPARENT, (LONG)gameHwnd);
+				SetForegroundWindow(gameHwnd);
 				while (msg.message != WM_QUIT)
 				{
 					GetWindowRect(gameHwnd, &rect1);
@@ -210,6 +216,51 @@ namespace ControlProgram {
 						{
 							for (string file_name : LuaFiles) {
 								ImGui::TextColored(ImVec4(0.0f, 0.8f, 0.0f, 1.0f), file_name.c_str());
+							}
+							ImGui::TreePop();
+							ImGui::Separator();
+						}
+						if (ImGui::TreeNode(u8"Lua脚本数据"))
+						{
+							ImGui::Text(u8"当前时间：%f", NowTime);
+							if (ImGui::TreeNode(u8"计时器"))
+							{
+								for (auto [chronoscopeName, chronoscopeData] : Chronoscope) {
+									if (chronoscopeData.EndTime < NowTime) {
+										ImGui::TextColored(ImVec4(0.8f, 0.0f, 0.0f, 1.0f), chronoscopeName.c_str());
+									}
+									else {
+										ImGui::TextColored(ImVec4(0.0f, 0.8f, 0.0f, 1.0f), chronoscopeName.c_str());
+									}
+									ImGui::SameLine();
+									ImGui::Text(u8" : %f", chronoscopeData.EndTime);
+								}
+								ImGui::TreePop();
+							}
+							if (ImGui::TreeNode(u8"变量缓存"))
+							{
+								if (ImGui::TreeNode(u8"整数"))
+								{
+									for (auto [VariableName, VariableData] : IntVariable) {
+										ImGui::Text(u8"%s: %d", VariableName.c_str(), VariableData);
+									}
+									ImGui::TreePop();
+								}
+								if (ImGui::TreeNode(u8"浮点数"))
+								{
+									for (auto [VariableName, VariableData] : FloatVariable) {
+										ImGui::Text(u8"%s: %f", VariableName.c_str(), VariableData);
+									}
+									ImGui::TreePop();
+								}
+								if (ImGui::TreeNode(u8"字符串"))
+								{
+									for (auto [VariableName, VariableData] : StringVariable) {
+										ImGui::Text(u8"%s: %s", VariableName.c_str(), VariableData.c_str());
+									}
+									ImGui::TreePop();
+								}
+								ImGui::TreePop();
 							}
 							ImGui::TreePop();
 							ImGui::Separator();
@@ -330,7 +381,12 @@ namespace ControlProgram {
 				ref(Base::PlayerData::CurrentHealth),
 				ref(Base::PlayerData::Coordinate::Entity),
 				ref(Base::Monster::Monsters),
-				ref(Base::Draw::GameInitInfo)
+				ref(Base::Draw::GameInitInfo),
+				ref(Base::Chronoscope::ChronoscopeList),
+				ref(Base::Chronoscope::NowTime),
+				ref(LuaData::IntVariable),
+				ref(LuaData::FloatVariable),
+				ref(LuaData::StringVariable)
 				).detach();
 	}
 }

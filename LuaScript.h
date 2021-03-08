@@ -1,7 +1,6 @@
 #pragma once
 #include <lua.hpp> 
 #include "loader.h"
-#include "LuaData.h"
 lua_State* L;
 static string Nowlua;
 static string Sublua;
