@@ -467,10 +467,10 @@ static int Game_Monster_GetAllMonsterDebuff(lua_State* pL)
         lua_pushstring(pL,"Debuff");
         lua_newtable(pL);
         for (string debuff : vector<string>{ "Covet","Dizziness","Paralysis","Sleep","Poisoning","Ride","Ridedowna","Reducebreath","Explode","Flicker","FlickerG","Smoke","Traphole","Stasistrap" }) {
-            lua_pushstring(pL, debuff + "State");
+            lua_pushstring(pL, (debuff + "State").c_str());
             lua_pushnumber(pL, monsterData.DeBuff[debuff].StateValue/monsterData.DeBuff[debuff].MaxStateValue);
             lua_settable(pL, -3);
-            lua_pushstring(pL, debuff + "Recovery");
+            lua_pushstring(pL, (debuff + "Recovery").c_str());
             lua_pushnumber(pL, monsterData.DeBuff[debuff].RecoveryValue / monsterData.DeBuff[debuff].MaxRecoveryValue);
             lua_settable(pL, -3);
         }
@@ -565,10 +565,10 @@ static int Game_Monster_GetAllMonsterDebuffInRange(lua_State* pL)
         lua_pushstring(pL, "Debuff");
         lua_newtable(pL);
         for (string debuff : vector<string>{ "Covet","Dizziness","Paralysis","Sleep","Poisoning","Ride","Ridedowna","Reducebreath","Explode","Flicker","FlickerG","Smoke","Traphole","Stasistrap" }) {
-            lua_pushstring(pL, debuff + "State");
+            lua_pushstring(pL, (debuff + "State").c_str());
             lua_pushnumber(pL, monsterData.DeBuff[debuff].StateValue / monsterData.DeBuff[debuff].MaxStateValue);
             lua_settable(pL, -3);
-            lua_pushstring(pL, debuff + "Recovery");
+            lua_pushstring(pL, (debuff + "Recovery").c_str());
             lua_pushnumber(pL, monsterData.DeBuff[debuff].RecoveryValue / monsterData.DeBuff[debuff].MaxRecoveryValue);
             lua_settable(pL, -3);
         }
@@ -666,16 +666,16 @@ static int Game_Monster_GetAllMonsterDebuffInTargetPointRange(lua_State* pL)
     float min = (float)lua_tonumber(pL, 4);
     float max = (float)lua_tonumber(pL, 5);
     lua_newtable(pL);
-    for (auto [id, monsterData] : Component::GetAllMonsterDebuffRelativeToPlayers(Base::Vector3(x, y, z), min, max)) {
+    for (auto [id, monsterData] : Component::GetAllMonsterDeBuffRelativeToTarget(Base::Vector3(x, y, z), min, max)) {
         lua_pushinteger(pL, id);
         lua_newtable(pL);
         lua_pushstring(pL, "Debuff");
         lua_newtable(pL);
         for (string debuff : vector<string>{ "Covet","Dizziness","Paralysis","Sleep","Poisoning","Ride","Ridedowna","Reducebreath","Explode","Flicker","FlickerG","Smoke","Traphole","Stasistrap" }) {
-            lua_pushstring(pL, debuff + "State");
+            lua_pushstring(pL, (debuff + "State").c_str());
             lua_pushnumber(pL, monsterData.DeBuff[debuff].StateValue / monsterData.DeBuff[debuff].MaxStateValue);
             lua_settable(pL, -3);
-            lua_pushstring(pL, debuff + "Recovery");
+            lua_pushstring(pL, (debuff + "Recovery").c_str());
             lua_pushnumber(pL, monsterData.DeBuff[debuff].RecoveryValue / monsterData.DeBuff[debuff].MaxRecoveryValue);
             lua_settable(pL, -3);
         }
