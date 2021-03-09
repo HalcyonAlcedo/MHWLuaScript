@@ -648,6 +648,99 @@ namespace Component {
 			return environmentaList;
 		}
 #pragma endregion
+/*
+	获取怪物的异常状态
+*/
+#pragma region GetAllMonsterDeBuff
+		struct MonsterDeBuff {
+			void* Plot; 
+			map<string, MonsterBuff::MonsterBuffState> DeBuff;
+			int Id;
+			int SubId;
+			MonsterDeBuff(
+				void* Plot = nullptr,
+				map<string, MonsterBuff::MonsterBuffState> DeBuff = {},
+				int Id = 0,
+				int SubId = 0)
+				:Plot(Plot), DeBuff(DeBuff), Id(Id), SubId(SubId) {
+			};
+		};
+		static map<int, MonsterDeBuff> GetAllMonsterDeBuff() {
+			map<int, MonsterDeBuff> monsterList;
+			int installcount = 0;
+			for (auto [monster, monsterData] : Base::Monster::Monsters) {
+				if (monster != nullptr) {
+					if (
+						monsterData.Id != Base::Monster::Filter.first and
+						monsterData.SubId != Base::Monster::Filter.second and
+						Base::Monster::Filter.first != 255 and
+						Base::Monster::Filter.second != 255
+						)
+						continue;
+					map<string, MonsterBuff::MonsterBuffState> DeBuff;
+					for (string debuff : vector<string>{"Covet","Dizziness","Paralysis","Sleep","Poisoning","Ride","Ridedowna","Reducebreath","Explode","Flicker","FlickerG","Smoke","Traphole","Stasistrap"}) {
+						DeBuff[debuff] = MonsterBuff::GetMonsterBuffState(monster, debuff);
+					}
+					monsterList[installcount] = MonsterDeBuff(monster, DeBuff, monsterData.Id, monsterData.SubId);
+					installcount++;
+				}
+			}
+			return monsterList;
+		}
+		static map<int, MonsterDeBuff> GetAllMonsterDeBuffRelativeToTarget(Base::Vector3 Target, float MinRange = 0, float MaxRange = 9999999.0) {
+			map<int, MonsterDeBuff> monsterList;
+			int installcount = 0;
+			for (auto [monster, monsterData] : Base::Monster::Monsters) {
+				if (monster != nullptr) {
+					if (
+						monsterData.Id != Base::Monster::Filter.first and
+						monsterData.SubId != Base::Monster::Filter.second and
+						Base::Monster::Filter.first != 255 and
+						Base::Monster::Filter.second != 255
+						)
+						continue;
+					float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Target,
+						Base::Vector3(monsterData.CoordinatesX, monsterData.CoordinatesY, monsterData.CoordinatesZ));
+					if (distance < MaxRange and distance > MinRange) {
+						map<string, MonsterBuff::MonsterBuffState> DeBuff;
+						for (string debuff : vector<string>{ "Covet","Dizziness","Paralysis","Sleep","Poisoning","Ride","Ridedowna","Reducebreath","Explode","Flicker","FlickerG","Smoke","Traphole","Stasistrap" }) {
+							DeBuff[debuff] = MonsterBuff::GetMonsterBuffState(monster, debuff);
+						}
+						monsterList[installcount] = MonsterDeBuff(monster, DeBuff, monsterData.Id, monsterData.SubId);
+						installcount++;
+					}
+				}
+			}
+			return monsterList;
+		}
+		static map<int, MonsterDeBuff> GetAllMonsterDebuffRelativeToPlayers(float MinRange = 0, float MaxRange = 9999999.0) {
+			map<int, MonsterDeBuff> monsterList;
+			int installcount = 0;
+			for (auto [monster, monsterData] : Base::Monster::Monsters) {
+				if (monster != nullptr) {
+					if (
+						monsterData.Id != Base::Monster::Filter.first and
+						monsterData.SubId != Base::Monster::Filter.second and
+						Base::Monster::Filter.first != 255 and
+						Base::Monster::Filter.second != 255
+						)
+						continue;
+					float distance = Base::Calculation::DistanceBetweenTwoCoordinates(Base::PlayerData::Coordinate::Entity,
+						Base::Vector3(monsterData.CoordinatesX, monsterData.CoordinatesY, monsterData.CoordinatesZ));
+					if (distance < MaxRange and distance > MinRange) {
+						map<string, MonsterBuff::MonsterBuffState> DeBuff;
+						for (string debuff : vector<string>{ "Covet","Dizziness","Paralysis","Sleep","Poisoning","Ride","Ridedowna","Reducebreath","Explode","Flicker","FlickerG","Smoke","Traphole","Stasistrap" }) {
+							DeBuff[debuff] = MonsterBuff::GetMonsterBuffState(monster, debuff);
+						}
+						monsterList[installcount] = MonsterDeBuff(monster, DeBuff, monsterData.Id, monsterData.SubId);
+						installcount++;
+					}
+				}
+			}
+			return monsterList;
+		}
+#pragma endregion
+
 //获取目录中的文件
 	void getFiles(string path, vector<string>& files)
 		{

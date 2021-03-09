@@ -458,6 +458,39 @@ static int Game_Monster_GetAllMonsterHealth(lua_State* pL)
     }
     return 1;
 }
+static int Game_Monster_GetAllMonsterDebuff(lua_State* pL)
+{
+    lua_newtable(pL);
+    for (auto [id, monsterData] : Component::GetAllMonsterDeBuff()) {
+        lua_pushinteger(pL, id);
+        lua_newtable(pL);
+        lua_pushstring(pL,"Debuff");
+        lua_newtable(pL);
+        for (string debuff : vector<string>{ "Covet","Dizziness","Paralysis","Sleep","Poisoning","Ride","Ridedowna","Reducebreath","Explode","Flicker","FlickerG","Smoke","Traphole","Stasistrap" }) {
+            lua_pushstring(pL, debuff + "State");
+            lua_pushnumber(pL, monsterData.DeBuff[debuff].StateValue/monsterData.DeBuff[debuff].MaxStateValue);
+            lua_settable(pL, -3);
+            lua_pushstring(pL, debuff + "Recovery");
+            lua_pushnumber(pL, monsterData.DeBuff[debuff].RecoveryValue / monsterData.DeBuff[debuff].MaxRecoveryValue);
+            lua_settable(pL, -3);
+        }
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Id");
+        lua_pushinteger(pL, monsterData.Id);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "SubId");
+        lua_pushinteger(pL, monsterData.SubId);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Ptr");//怪物指针
+        ostringstream ptr;
+        ptr << monsterData.Plot;
+        string ptrstr = ptr.str();
+        lua_pushstring(pL, ptrstr.c_str());
+        lua_settable(pL, -3);
+        lua_settable(pL, -3);
+    }
+    return 1;
+}
 static int Game_Monster_GetAllMonsterCoordinatesInRange(lua_State* pL)
 {
     float min = (float)lua_tonumber(pL, 1);
@@ -504,6 +537,41 @@ static int Game_Monster_GetAllMonsterHealthInRange(lua_State* pL)
         lua_settable(pL, -3);
         lua_pushstring(pL, "MaxHealth");
         lua_pushnumber(pL, monsterData.MaxHealth);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Id");
+        lua_pushinteger(pL, monsterData.Id);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "SubId");
+        lua_pushinteger(pL, monsterData.SubId);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Ptr");//怪物指针
+        ostringstream ptr;
+        ptr << monsterData.Plot;
+        string ptrstr = ptr.str();
+        lua_pushstring(pL, ptrstr.c_str());
+        lua_settable(pL, -3);
+        lua_settable(pL, -3);
+    }
+    return 1;
+}
+static int Game_Monster_GetAllMonsterDebuffInRange(lua_State* pL)
+{
+    float min = (float)lua_tonumber(pL, 1);
+    float max = (float)lua_tonumber(pL, 2);
+    lua_newtable(pL);
+    for (auto [id, monsterData] : Component::GetAllMonsterDeBuffRelativeToTarget(min, max)) {
+        lua_pushinteger(pL, id);
+        lua_newtable(pL);
+        lua_pushstring(pL, "Debuff");
+        lua_newtable(pL);
+        for (string debuff : vector<string>{ "Covet","Dizziness","Paralysis","Sleep","Poisoning","Ride","Ridedowna","Reducebreath","Explode","Flicker","FlickerG","Smoke","Traphole","Stasistrap" }) {
+            lua_pushstring(pL, debuff + "State");
+            lua_pushnumber(pL, monsterData.DeBuff[debuff].StateValue / monsterData.DeBuff[debuff].MaxStateValue);
+            lua_settable(pL, -3);
+            lua_pushstring(pL, debuff + "Recovery");
+            lua_pushnumber(pL, monsterData.DeBuff[debuff].RecoveryValue / monsterData.DeBuff[debuff].MaxRecoveryValue);
+            lua_settable(pL, -3);
+        }
         lua_settable(pL, -3);
         lua_pushstring(pL, "Id");
         lua_pushinteger(pL, monsterData.Id);
@@ -573,6 +641,44 @@ static int Game_Monster_GetAllMonsterHealthInTargetPointRange(lua_State* pL)
         lua_settable(pL, -3);
         lua_pushstring(pL, "MaxHealth");
         lua_pushnumber(pL, monsterData.MaxHealth);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Id");
+        lua_pushinteger(pL, monsterData.Id);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "SubId");
+        lua_pushinteger(pL, monsterData.SubId);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Ptr");//怪物指针
+        ostringstream ptr;
+        ptr << monsterData.Plot;
+        string ptrstr = ptr.str();
+        lua_pushstring(pL, ptrstr.c_str());
+        lua_settable(pL, -3);
+        lua_settable(pL, -3);
+    }
+    return 1;
+}
+static int Game_Monster_GetAllMonsterDebuffInTargetPointRange(lua_State* pL)
+{
+    float x = (float)lua_tonumber(pL, 1);
+    float y = (float)lua_tonumber(pL, 2);
+    float z = (float)lua_tonumber(pL, 3);
+    float min = (float)lua_tonumber(pL, 4);
+    float max = (float)lua_tonumber(pL, 5);
+    lua_newtable(pL);
+    for (auto [id, monsterData] : Component::GetAllMonsterDebuffRelativeToPlayers(Base::Vector3(x, y, z), min, max)) {
+        lua_pushinteger(pL, id);
+        lua_newtable(pL);
+        lua_pushstring(pL, "Debuff");
+        lua_newtable(pL);
+        for (string debuff : vector<string>{ "Covet","Dizziness","Paralysis","Sleep","Poisoning","Ride","Ridedowna","Reducebreath","Explode","Flicker","FlickerG","Smoke","Traphole","Stasistrap" }) {
+            lua_pushstring(pL, debuff + "State");
+            lua_pushnumber(pL, monsterData.DeBuff[debuff].StateValue / monsterData.DeBuff[debuff].MaxStateValue);
+            lua_settable(pL, -3);
+            lua_pushstring(pL, debuff + "Recovery");
+            lua_pushnumber(pL, monsterData.DeBuff[debuff].RecoveryValue / monsterData.DeBuff[debuff].MaxRecoveryValue);
+            lua_settable(pL, -3);
+        }
         lua_settable(pL, -3);
         lua_pushstring(pL, "Id");
         lua_pushinteger(pL, monsterData.Id);
@@ -1072,20 +1178,20 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Monster_GetAllMonsterCoordinates", Game_Monster_GetAllMonsterCoordinates);
     //获取所有怪物的生命
     lua_register(L, "Game_Monster_GetAllMonsterHealth", Game_Monster_GetAllMonsterHealth);
-    //获取所有怪物的异常状态(计划中)
-    //lua_register(L, "Game_Monster_GetAllMonsterDebuff", Game_Monster_GetAllMonsterDebuff);
+    //获取所有怪物的异常状态
+    lua_register(L, "Game_Monster_GetAllMonsterDebuff", Game_Monster_GetAllMonsterDebuff);
     //获取范围内所有怪物的坐标
     lua_register(L, "Game_Monster_GetAllMonsterCoordinatesInRange", Game_Monster_GetAllMonsterCoordinatesInRange);
     //获取范围内所有怪物的生命
     lua_register(L, "Game_Monster_GetAllMonsterHealthInRange", Game_Monster_GetAllMonsterHealthInRange);
     //获取范围内所有怪物的异常状态(计划中)
-    //lua_register(L, "Game_Monster_GetAllMonsterDebuffInRange", Game_Monster_GetAllMonsterDebuffInRange);
+    lua_register(L, "Game_Monster_GetAllMonsterDebuffInRange", Game_Monster_GetAllMonsterDebuffInRange);
     //获取目标点范围内所有怪物的坐标
     lua_register(L, "Game_Monster_GetAllMonsterCoordinatesInTargetPointRange", Game_Monster_GetAllMonsterCoordinatesInTargetPointRange);
     //获取目标点范围内所有怪物的生命
     lua_register(L, "Game_Monster_GetAllMonsterHealthInTargetPointRange", Game_Monster_GetAllMonsterHealthInTargetPointRange);
     //获取目标点范围内所有怪物的异常状态(计划中)
-    //lua_register(L, "Game_Monster_GetAllMonsterDebuffInTargetPointRange", Game_Monster_GetAllMonsterDebuffInTargetPointRange);
+    lua_register(L, "Game_Monster_GetAllMonsterDebuffInTargetPointRange", Game_Monster_GetAllMonsterDebuffInTargetPointRange);
     #pragma endregion
     #pragma region Environmental
     //设置环境生物筛选器
