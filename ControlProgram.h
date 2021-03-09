@@ -3,390 +3,230 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 #include <d3d11.h>
+#include <dxgi.h>
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <tchar.h>
+#include "kiero.h"
 #pragma comment ( lib, "D3D11.lib")
 
-// Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace ControlProgram {
+	bool initConsole = false;
 	bool init = false;
-	// Data
-	static ID3D11Device* g_pd3dDevice = NULL;
-	static ID3D11DeviceContext* g_pd3dDeviceContext = NULL;
-	static IDXGISwapChain* g_pSwapChain = NULL;
-	static ID3D11RenderTargetView* g_mainRenderTargetView = NULL;
+	typedef HRESULT(__stdcall* Present) (IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags);
+	typedef LRESULT(CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
+	typedef uintptr_t PTR;
+	LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	// Forward declarations of helper functions
-	bool CreateDeviceD3D(HWND hWnd);
-	void CleanupDeviceD3D();
-	void CreateRenderTarget();
-	void CleanupRenderTarget();
-	LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	Present oPresent;
+	HWND window = NULL;
+	WNDPROC oWndProc;
+	ID3D11Device* pDevice = NULL;
+	ID3D11DeviceContext* pContext = NULL;
+	ID3D11RenderTargetView* mainRenderTargetView;
+	HMODULE hMod;
 
-	static bool CreateDeviceD3D(HWND hWnd)
+	bool GameInit = false;
+	void InitImGui()
 	{
-		RECT rcWnd;
-		GetWindowRect(hWnd, &rcWnd);
-		// Setup swap chain
-		DXGI_SWAP_CHAIN_DESC sd;
-		ZeroMemory(&sd, sizeof(sd));
-		sd.BufferCount = 2;
-		sd.BufferDesc.Width = rcWnd.right - rcWnd.left;
-		sd.BufferDesc.Height = rcWnd.bottom - rcWnd.top;
-		sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-		sd.BufferDesc.RefreshRate.Numerator = 60;
-		sd.BufferDesc.RefreshRate.Denominator = 1;
-		sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH | DXGI_SWAP_CHAIN_FLAG_GDI_COMPATIBLE;
-		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		sd.OutputWindow = hWnd;
-		sd.SampleDesc.Count = 1;
-		sd.SampleDesc.Quality = 0;
-		sd.Windowed = TRUE;
-		sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-
-		UINT createDeviceFlags = 0;
-		//createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-		D3D_FEATURE_LEVEL featureLevel;
-		const D3D_FEATURE_LEVEL featureLevelArray[2] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0, };
-		if (D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, createDeviceFlags, featureLevelArray, 2, D3D11_SDK_VERSION, &sd, &g_pSwapChain, &g_pd3dDevice, &featureLevel, &g_pd3dDeviceContext) != S_OK)
-			return false;
-
-		CreateRenderTarget();
-		return true;
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO();
+		auto fonts = ImGui::GetIO().Fonts;
+		fonts->AddFontFromFileTTF(
+			"c:/windows/fonts/simhei.ttf",
+			13.0f,
+			NULL,
+			fonts->GetGlyphRangesChineseSimplifiedCommon()
+		);
+		io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
+		ImGui_ImplWin32_Init(window);
+		ImGui_ImplDX11_Init(pDevice, pContext);
 	}
 
-	static void CleanupDeviceD3D()
+	HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)
 	{
-		CleanupRenderTarget();
-		if (g_pSwapChain) { g_pSwapChain->Release(); g_pSwapChain = NULL; }
-		if (g_pd3dDeviceContext) { g_pd3dDeviceContext->Release(); g_pd3dDeviceContext = NULL; }
-		if (g_pd3dDevice) { g_pd3dDevice->Release(); g_pd3dDevice = NULL; }
+		if (!init)
+		{
+			if (SUCCEEDED(pSwapChain->GetDevice(__uuidof(ID3D11Device), (void**)&pDevice)))
+			{
+				pDevice->GetImmediateContext(&pContext);
+				DXGI_SWAP_CHAIN_DESC sd;
+				pSwapChain->GetDesc(&sd);
+				window = sd.OutputWindow;
+				ID3D11Texture2D* pBackBuffer;
+				pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+				pDevice->CreateRenderTargetView(pBackBuffer, NULL, &mainRenderTargetView);
+				pBackBuffer->Release();
+				oWndProc = (WNDPROC)SetWindowLongPtr(window, GWLP_WNDPROC, (LONG_PTR)WndProc);
+				InitImGui();
+				init = true;
+			}
+
+			else
+				return oPresent(pSwapChain, SyncInterval, Flags);
+		}
+
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+
+		if (Base::ModConfig::ModConsole and GameInit)
+		{
+			ImGui::SetNextWindowBgAlpha(0.35f);
+			ImGui::Begin(u8"LuaScript 控制台");
+
+			ImGui::Text(u8"LuaScript版本：%s", Base::ModConfig::ModVersion);
+
+			if (ImGui::TreeNode(u8"Lua脚本列表"))
+			{
+				for (string file_name : Base::ModConfig::LuaFiles) {
+					ImGui::TextColored(ImVec4(0.0f, 0.8f, 0.0f, 1.0f), file_name.c_str());
+				}
+				ImGui::TreePop();
+				ImGui::Separator();
+			}
+			if (ImGui::TreeNode(u8"Lua脚本数据"))
+			{
+				ImGui::Text(u8"当前时间：%f", Base::Chronoscope::NowTime);
+				if (ImGui::TreeNode(u8"计时器"))
+				{
+					for (auto [chronoscopeName, chronoscopeData] : Base::Chronoscope::ChronoscopeList) {
+						if (chronoscopeData.EndTime < Base::Chronoscope::NowTime) {
+							ImGui::TextColored(ImVec4(0.8f, 0.0f, 0.0f, 1.0f), chronoscopeName.c_str());
+						}
+						else {
+							ImGui::TextColored(ImVec4(0.0f, 0.8f, 0.0f, 1.0f), chronoscopeName.c_str());
+						}
+						ImGui::SameLine();
+						ImGui::Text(u8" : %f", chronoscopeData.EndTime);
+					}
+					ImGui::TreePop();
+				}
+				if (ImGui::TreeNode(u8"变量缓存"))
+				{
+					if (ImGui::TreeNode(u8"整数"))
+					{
+						for (auto [VariableName, VariableData] : LuaData::IntVariable) {
+							ImGui::Text(u8"%s: %d", VariableName.c_str(), VariableData);
+						}
+						ImGui::TreePop();
+					}
+					if (ImGui::TreeNode(u8"浮点数"))
+					{
+						for (auto [VariableName, VariableData] : LuaData::FloatVariable) {
+							ImGui::Text(u8"%s: %f", VariableName.c_str(), VariableData);
+						}
+						ImGui::TreePop();
+					}
+					if (ImGui::TreeNode(u8"字符串"))
+					{
+						for (auto [VariableName, VariableData] : LuaData::StringVariable) {
+							ImGui::Text(u8"%s: %s", VariableName.c_str(), VariableData.c_str());
+						}
+						ImGui::TreePop();
+					}
+					ImGui::TreePop();
+				}
+				ImGui::TreePop();
+				ImGui::Separator();
+			}
+			if (ImGui::TreeNode(u8"游戏数据"))
+			{
+				ImGui::Text(u8"地图Id：%d", Base::World::MapId);
+				if (ImGui::TreeNode(u8"玩家信息"))
+				{
+					ImGui::Text(u8"动作Id：%d", Base::PlayerData::ActionId);
+					ImGui::Text(u8"当前耐力：%f", Base::PlayerData::CurrentEndurance);
+					ImGui::Text(u8"当前血量：%f", Base::PlayerData::CurrentHealth);
+					ImGui::Text(u8"当前坐标");
+					ImGui::Text(u8"X：%f", Base::PlayerData::Coordinate::Entity.x);
+					ImGui::Text(u8"Y：%f", Base::PlayerData::Coordinate::Entity.y);
+					ImGui::Text(u8"Z：%f", Base::PlayerData::Coordinate::Entity.z);
+					ImGui::Text(u8"武器类型：%d", Base::PlayerData::Weapons::WeaponType);
+					ImGui::Text(u8"武器Id：%d", Base::PlayerData::Weapons::WeaponId);
+					ImGui::TreePop();
+				}
+				if (ImGui::TreeNode(u8"怪物信息"))
+				{
+					for (auto [monster, monsterData] : Base::Monster::Monsters) {
+						if (monster != nullptr) {
+							ostringstream ptr;
+							ptr << monsterData.Plot;
+							string ptrstr = ptr.str();
+							if (ImGui::TreeNode(ptrstr.c_str()))
+							{
+								void* healthMgr = *offsetPtr<void*>(monster, 0x7670);
+								float health = *offsetPtr<float>(healthMgr, 0x64);
+								float maxHealth = *offsetPtr<float>(healthMgr, 0x60);
+								ImGui::Text(u8"内存地址：%x", monsterData.Plot);
+								ImGui::Text(u8"怪物Id：%d", monsterData.Id);
+								ImGui::Text(u8"怪物变种：%d", monsterData.SubId);
+								ImGui::Text(u8"当前血量：%f", health);
+								ImGui::Text(u8"最大血量：%f", maxHealth);
+								ImGui::Text(u8"当前坐标");
+								ImGui::Text(u8"X：%f", monsterData.CoordinatesX);
+								ImGui::Text(u8"Y：%f", monsterData.CoordinatesY);
+								ImGui::Text(u8"Z：%f", monsterData.CoordinatesZ);
+								ImGui::TreePop();
+								ImGui::Separator();
+							}
+						}
+					}
+					ImGui::TreePop();
+				}
+
+
+				ImGui::TreePop();
+				ImGui::Separator();
+			}
+			ImGui::End();
+		}
+		if (!GameInit) {
+			ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
+			ImGui::Begin(u8"进度条", NULL, window_flags);
+			static float progress = 0.0f, progress_dir = 1.0f;
+			progress += progress_dir * 0.4f * ImGui::GetIO().DeltaTime;
+			if (progress >= +1.1f) { GameInit = true; }
+			ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f), "");
+			ImGui::Text(Base::Draw::GameInitInfo.c_str());
+			ImGui::End();
+		}
+		ImGui::Render();
+		pContext->OMSetRenderTargets(1, &mainRenderTargetView, NULL);
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+		return oPresent(pSwapChain, SyncInterval, Flags);
 	}
 
-	static void CreateRenderTarget()
+	DWORD WINAPI MainThread(LPVOID lpReserved)
 	{
-		ID3D11Texture2D* pBackBuffer;
-		g_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
-		g_pd3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &g_mainRenderTargetView);
-		pBackBuffer->Release();
+		bool init_hook = false;
+		do
+		{
+			if (kiero::init(kiero::RenderType::D3D11) == kiero::Status::Success)
+			{
+				kiero::bind(8, (void**)&oPresent, hkPresent);
+				init_hook = true;
+			}
+		} while (!init_hook);
+		return TRUE;
 	}
 
-	static void CleanupRenderTarget()
-	{
-		if (g_mainRenderTargetView) { g_mainRenderTargetView->Release(); g_mainRenderTargetView = NULL; }
-	}
+	LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
-	// Win32 message handler
-	static LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-	{
-		if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+		if (true && ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
 			return true;
 
-		switch (msg)
-		{
-		case WM_SIZE:
-			if (g_pd3dDevice != NULL && wParam != SIZE_MINIMIZED)
-			{
-				CleanupRenderTarget();
-				g_pSwapChain->ResizeBuffers(0, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam), DXGI_FORMAT_UNKNOWN, 0);
-				CreateRenderTarget();
-			}
-			return 0;
-		case WM_SYSCOMMAND:
-			if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
-				return 0;
-			break;
-		case WM_DESTROY:
-			::PostQuitMessage(0);
-			return 0;
-		}
-		return ::DefWindowProc(hWnd, msg, wParam, lParam);
+		return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
 	}
 
 	static void InitConsole() {
-		if (init)
+		if (initConsole)
 			return;
 		else
-			init = true;
-
-		std::thread([](bool& showwindow,
-			vector<string>& LuaFiles,
-			string& ModVersion,
-			int& MapId,
-			int& ActionId,
-			int& WeaponType,
-			int& WeaponId,
-			float& CurrentEndurance,
-			float& CurrentHealth,
-			Base::Vector3& PlayerCoordinate,
-			map<void*, Base::Monster::MonsterData>& Monsters,
-			string& GameInitInfo,
-			map<string, Base::Chronoscope::ChronoscopeData>& Chronoscope,
-			float &NowTime,
-			map<string, int>& IntVariable,
-			map<string, float>& FloatVariable,
-			map<string, string>& StringVariable
-			) {
-				bool GameInit = false;
-				WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T("LuaScrippt"), NULL };
-				::RegisterClassEx(&wc);
-				//在扩展样式中加入WS_EX_LAYERED
-				HWND hwnd = CreateWindowEx(WS_EX_LAYERED,
-					wc.lpszClassName,
-					_T("LuaScrpt 控制台"),
-					WS_POPUP,
-					CW_USEDEFAULT,
-					CW_USEDEFAULT,
-					GetSystemMetrics(SM_CXSCREEN),
-					GetSystemMetrics(SM_CYSCREEN),
-					NULL,
-					NULL,
-					GetModuleHandle(NULL),
-					NULL);
-				//设置颜色过滤,使用改关键色刷新屏幕后颜色被过滤实现透明
-				SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), NULL, LWA_COLORKEY);
-
-				//设置dx11屏幕刷新颜色 注意这里的颜色要和设置透明关键色设置一样
-				//ImVec4 clear_color = ImGui::ColorConvertU32ToFloat4(IM_COL32(254, 254, 254, 255));
-				float clear_color[] = { 0, 0, 0, 0 };
-
-				if (!CreateDeviceD3D(hwnd))
-				{
-					CleanupDeviceD3D();
-					::UnregisterClass(wc.lpszClassName, wc.hInstance);
-					return 1;
-				}
-				::ShowWindow(hwnd, SW_SHOWDEFAULT);
-				::UpdateWindow(hwnd);
-
-				IMGUI_CHECKVERSION();
-				ImGui::CreateContext();
-				ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-				ImGui::StyleColorsDark();
-
-				ImGui_ImplWin32_Init(hwnd);
-				ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
-				auto fonts = ImGui::GetIO().Fonts;
-				fonts->AddFontFromFileTTF(
-					"c:/windows/fonts/simhei.ttf",
-					13.0f,
-					NULL,
-					fonts->GetGlyphRangesChineseSimplifiedCommon()
-				);
-
-				MSG msg;
-				ZeroMemory(&msg, sizeof(msg));
-				HWND gameHwnd = FindWindow("MT FRAMEWORK", NULL);
-				RECT rect1;
-				RECT rect2;
-				::SetWindowLongPtr(hwnd, GWLP_HWNDPARENT, (LONG)gameHwnd);
-				SetForegroundWindow(gameHwnd);
-				while (msg.message != WM_QUIT)
-				{
-					GetWindowRect(gameHwnd, &rect1);
-					GetWindowRect(hwnd, &rect2);
-					if (
-						rect1.left != rect2.left or
-						rect1.top != rect2.top or
-						rect1.right != rect2.right or
-						rect1.bottom != rect2.bottom
-						)
-						MoveWindow(hwnd, rect1.left, rect1.top, rect1.right - rect1.left, rect1.bottom - rect1.top, false);
-					if (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
-					{
-						::TranslateMessage(&msg);
-						::DispatchMessage(&msg);
-						continue;
-					}
-					ImGui_ImplDX11_NewFrame();
-					ImGui_ImplWin32_NewFrame();
-					ImGui::NewFrame();
-					if (showwindow and GameInit)
-					{
-
-						ImGui::Begin(u8"LuaScript 控制台");
-
-						ImGui::Text(u8"LuaScript版本：%s", ModVersion);
-
-						if (ImGui::TreeNode(u8"Lua脚本列表"))
-						{
-							for (string file_name : LuaFiles) {
-								ImGui::TextColored(ImVec4(0.0f, 0.8f, 0.0f, 1.0f), file_name.c_str());
-							}
-							ImGui::TreePop();
-							ImGui::Separator();
-						}
-						if (ImGui::TreeNode(u8"Lua脚本数据"))
-						{
-							ImGui::Text(u8"当前时间：%f", NowTime);
-							if (ImGui::TreeNode(u8"计时器"))
-							{
-								for (auto [chronoscopeName, chronoscopeData] : Chronoscope) {
-									if (chronoscopeData.EndTime < NowTime) {
-										ImGui::TextColored(ImVec4(0.8f, 0.0f, 0.0f, 1.0f), chronoscopeName.c_str());
-									}
-									else {
-										ImGui::TextColored(ImVec4(0.0f, 0.8f, 0.0f, 1.0f), chronoscopeName.c_str());
-									}
-									ImGui::SameLine();
-									ImGui::Text(u8" : %f", chronoscopeData.EndTime);
-								}
-								ImGui::TreePop();
-							}
-							if (ImGui::TreeNode(u8"变量缓存"))
-							{
-								if (ImGui::TreeNode(u8"整数"))
-								{
-									for (auto [VariableName, VariableData] : IntVariable) {
-										ImGui::Text(u8"%s: %d", VariableName.c_str(), VariableData);
-									}
-									ImGui::TreePop();
-								}
-								if (ImGui::TreeNode(u8"浮点数"))
-								{
-									for (auto [VariableName, VariableData] : FloatVariable) {
-										ImGui::Text(u8"%s: %f", VariableName.c_str(), VariableData);
-									}
-									ImGui::TreePop();
-								}
-								if (ImGui::TreeNode(u8"字符串"))
-								{
-									for (auto [VariableName, VariableData] : StringVariable) {
-										ImGui::Text(u8"%s: %s", VariableName.c_str(), VariableData.c_str());
-									}
-									ImGui::TreePop();
-								}
-								ImGui::TreePop();
-							}
-							ImGui::TreePop();
-							ImGui::Separator();
-						}
-						if (ImGui::TreeNode(u8"游戏数据"))
-						{
-							ImGui::Text(u8"地图Id：%d", MapId);
-							if (ImGui::TreeNode(u8"玩家信息"))
-							{
-								ImGui::Text(u8"动作Id：%d", ActionId);
-								ImGui::Text(u8"当前耐力：%f", CurrentEndurance);
-								ImGui::Text(u8"当前血量：%f", CurrentHealth);
-								ImGui::Text(u8"当前坐标");
-								ImGui::Text(u8"X：%f", PlayerCoordinate.x);
-								ImGui::Text(u8"Y：%f", PlayerCoordinate.y);
-								ImGui::Text(u8"Z：%f", PlayerCoordinate.z);
-								ImGui::Text(u8"武器类型：%d", WeaponType);
-								ImGui::Text(u8"武器Id：%d", WeaponId);
-								ImGui::TreePop();
-							}
-							if (ImGui::TreeNode(u8"怪物信息"))
-							{
-								for (auto [monster, monsterData] : Monsters) {
-									if (monster != nullptr) {
-										ostringstream ptr;
-										ptr << monsterData.Plot;
-										string ptrstr = ptr.str();
-										if (ImGui::TreeNode(ptrstr.c_str()))
-										{
-											void* healthMgr = *offsetPtr<void*>(monster, 0x7670);
-											float health = *offsetPtr<float>(healthMgr, 0x64);
-											float maxHealth = *offsetPtr<float>(healthMgr, 0x60);
-											ImGui::Text(u8"内存地址：%x", monsterData.Plot);
-											ImGui::Text(u8"怪物Id：%d", monsterData.Id);
-											ImGui::Text(u8"怪物变种：%d", monsterData.SubId);
-											ImGui::Text(u8"当前血量：%f", health);
-											ImGui::Text(u8"最大血量：%f", maxHealth);
-											ImGui::Text(u8"当前坐标");
-											ImGui::Text(u8"X：%f", monsterData.CoordinatesX);
-											ImGui::Text(u8"Y：%f", monsterData.CoordinatesY);
-											ImGui::Text(u8"Z：%f", monsterData.CoordinatesZ);
-											ImGui::TreePop();
-											ImGui::Separator();
-										}
-									}
-								}
-								ImGui::TreePop();
-							}
-
-
-							ImGui::TreePop();
-							ImGui::Separator();
-						}
-						ImGui::End();
-					}
-					if (!GameInit) {
-						/*
-							ImVec2 window_pos, window_pos_pivot;
-							window_pos.x = 500.0f;
-							window_pos.y = 500.0f;
-							window_pos_pivot.x = 0.0f;
-							window_pos_pivot.y = 0.0f;
-							ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
-						*/
-						ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
-						ImGui::Begin(u8"进度条", NULL, window_flags);
-						static float progress = 0.0f, progress_dir = 1.0f;
-						progress += progress_dir * 0.4f * ImGui::GetIO().DeltaTime;
-						if (progress >= +1.1f) { GameInit = true; }
-						ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f), "");
-						ImGui::Text(GameInitInfo.c_str());
-						ImGui::End();
-					}
-					ImGui::Render();
-					//const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
-					g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, NULL);
-					g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color);
-					ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
-					BLENDFUNCTION blend = { AC_SRC_OVER, 0, 0, AC_SRC_ALPHA };
-					POINT pt = { 0, 0 };
-					SIZE sz = { 0, 0 };
-					IDXGISurface1* pSurface = NULL;
-					HDC hDC = NULL;
-
-					g_pSwapChain->Present(1, 0);
-
-					g_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pSurface));
-					DXGI_SURFACE_DESC desc;
-					pSurface->GetDesc(&desc);
-					sz.cx = desc.Width;
-					sz.cy = desc.Height;
-
-					pSurface->GetDC(FALSE, &hDC);
-					::UpdateLayeredWindow(hwnd, nullptr, nullptr, &sz, hDC, &pt, 0, &blend, ULW_COLORKEY);
-					pSurface->ReleaseDC(nullptr);
-					pSurface->Release();
-				}
-
-				// Cleanup
-				ImGui_ImplDX11_Shutdown();
-				ImGui_ImplWin32_Shutdown();
-				ImGui::DestroyContext();
-
-				CleanupDeviceD3D();
-				::DestroyWindow(hwnd);
-				::UnregisterClass(wc.lpszClassName, wc.hInstance);
-
-			},
-			ref(Base::ModConfig::ModConsole),
-				ref(Base::ModConfig::LuaFiles),
-				ref(Base::ModConfig::ModVersion),
-				ref(Base::World::MapId),
-				ref(Base::PlayerData::ActionId),
-				ref(Base::PlayerData::Weapons::WeaponType),
-				ref(Base::PlayerData::Weapons::WeaponId),
-				ref(Base::PlayerData::CurrentEndurance),
-				ref(Base::PlayerData::CurrentHealth),
-				ref(Base::PlayerData::Coordinate::Entity),
-				ref(Base::Monster::Monsters),
-				ref(Base::Draw::GameInitInfo),
-				ref(Base::Chronoscope::ChronoscopeList),
-				ref(Base::Chronoscope::NowTime),
-				ref(LuaData::IntVariable),
-				ref(LuaData::FloatVariable),
-				ref(LuaData::StringVariable)
-				).detach();
+			initConsole = true;
+		CreateThread(nullptr, 0, MainThread, hMod, 0, nullptr);
 	}
 }

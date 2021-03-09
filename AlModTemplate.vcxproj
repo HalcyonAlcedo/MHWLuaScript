@@ -161,9 +161,12 @@
   <ItemGroup>
     <ClCompile Include="deps\imgui_impl_dx11.cpp" />
     <ClCompile Include="deps\imgui_impl_win32.cpp" />
+    <ClCompile Include="deps\kiero.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="HttpClient.cpp" />
     <ClCompile Include="HttpClient.h" />
+    <ClCompile Include="impl\d3d11_impl.cpp" />
+    <ClCompile Include="impl\shared.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="deps\loader.lib" />
@@ -184,7 +187,10 @@
     <ClInclude Include="ControlProgram.h" />
     <ClInclude Include="deps\imgui_impl_dx11.h" />
     <ClInclude Include="deps\imgui_impl_win32.h" />
+    <ClInclude Include="deps\kiero.h" />
     <ClInclude Include="Execution.h" />
+    <ClInclude Include="impl\d3d11_impl.h" />
+    <ClInclude Include="impl\shared.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="HttpRequest.h" />
     <ClInclude Include="LuaData.h" />

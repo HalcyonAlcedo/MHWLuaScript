@@ -15,6 +15,9 @@
     <Filter Include="源代码\imgui">
       <UniqueIdentifier>{1ebe948a-e1bb-4b85-bf1c-9581568ed5ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源代码\impl">
+      <UniqueIdentifier>{020807b8-93b1-48a6-b02c-aa13750252a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -31,6 +34,15 @@
     </ClCompile>
     <ClCompile Include="deps\imgui_impl_win32.cpp">
       <Filter>源代码\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="deps\kiero.cpp">
+      <Filter>源代码</Filter>
+    </ClCompile>
+    <ClCompile Include="impl\d3d11_impl.cpp">
+      <Filter>源代码\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="impl\shared.cpp">
+      <Filter>源代码\impl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +88,15 @@
     </ClInclude>
     <ClInclude Include="ControlProgram.h">
       <Filter>核心数据</Filter>
+    </ClInclude>
+    <ClInclude Include="deps\kiero.h">
+      <Filter>源代码</Filter>
+    </ClInclude>
+    <ClInclude Include="impl\d3d11_impl.h">
+      <Filter>源代码\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="impl\shared.h">
+      <Filter>源代码\impl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

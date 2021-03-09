@@ -22,7 +22,6 @@
 #include "LuaData.h"
 #include "ControlProgram.h"
 #include "LuaScript.h"
-
 using namespace loader;
 
 __declspec(dllexport) extern bool Load()
@@ -64,8 +63,11 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	LPVOID lpReserved
 )
 {
-	if (ul_reason_for_call == DLL_PROCESS_ATTACH)
+	if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
+		DisableThreadLibraryCalls(hModule);
+		ControlProgram::hMod = hModule;
 		return Load();
+	}
 	return TRUE;
 }
 
