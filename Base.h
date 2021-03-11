@@ -654,8 +654,8 @@ namespace Base {
 			else
 				AimingState = false;
 			if (BasicGameData::PlayerDataPlot != nullptr) {
-				AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerDataPlot, 0x46F8);
-				Angle = *offsetPtr<float>(BasicGameData::PlayerDataPlot, 0x4628) * 180.0;
+				AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerDataPlot, 0x4298);
+				Angle = *offsetPtr<float>(BasicGameData::PlayerDataPlot, 0x41C8) * 180.0;
 				Radian = 4 * atan(1.0) / 180 * PlayerData::Angle;
 			}
 			void* ActionPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
@@ -1017,16 +1017,15 @@ namespace Base {
 			void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 			void* PlayerInfoPlot = *(undefined**)MH::Player::BasePtr;
 			BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
-			void* PlayerDataPlot = *(undefined**)MH::Player::PlayerDataPlot;
-			void* PlayerDataOffset1 = *offsetPtr<undefined**>((undefined(*)())PlayerDataPlot, 0x128);
+			void* PlayerDataOffset1 = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
 			void* PlayerDataOffset2 = nullptr;
 			if (PlayerDataOffset1 != nullptr)
-				PlayerDataOffset2 = *offsetPtr<undefined**>((undefined(*)())PlayerDataOffset1, 0x70);
+				PlayerDataOffset2 = *offsetPtr<undefined**>((undefined(*)())PlayerDataOffset1, 0x4c0);
 			void* PlayerDataOffset3 = nullptr;
 			if (PlayerDataOffset2 != nullptr)
-				PlayerDataOffset3 = *offsetPtr<undefined**>((undefined(*)())PlayerDataOffset2, 0x400);
+				PlayerDataOffset3 = *offsetPtr<undefined**>((undefined(*)())PlayerDataOffset2, 0x98);
 			if (PlayerDataOffset3 != nullptr)
-				BasicGameData::PlayerDataPlot = *offsetPtr<undefined**>((undefined(*)())PlayerDataOffset3, 0xD0);
+				BasicGameData::PlayerDataPlot = *offsetPtr<undefined**>((undefined(*)())PlayerDataOffset3, 0x48);
 			BasicGameData::PlayerInfoPlot = *offsetPtr<undefined**>((undefined(*)())PlayerInfoPlot, 0xA8);
 			BasicGameData::GameTimePlot = (undefined(*)())MH::World::GmaeClock;
 			BasicGameData::MapPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7D20);
