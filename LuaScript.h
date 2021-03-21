@@ -94,6 +94,12 @@ static int Gmae_Player_Weapon_GetWeaponType(lua_State* pL) {
 static int Gmae_Player_Weapon_ChangeWeapons(lua_State* pL) {
     int type = (int)lua_tointeger(pL, 1);
     int id = (int)lua_tointeger(pL, 2);
+    Base::PlayerData::Weapons::ChangeWeapons(type, id, false);
+    return 0;
+}
+static int Gmae_Player_Weapon_CompleteChangeWeapons(lua_State* pL) {
+    int type = (int)lua_tointeger(pL, 1);
+    int id = (int)lua_tointeger(pL, 2);
     Base::PlayerData::Weapons::ChangeWeapons(type, id);
     return 0;
 }
@@ -464,14 +470,17 @@ static int Game_Monster_GetAllMonsterDebuff(lua_State* pL)
     for (auto [id, monsterData] : Component::GetAllMonsterDeBuff()) {
         lua_pushinteger(pL, id);
         lua_newtable(pL);
-        lua_pushstring(pL,"Debuff");
+        lua_pushstring(pL, "Debuff");
         lua_newtable(pL);
         for (string debuff : vector<string>{ "Covet","Dizziness","Paralysis","Sleep","Poisoning","Ride","Ridedowna","Reducebreath","Explode","Flicker","FlickerG","Smoke","Traphole","Stasistrap" }) {
-            lua_pushstring(pL, (debuff + "State").c_str());
-            lua_pushnumber(pL, monsterData.DeBuff[debuff].StateValue/monsterData.DeBuff[debuff].MaxStateValue);
+            lua_pushstring(pL, debuff.c_str());
+            lua_newtable(pL);
+            lua_pushstring(pL, "State");
+            lua_pushnumber(pL, monsterData.DeBuff[debuff].StateValue / monsterData.DeBuff[debuff].MaxStateValue);
             lua_settable(pL, -3);
-            lua_pushstring(pL, (debuff + "Recovery").c_str());
+            lua_pushstring(pL, "Recovery");
             lua_pushnumber(pL, monsterData.DeBuff[debuff].RecoveryValue / monsterData.DeBuff[debuff].MaxRecoveryValue);
+            lua_settable(pL, -3);
             lua_settable(pL, -3);
         }
         lua_settable(pL, -3);
@@ -565,11 +574,14 @@ static int Game_Monster_GetAllMonsterDebuffInRange(lua_State* pL)
         lua_pushstring(pL, "Debuff");
         lua_newtable(pL);
         for (string debuff : vector<string>{ "Covet","Dizziness","Paralysis","Sleep","Poisoning","Ride","Ridedowna","Reducebreath","Explode","Flicker","FlickerG","Smoke","Traphole","Stasistrap" }) {
-            lua_pushstring(pL, (debuff + "State").c_str());
+            lua_pushstring(pL, debuff.c_str());
+            lua_newtable(pL);
+            lua_pushstring(pL, "State");
             lua_pushnumber(pL, monsterData.DeBuff[debuff].StateValue / monsterData.DeBuff[debuff].MaxStateValue);
             lua_settable(pL, -3);
-            lua_pushstring(pL, (debuff + "Recovery").c_str());
+            lua_pushstring(pL, "Recovery");
             lua_pushnumber(pL, monsterData.DeBuff[debuff].RecoveryValue / monsterData.DeBuff[debuff].MaxRecoveryValue);
+            lua_settable(pL, -3);
             lua_settable(pL, -3);
         }
         lua_settable(pL, -3);
@@ -669,17 +681,20 @@ static int Game_Monster_GetAllMonsterDebuffInTargetPointRange(lua_State* pL)
     for (auto [id, monsterData] : Component::GetAllMonsterDeBuffRelativeToTarget(Base::Vector3(x, y, z), min, max)) {
         lua_pushinteger(pL, id);
         lua_newtable(pL);
-        lua_pushstring(pL, "Debuff");
-        lua_newtable(pL);
-        for (string debuff : vector<string>{ "Covet","Dizziness","Paralysis","Sleep","Poisoning","Ride","Ridedowna","Reducebreath","Explode","Flicker","FlickerG","Smoke","Traphole","Stasistrap" }) {
-            lua_pushstring(pL, (debuff + "State").c_str());
-            lua_pushnumber(pL, monsterData.DeBuff[debuff].StateValue / monsterData.DeBuff[debuff].MaxStateValue);
+            lua_pushstring(pL, "Debuff");
+            lua_newtable(pL);
+                for (string debuff : vector<string>{ "Covet","Dizziness","Paralysis","Sleep","Poisoning","Ride","Ridedowna","Reducebreath","Explode","Flicker","FlickerG","Smoke","Traphole","Stasistrap" }) {
+                    lua_pushstring(pL, debuff.c_str());
+                    lua_newtable(pL);
+                        lua_pushstring(pL, "State");
+                        lua_pushnumber(pL, monsterData.DeBuff[debuff].StateValue / monsterData.DeBuff[debuff].MaxStateValue);
+                        lua_settable(pL, -3);
+                        lua_pushstring(pL, "Recovery");
+                        lua_pushnumber(pL, monsterData.DeBuff[debuff].RecoveryValue / monsterData.DeBuff[debuff].MaxRecoveryValue);
+                        lua_settable(pL, -3);
+                    lua_settable(pL, -3);
+                }
             lua_settable(pL, -3);
-            lua_pushstring(pL, (debuff + "Recovery").c_str());
-            lua_pushnumber(pL, monsterData.DeBuff[debuff].RecoveryValue / monsterData.DeBuff[debuff].MaxRecoveryValue);
-            lua_settable(pL, -3);
-        }
-        lua_settable(pL, -3);
         lua_pushstring(pL, "Id");
         lua_pushinteger(pL, monsterData.Id);
         lua_settable(pL, -3);
@@ -1066,6 +1081,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Gmae_Player_Weapon_GetWeaponType", Gmae_Player_Weapon_GetWeaponType);
     //更换玩家的武器
     lua_register(L, "Gmae_Player_Weapon_ChangeWeapons", Gmae_Player_Weapon_ChangeWeapons);
+    //完全更换玩家的武器
+    lua_register(L, "Gmae_Player_Weapon_CompleteChangeWeapons", Gmae_Player_Weapon_CompleteChangeWeapons);
     //获取玩家武器装饰物坐标
     lua_register(L, "Gmae_Player_Weapon_GetOrnamentsCoordinate", Gmae_Player_Weapon_GetOrnamentsCoordinate);
     //获取玩家武器装饰物模型大小

@@ -35,8 +35,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.1.3";
-		long long ModBuild = 113003092202;
+		string ModVersion = "v1.1.4";
+		long long ModBuild = 114003211447;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -468,9 +468,16 @@ namespace Base {
 			//副武器模型大小
 			Vector3 SecondaryWeaponSize = Vector3();
 			//更换武器（武器类型，武器ID）
-			static void ChangeWeapons(int type, int id) {
-				if (type <= 13 and type >= 0 and id >= 0)
-					MH::Weapon::ChangeWeapon(BasicGameData::PlayerPlot, type, id);
+			static void ChangeWeapons(int type, int id, bool Complete = true) {
+				if (type <= 13 and type >= 0 and id >= 0) {
+					if (Complete) {
+						*offsetPtr<int>(BasicGameData::PlayerPlot, 0x13860) = type;
+						*offsetPtr<int>(BasicGameData::PlayerPlot, 0x13864) = id;
+						MH::Weapon::CompleteChangeWeapon(BasicGameData::PlayerPlot, 1, 0);
+					}
+					else
+						MH::Weapon::ChangeWeapon(BasicGameData::PlayerPlot, type, id);
+				}
 			}
 			//解除主武器坐标控制
 			static void DecontrolMainWeaponCoordinate() {

@@ -82,7 +82,8 @@ namespace MH {
             }
             static undefined8(*CalcElementalBloat)() = (undefined8(*)())0x1419900a0;
         }
-        static void* (*ChangeWeapon)(void*, int, int) = (void* (*)(void*, int, int))0x141F76CE0;//更换武器
+        static void* (*ChangeWeapon)(void*, int, int) = (void* (*)(void*, int, int))0x141F76CE0;//更换武器(不刷新内存)
+        static void* (*CompleteChangeWeapon)(void*, int, int) = (void* (*)(void*, int, int))0x14205E050;//更换武器
 
         static undefined(*WeaponOrnaments)() = (undefined(*)())0x1421300f1;
         static undefined(*MainWeaponPtr)() = (undefined(*)())0x142135B29;
