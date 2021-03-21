@@ -740,6 +740,27 @@ namespace Component {
 			return monsterList;
 		}
 #pragma endregion
+/*
+	获取武器特性值
+*/
+#pragma region GetWeaponCharacteristicValue
+		static int GetWeaponCharacteristicIntValue(string ptr) {
+			int Ptr = 0;
+			sscanf_s(ptr.c_str(), "%x", &Ptr);
+			void* WeaponEntityPlot = *offsetPtr<void*>(Base::BasicGameData::PlayerPlot, 0x76B0);
+			if (WeaponEntityPlot != nullptr){
+				return *offsetPtr<int>(WeaponEntityPlot, Ptr);
+			}
+		}
+		static float GetWeaponCharacteristicFloatValue(string ptr) {
+			int Ptr = 0;
+			sscanf_s(ptr.c_str(), "%x", &Ptr);
+			void* WeaponEntityPlot = *offsetPtr<void*>(Base::BasicGameData::PlayerPlot, 0x76B0);
+			if (WeaponEntityPlot != nullptr) {
+				return *offsetPtr<float>(WeaponEntityPlot, Ptr);
+			}
+		}
+#pragma endregion
 
 //获取目录中的文件
 	void getFiles(string path, vector<string>& files)

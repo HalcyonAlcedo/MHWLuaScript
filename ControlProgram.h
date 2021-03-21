@@ -29,7 +29,6 @@ namespace ControlProgram {
 	ID3D11RenderTargetView* mainRenderTargetView;
 	HMODULE hMod;
 
-	bool GameInit = false;
 	void InitImGui()
 	{
 		ImGui::CreateContext();
@@ -73,7 +72,7 @@ namespace ControlProgram {
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 
-		if (Base::ModConfig::ModConsole and GameInit)
+		if (Base::ModConfig::ModConsole)
 		{
 			ImGui::SetNextWindowBgAlpha(0.35f);
 			ImGui::Begin(u8"LuaScript 控制台");
@@ -182,16 +181,6 @@ namespace ControlProgram {
 				ImGui::TreePop();
 				ImGui::Separator();
 			}
-			ImGui::End();
-		}
-		if (!GameInit) {
-			ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
-			ImGui::Begin(u8"进度条", NULL, window_flags);
-			static float progress = 0.0f, progress_dir = 1.0f;
-			progress += progress_dir * 0.4f * ImGui::GetIO().DeltaTime;
-			if (progress >= +1.1f) { GameInit = true; }
-			ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f), "");
-			ImGui::Text(Base::Draw::GameInitInfo.c_str());
 			ImGui::End();
 		}
 		ImGui::Render();

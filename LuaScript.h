@@ -205,6 +205,16 @@ static int Gmae_Player_Weapon_DecontrolSecondaryWeaponSize(lua_State* pL) {
     Base::PlayerData::Weapons::DecontrolSecondaryWeaponSize();
     return 0;
 }
+static int Gmae_Player_Weapon_CharacteristicIntValue(lua_State* pL) {
+    string ptr = "0x" + (string)lua_tostring(pL, 1);
+    lua_pushinteger(pL, Component::GetWeaponCharacteristicIntValue(ptr));
+    return 1;
+}
+static int Gmae_Player_Weapon_CharacteristicFloatValue(lua_State* pL) {
+    string ptr = "0x" + (string)lua_tostring(pL, 1);
+    lua_pushinteger(pL, Component::GetWeaponCharacteristicFloatValue(ptr));
+    return 1;
+}
 static int Gmae_Player_GetFsmData(lua_State* pL) {
     lua_pushinteger(pL, Base::PlayerData::Fsm.Target);
     lua_pushinteger(pL, Base::PlayerData::Fsm.Id);
@@ -1119,6 +1129,10 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Gmae_Player_Weapon_DecontrolSecondaryWeaponCoordinate", Gmae_Player_Weapon_DecontrolSecondaryWeaponCoordinate);
     //解除玩家副武器模型大小设置
     lua_register(L, "Gmae_Player_Weapon_DecontrolSecondaryWeaponSize", Gmae_Player_Weapon_DecontrolSecondaryWeaponSize);
+    //获取玩家武器特殊数值(整数型)
+    lua_register(L, "Gmae_Player_Weapon_CharacteristicIntValue", Gmae_Player_Weapon_CharacteristicIntValue);
+    //获取玩家武器特殊数值(浮点型)
+    lua_register(L, "Gmae_Player_Weapon_CharacteristicFloatValue", Gmae_Player_Weapon_CharacteristicFloatValue);
     
     //获取玩家派生信息
     lua_register(L, "Gmae_Player_GetFsmData", Gmae_Player_GetFsmData);
