@@ -167,6 +167,7 @@
     <ClCompile Include="HttpClient.h" />
     <ClCompile Include="impl\d3d11_impl.cpp" />
     <ClCompile Include="impl\shared.cpp" />
+    <ClCompile Include="impl\win32_impl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="deps\loader.lib" />
@@ -191,6 +192,7 @@
     <ClInclude Include="Execution.h" />
     <ClInclude Include="impl\d3d11_impl.h" />
     <ClInclude Include="impl\shared.h" />
+    <ClInclude Include="impl\win32_impl.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="HttpRequest.h" />
     <ClInclude Include="LuaData.h" />

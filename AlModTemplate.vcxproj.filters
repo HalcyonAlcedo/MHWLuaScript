@@ -44,6 +44,9 @@
     <ClCompile Include="impl\shared.cpp">
       <Filter>源代码\impl</Filter>
     </ClCompile>
+    <ClCompile Include="impl\win32_impl.cpp">
+      <Filter>源代码\impl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="deps\minhook\libMinHook.x64.lib">
@@ -96,6 +99,9 @@
       <Filter>源代码\impl</Filter>
     </ClInclude>
     <ClInclude Include="impl\shared.h">
+      <Filter>源代码\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="impl\win32_impl.h">
       <Filter>源代码\impl</Filter>
     </ClInclude>
   </ItemGroup>
