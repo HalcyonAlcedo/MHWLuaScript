@@ -1,5 +1,3 @@
-// dllmain.cpp : Définit le point d'entrée de l'application DLL.
-// MHWDLLMod 005
 #include <fstream>
 #include <queue>
 #include <functional>

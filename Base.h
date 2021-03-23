@@ -35,8 +35,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.1.6 Alpha";
-		long long ModBuild = 115003222049;
+		string ModVersion = "v1.1.6";
+		long long ModBuild = 116003232142;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -338,10 +338,28 @@ namespace Base {
 			if (monsterBuff.MaxStateValue != 0) {
 				MonsterBuff::SetMonsterBuffState(monster, buff);
 			}
-		}//获取怪物buff状态
+		}
+		//获取怪物buff状态
 		static MonsterBuff::MonsterBuffState GetBuff(void* monster, string buff) {
 			return MonsterBuff::GetMonsterBuffState(monster, buff);
 		}
+		//获取怪物buff状态
+		static void* GetHateTarget(void* monster) {
+			void* HateTargetOffset1 = *offsetPtr<undefined**>((undefined(*)())monster, 0x98);
+			void* HateTargetOffset2 = nullptr;
+			if (HateTargetOffset1 != nullptr)
+				HateTargetOffset2 = *offsetPtr<undefined**>((undefined(*)())HateTargetOffset1, 0x1B0);
+			void* HateTargetOffset3 = nullptr;
+			if (HateTargetOffset2 != nullptr)
+				HateTargetOffset3 = *offsetPtr<undefined**>((undefined(*)())HateTargetOffset2, 0x8);
+			void* HateTargetOffset4 = nullptr;
+			if (HateTargetOffset3 != nullptr)
+				HateTargetOffset4 = *offsetPtr<undefined**>((undefined(*)())HateTargetOffset3, 0x970);
+			if (HateTargetOffset4 != nullptr)
+				return *offsetPtr<void*>(HateTargetOffset4, 0x5D0);
+			return nullptr;
+		}
+		//设置怪物派生动作
 		static void BehaviorControl(void* monster, int Fsm) {
 			//感谢南风焓大佬提供的地址
 			MH::Monster::BehaviorControl((undefined*)monster, Fsm);

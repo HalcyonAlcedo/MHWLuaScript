@@ -765,6 +765,20 @@ static int Game_Player_GetPlayerHookCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Hook.z);
     return 3;
 }
+static int Game_Player_GetMonstersHateToPlayers(lua_State* pL) {
+    lua_newtable(pL);
+    vector<void*> Monster = Component::GetMonstersHateToPlayers();
+    vector<void*>::iterator it = Monster.begin();
+    for (; it != Monster.end(); ++it)
+    {
+        ostringstream ptr;
+        ptr << *it;
+        string ptrstr = ptr.str();
+        lua_pushstring(pL, ptrstr.c_str());
+    }
+    lua_settable(pL, -3);
+    return 1;
+}
 static int Game_Player_GetPlayerVisualDistance(lua_State* pL) {
     void* VisualOffset = *offsetPtr<undefined**>((undefined(*)())Base::BasicGameData::PlayerPlot, 0x7690);
     lua_pushnumber(pL, *offsetPtr<float>(VisualOffset, 0x5E8));
@@ -1041,7 +1055,6 @@ int Lua_Main(string LuaFile)
     int error = luaL_dofile(L, LuaFile.c_str());
     if (error)
     {
-        //LOG(ERR) << "dofile error";
         return -1;
     }
     Nowlua = LuaFile;
@@ -1164,6 +1177,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Player_SetPlayerBuffDuration", Game_Player_SetPlayerBuffDuration);
     //获取玩家钩爪坐标
     lua_register(L, "Game_Player_GetPlayerHookCoordinate", Game_Player_GetPlayerHookCoordinate);
+    //获取对玩家仇恨的怪物
+    lua_register(L, "Game_Player_GetMonstersHateToPlayers", Game_Player_GetMonstersHateToPlayers);
     
     #pragma endregion
     //获取当前地图Id
@@ -1310,6 +1325,7 @@ int Lua_Main(string LuaFile)
 
     lua_getglobal(L, "run");
     lua_pcall(L, 0, 0, 0);
+    lua_pop(L, 1);
     lua_close(L);
     Sublua = "";
     return 1;

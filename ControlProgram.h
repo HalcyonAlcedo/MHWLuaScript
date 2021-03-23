@@ -38,7 +38,7 @@ namespace ControlProgram {
 			"c:/windows/fonts/simhei.ttf",
 			13.0f,
 			NULL,
-			fonts->GetGlyphRangesChineseSimplifiedCommon()
+			fonts->GetGlyphRangesChineseFull()
 		);
 		io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
 		ImGui_ImplWin32_Init(window);
@@ -82,7 +82,7 @@ namespace ControlProgram {
 			if (ImGui::TreeNode(u8"Lua脚本列表"))
 			{
 				for (string file_name : Base::ModConfig::LuaFiles) {
-					ImGui::TextColored(ImVec4(0.0f, 0.8f, 0.0f, 1.0f), file_name.c_str());
+					ImGui::TextColored(ImVec4(0.0f, 0.8f, 0.0f, 1.0f), Component::string_To_UTF8(file_name).c_str());
 				}
 				ImGui::TreePop();
 				ImGui::Separator();
@@ -161,7 +161,7 @@ namespace ControlProgram {
 							ostringstream ptr;
 							ptr << monsterData.Plot;
 							string ptrstr = ptr.str();
-							if (ImGui::TreeNode(ptrstr.c_str()))
+							if (ImGui::TreeNode((Component::GetMonstersName_CN(monsterData.Id) + ptrstr).c_str()))
 							{
 								void* healthMgr = *offsetPtr<void*>(monster, 0x7670);
 								float health = *offsetPtr<float>(healthMgr, 0x64);
@@ -175,6 +175,13 @@ namespace ControlProgram {
 								ImGui::Text(u8"X：%f", monsterData.CoordinatesX);
 								ImGui::Text(u8"Y：%f", monsterData.CoordinatesY);
 								ImGui::Text(u8"Z：%f", monsterData.CoordinatesZ);
+								void* MonstersHate = Base::Monster::GetHateTarget(monster);
+								ImGui::Text(u8"仇恨目标：%s", MonstersHate != nullptr ? 
+									MonstersHate == Base::BasicGameData::PlayerPlot ? u8"玩家" : u8"其他"
+									: u8"无目标"
+								);
+								ImGui::SameLine();
+								ImGui::Text("%x", MonstersHate);
 								ImGui::TreePop();
 								ImGui::Separator();
 							}

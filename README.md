@@ -148,6 +148,7 @@
 |Game_Player_CreateBowgunProjectiles      |`Game_Player_CreateBowgunProjectiles(12,startX,startY,startZ,endX,endY,endZ)`|生成玩家手弩投射物（投射物id,起始坐标,结束坐标） |
 |Game_Player_GetPlayerBuffDuration        |`local buffDuration = Game_Player_GetPlayerBuffDuration('BuffName')`|获取玩家Buff剩余时间   |
 |Game_Player_SetPlayerBuffDuration        |`Game_Player_SetPlayerBuffDuration('BuffName',20)`           |设置玩家Buff持续时间   |
+|Game_Player_GetMonstersHateToPlayers     |`Game_Player_GetMonstersHateToPlayers()`                  |获取对玩家仇恨的怪物   |
 |Game_World_GetMapId                      |`Game_World_GetMapId()`                                   |获取地图ID        |
 
 ### 怪物

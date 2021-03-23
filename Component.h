@@ -761,27 +761,106 @@ namespace Component {
 			}
 		}
 #pragma endregion
-
-//»ñÈ¡Ä¿Â¼ÖĞµÄÎÄ¼ş
-	void getFiles(string path, vector<string>& files)
-		{
-			//ÎÄ¼ş¾ä±ú
-			long   hFile = 0;
-			//ÎÄ¼şĞÅÏ¢
-			struct _finddata_t fileinfo;
-			string p;
-			if ((hFile = _findfirst(p.assign(path).append("\\*.lua").c_str(), &fileinfo)) != -1)
-			{
-				do
-				{
-					if (!(fileinfo.attrib & _A_SUBDIR))
-					{
-						files.push_back(p.assign(path).append("\\").append(fileinfo.name));
-					}
-				} while (_findnext(hFile, &fileinfo) == 0);
-				_findclose(hFile);
+/*
+	»ñÈ¡¶ÔÍæ¼Ò³ğºŞµÄ¹ÖÎï
+*/
+#pragma region GetMonstersHateToPlayers
+		static vector<void*> GetMonstersHateToPlayers() {
+			vector<void*> monsterList;
+			for (auto [monster, monsterData] : Base::Monster::Monsters) {
+				if (monster != nullptr) {
+					if (
+						monsterData.Id != Base::Monster::Filter.first and
+						monsterData.SubId != Base::Monster::Filter.second and
+						Base::Monster::Filter.first != 255 and
+						Base::Monster::Filter.second != 255
+						)
+						continue;
+					if(Base::Monster::GetHateTarget(monster) != nullptr)
+					monsterList.push_back(Base::Monster::GetHateTarget(monster));
+				}
 			}
+			return monsterList;
 		}
+#pragma endregion
+#pragma region GetMonstersName_CN
+		static string GetMonstersName_CN(int id) {
+			if( id == 0 ) return u8"ĞUî€ıˆ";    if( id == 1 ) return u8"»ğıˆ";    if( id == 2 ) return u8"²İÊ³ıˆ";    if( id == 3 ) return u8"Ğ×²òıˆ";
+			if( id == 4 ) return u8"ÈÛÉ½ıˆ";    if( id == 5 ) return u8"¾úØi";    if( id == 6 ) return u8"Ò§ô~";    if( id == 7 ) return u8"´óĞ×²òıˆ";
+			if( id == 8 ) return u8"¹ÚÍ»ıˆ¡á";    if( id == 9 ) return u8"´Æ»ğıˆ";    if( id == 10 ) return u8"™Ñ»ğıˆ";    if( id == 11 ) return u8"Én»ğıˆ";
+			if( id == 12 ) return u8"½Çıˆ";    if( id == 13 ) return u8"ºÚ½Çıˆ";    if( id == 14 ) return u8"÷è÷ë";    if( id == 15 ) return u8"ØÏ£Ä¦Ë¹";
+			if( id == 16 ) return u8"ä“ıˆ";    if( id == 17 ) return u8"Ñ×åúıˆ";    if( id == 18 ) return u8"Ñ×Íõıˆ";    if( id == 19 ) return u8"ÈÛÑÒıˆ";
+			if( id == 20 ) return u8"¿Ö±©ıˆ";    if( id == 21 ) return u8"ÍÁÉ°ıˆ";    if( id == 22 ) return u8"±¬æmıˆ";    if( id == 23 ) return u8"Â¹Ê×¾«";
+			if( id == 24 ) return u8"¶¾ÑıøB";    if( id == 25 ) return u8"œç±Mıˆ";    if( id == 26 ) return u8"Ú¤Ÿôıˆ";    if( id == 27 ) return u8"É¦øB";
+			if( id == 28 ) return u8"Ñ£øB";    if( id == 29 ) return u8"Äàô~ıˆ";    if( id == 30 ) return u8"ïwÀ×ıˆ";    if( id == 31 ) return u8"¸¡¿Õıˆ";
+			if( id == 32 ) return u8"ïLÆ¯ıˆ";    if( id == 33 ) return u8"´óĞ×î€ıˆ";    if( id == 34 ) return u8"‘K×¦ıˆ";    if( id == 35 ) return u8"¹Çæmıˆ";
+			if( id == 36 ) return u8"ŒÆÌ×ıˆ";    if( id == 37 ) return u8"ÑÒÙ\ıˆ";    if( id == 38 ) return u8"½kİxıˆ";    if( id == 39 ) return u8"±¬÷[ıˆ";
+			if( id == 40 ) return u8"±³¼×ıˆ";    if( id == 41 ) return u8"¾«ì`Â¹";    if( id == 42 ) return u8"¾«ì`Â¹";    if( id == 43 ) return u8"¾Ş¼×Ïx";
+			if( id == 44 ) return u8"¾Ş·ä";    if( id == 45 ) return u8"ĞĞÒíıˆ";    if( id == 46 ) return u8"¹ÚÍ»ıˆ¡â";    if( id == 47 ) return u8"·¼Òíıˆ";
+			if( id == 48 ) return u8"Øˆòáıˆ";    if( id == 49 ) return u8"ËáÒíıˆ";    if( id == 50 ) return u8"Ğ×î€ıˆ";    if( id == 51 ) return u8"¹Å´úÂ¹Ê×¾«";
+			if( id == 52 ) return u8"Í»“ôıˆ";    if( id == 53 ) return u8"í‘Òíıˆ";    if( id == 54 ) return u8"É¢ŸáÆ÷¹Ù";    if( id == 55 ) return u8"¡Á¸±É¢ŸáÆ÷¹Ù";
+			if( id == 56 ) return u8"ÆæÃæ×å";    if( id == 57 ) return u8"£¿£¿£¿";    if( id == 58 ) return u8"´Æ»ğıˆ£¿£¿£¿";    if( id == 59 ) return u8"¹ÚÍ»ıˆ";
+			if( id == 60 ) return u8"üS½ğÆæÃæ×å";    if( id == 61 ) return u8"ŞZıˆ";    if( id == 62 ) return u8"Ñ¸ıˆ";    if( id == 63 ) return u8"±ùÑÀıˆ";
+			if( id == 64 ) return u8"»ÌÅ­¿Ö±©ıˆ";    if( id == 65 ) return u8"Ëéıˆ";    if( id == 66 ) return u8"”Øıˆ";    if( id == 67 ) return u8"Áò”Øıˆ";
+			if( id == 68 ) return u8"À×î€ıˆ";    if( id == 69 ) return u8"Ë®ÑıøB";    if( id == 70 ) return u8"šÊÀœç±Mıˆ";    if( id == 71 ) return u8"¯w¶¾ıˆ";
+			if( id == 72 ) return u8"¸¡Ãßıˆ";    if( id == 73 ) return u8"ËªÒíïLÆ¯ıˆ";    if( id == 74 ) return u8"ƒ´×¦ıˆ";    if( id == 75 ) return u8"ìFÕÎŒÆÌ×ıˆ";
+			if( id == 76 ) return u8"¼tÉ±¬÷[ıˆ";    if( id == 77 ) return u8"±ùô~ıˆ";    if( id == 78 ) return u8"ÃÍÅ£ıˆ";    if( id == 79 ) return u8"±ù…âıˆ";
+			if( id == 80 ) return u8"äé²¨ıˆ";    if( id == 81 ) return u8"ÌìµØ»ÍÌäıˆ";    if( id == 82 ) return u8"²¨²¨";    if( id == 83 ) return u8"Ñ©Â¹";
+			if( id == 84 ) return u8"±ù²òÀÇ";    if( id == 85 ) return u8"¶¬Òíıˆ";    if( id == 86 ) return u8"«FÀp×å";    if( id == 87 ) return u8"»ÍºÚıˆ";
+			if( id == 88 ) return u8"½ğ»ğıˆ";    if( id == 89 ) return u8"ãy»ğıˆ";    if( id == 90 ) return u8"ºÚÀÇøB";    if( id == 91 ) return u8"½ğª{×Ó";
+			if( id == 92 ) return u8"¼¤°º½ğª{×Ó";    if( id == 93 ) return u8"ºÚŞZıˆ";    if( id == 94 ) return u8"À×ÀÇıˆ";    if( id == 95 ) return u8"ªzÀÇıˆ";
+			if( id == 96 ) return u8"ÃÍ±¬Ëéıˆ";    if( id == 97 ) return u8"Ú¤³àıˆ";    if( id == 98 ) return u8"Unavailable";    if( id == 99 ) return u8"‘ğºÛºÚÀÇøB";
+			if( id == 100 ) return u8"ËªÈĞ±ùÑÀıˆ";    if( id == 101 ) return u8"ºÚıˆ";
+			return "Î´Öª";
+		}
+#pragma endregion
+	//»ñÈ¡Ä¿Â¼ÖĞµÄÎÄ¼ş
+	void getFiles(string path, vector<string>& files)
+	{
+		//ÎÄ¼ş¾ä±ú
+		long   hFile = 0;
+		//ÎÄ¼şĞÅÏ¢
+		struct _finddata_t fileinfo;
+		string p;
+		if ((hFile = _findfirst(p.assign(path).append("\\*.lua").c_str(), &fileinfo)) != -1)
+		{
+			do
+			{
+				if (!(fileinfo.attrib & _A_SUBDIR))
+				{
+					files.push_back(p.assign(path).append("\\").append(fileinfo.name));
+				}
+			} while (_findnext(hFile, &fileinfo) == 0);
+			_findclose(hFile);
+		}
+	}
+	//utf8±àÂë×Ö·û´®
+	std::string string_To_UTF8(const std::string& str)
+	{
+		int nwLen = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
+
+		wchar_t* pwBuf = new wchar_t[nwLen + 1];//Ò»¶¨Òª¼Ó1£¬²»È»»á³öÏÖÎ²°Í 
+		ZeroMemory(pwBuf, nwLen * 2 + 2);
+
+		::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length(), pwBuf, nwLen);
+
+		int nLen = ::WideCharToMultiByte(CP_UTF8, 0, pwBuf, -1, NULL, NULL, NULL, NULL);
+
+		char* pBuf = new char[nLen + 1];
+		ZeroMemory(pBuf, nLen + 1);
+
+		::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, pBuf, nLen, NULL, NULL);
+
+		std::string retStr(pBuf);
+
+		delete[]pwBuf;
+		delete[]pBuf;
+
+		pwBuf = NULL;
+		pBuf = NULL;
+
+		return retStr;
+	}
 }
 
 
