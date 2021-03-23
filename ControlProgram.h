@@ -138,6 +138,12 @@ namespace ControlProgram {
 				if (ImGui::TreeNode(u8"玩家信息"))
 				{
 					ImGui::Text(u8"动作Id：%d", Base::PlayerData::ActionId);
+					if (ImGui::TreeNode(u8"派生信息"))
+					{
+						ImGui::Text(u8"当前Fsm：%d - %d", Base::PlayerData::NowFsm.Target, Base::PlayerData::NowFsm.Id);
+						ImGui::Text(u8"上一个执行的Fsm：%d - %d", Base::PlayerData::Fsm.Target, Base::PlayerData::Fsm.Id);
+						ImGui::TreePop();
+					}
 					ImGui::Text(u8"当前耐力：%f", Base::PlayerData::CurrentEndurance);
 					ImGui::Text(u8"当前血量：%f", Base::PlayerData::CurrentHealth);
 					ImGui::Text(u8"当前坐标");

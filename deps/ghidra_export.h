@@ -48,12 +48,12 @@ namespace MH {
     namespace World {
         static undefined8(*WaypointZLocal)(float*, float*) = (undefined8(*)(float*, float*))0x141DBF55F;
         static undefined8(*MapClockLocal)(float*, float) = (undefined8(*)(float*, float))0x140AE9EA0;
-        static undefined(*GmaeClock)() = (undefined(*)())0x145073D60;
-        static undefined(*GmaeClockControl)(float) = (undefined(*)(float))0x141B9EB37;
+        static undefined(*GameClock)() = (undefined(*)())0x145073D60;
+        static undefined(*GameClockControl)(float) = (undefined(*)(float))0x141B9EB37;
         static undefined(*Message)() = (undefined(*)())0x144FE7D80;
     }
     namespace Shlp {
-        static void* (*GetShlp)(void*, int) = (void* (*)(void*, int))0x140F86090;//·µ»ØshlpÂ·¾¶ shlp»ùÖ· shlpid
+        static void* (*GetShlp)(void*, int) = (void* (*)(void*, int))0x140F86090;//ï¿½ï¿½ï¿½ï¿½shlpÂ·ï¿½ï¿½ shlpï¿½ï¿½Ö· shlpid
         static void(*CallShlp)(void*, void*, void*, void*) = (void(*)(void*, void*, void*, void*))0x141ABA910;//shlp
     }
     namespace Savefile {
@@ -82,8 +82,8 @@ namespace MH {
             }
             static undefined8(*CalcElementalBloat)() = (undefined8(*)())0x1419900a0;
         }
-        static void* (*ChangeWeapon)(void*, int, int) = (void* (*)(void*, int, int))0x141F76CE0;//¸ü»»ÎäÆ÷(²»Ë¢ÐÂÄÚ´æ)
-        static void* (*CompleteChangeWeapon)(void*, int, int) = (void* (*)(void*, int, int))0x14205E050;//¸ü»»ÎäÆ÷
+        static void* (*ChangeWeapon)(void*, int, int) = (void* (*)(void*, int, int))0x141F76CE0;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½Ë¢ï¿½ï¿½ï¿½Ú´ï¿½)
+        static void* (*CompleteChangeWeapon)(void*, int, int) = (void* (*)(void*, int, int))0x14205E050;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         static undefined(*WeaponOrnaments)() = (undefined(*)())0x1421300f1;
         static undefined(*MainWeaponPtr)() = (undefined(*)())0x142135B29;

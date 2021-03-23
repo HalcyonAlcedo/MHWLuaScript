@@ -5,269 +5,269 @@ lua_State* L;
 static string Nowlua;
 static string Sublua;
 #pragma region GameFun
-static int Gmae_Player_GetPlayerCoordinate(lua_State* pL) {
+static int Game_Player_GetPlayerCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Entity.x);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Entity.y);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Entity.z);
     return 3;
 }
-static int Gmae_Player_SetPlayerCoordinate(lua_State* pL) {
+static int Game_Player_SetPlayerCoordinate(lua_State* pL) {
     float x = (float)lua_tonumber(pL, 1);
     float y = (float)lua_tonumber(pL, 2);
     float z = (float)lua_tonumber(pL, 3);
     Component::MovePlayerToPoint(Base::Vector3( x,y,z ));
     return 0;
 }
-static int Gmae_Player_GetPlayerCollimatorCoordinate(lua_State* pL) {
+static int Game_Player_GetPlayerCollimatorCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Collimator.x);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Collimator.y);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Collimator.z);
     return 3;
 }
-static int Gmae_Player_GetPlayerParabolaCollimatorCoordinate(lua_State* pL) {
+static int Game_Player_GetPlayerParabolaCollimatorCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Parabola.x);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Parabola.y);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Parabola.z);
     return 3;
 }
-static int Gmae_Player_GetPlayerWeaponCoordinate(lua_State* pL) {
+static int Game_Player_GetPlayerWeaponCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Weapon.x);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Weapon.y);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Weapon.z);
     return 3;
 }
-static int Gmae_Player_CheckAimingStatus(lua_State* pL) {
+static int Game_Player_CheckAimingStatus(lua_State* pL) {
     lua_pushboolean(pL, Base::PlayerData::AimingState);
     return 1;
 }
-static int Gmae_Player_AddEffect(lua_State* pL) {
+static int Game_Player_AddEffect(lua_State* pL) {
     int group = (int)lua_tointeger(pL, 1);
     int record = (int)lua_tointeger(pL, 2);
     Base::PlayerData::Effects::GenerateSpecialEffects(group, record);
     return 0;
 }
-static int Gmae_Player_GetPlayerIncrementCoordinate(lua_State* pL) {
+static int Game_Player_GetPlayerIncrementCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Increment.x);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Increment.y);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Increment.z);
     return 3;
 }
-static int Gmae_Player_GetPlayerNavigationCoordinate(lua_State* pL) {
+static int Game_Player_GetPlayerNavigationCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Navigation.x);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Navigation.y);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Navigation.z);
     return 3;
 }
-static int Gmae_Player_GetPlayerVisualCoordinate(lua_State* pL) {
+static int Game_Player_GetPlayerVisualCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Visual.x);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Visual.y);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Visual.z);
     return 3;
 }
-static int Gmae_Player_SetPlayerVisualCoordinate(lua_State* pL) {
+static int Game_Player_SetPlayerVisualCoordinate(lua_State* pL) {
     float x = (float)lua_tonumber(pL, 1);
     float y = (float)lua_tonumber(pL, 2);
     float z = (float)lua_tonumber(pL, 3);
     Base::PlayerData::SetVisual(x,y,z);
     return 0;
 }
-static int Gmae_Player_UnbindPlayerVisualCoordinate(lua_State* pL) {
+static int Game_Player_UnbindPlayerVisualCoordinate(lua_State* pL) {
     Base::PlayerData::UnbindVisual();
     return 0;
 }
-static int Gmae_Player_GetPlayerActionId(lua_State* pL) {
+static int Game_Player_GetPlayerActionId(lua_State* pL) {
     lua_pushinteger(pL, Base::PlayerData::ActionId);
     return 1;
 }
-static int Gmae_Player_GetPlayerAngle(lua_State* pL) {
+static int Game_Player_GetPlayerAngle(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Angle);
     return 1;
 }
-static int Gmae_Player_Weapon_GetWeaponId(lua_State* pL) {
+static int Game_Player_Weapon_GetWeaponId(lua_State* pL) {
     lua_pushinteger(pL, Base::PlayerData::Weapons::WeaponId);
     return 1;
 }
-static int Gmae_Player_Weapon_GetWeaponType(lua_State* pL) {
+static int Game_Player_Weapon_GetWeaponType(lua_State* pL) {
     lua_pushinteger(pL, Base::PlayerData::Weapons::WeaponType);
     return 1;
 }
-static int Gmae_Player_Weapon_ChangeWeapons(lua_State* pL) {
+static int Game_Player_Weapon_ChangeWeapons(lua_State* pL) {
     int type = (int)lua_tointeger(pL, 1);
     int id = (int)lua_tointeger(pL, 2);
     Base::PlayerData::Weapons::ChangeWeapons(type, id, false);
     return 0;
 }
-static int Gmae_Player_Weapon_CompleteChangeWeapons(lua_State* pL) {
+static int Game_Player_Weapon_CompleteChangeWeapons(lua_State* pL) {
     int type = (int)lua_tointeger(pL, 1);
     int id = (int)lua_tointeger(pL, 2);
     Base::PlayerData::Weapons::ChangeWeapons(type, id);
     return 0;
 }
-static int Gmae_Player_Weapon_GetOrnamentsCoordinate(lua_State* pL) {
+static int Game_Player_Weapon_GetOrnamentsCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.x);
     lua_pushnumber(pL, Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.y);
     lua_pushnumber(pL, Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.z);
     return 3;
 }
-static int Gmae_Player_Weapon_GetOrnamentsSize(lua_State* pL) {
+static int Game_Player_Weapon_GetOrnamentsSize(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::WeaponOrnaments::OrnamentsSize.x);
     lua_pushnumber(pL, Base::PlayerData::WeaponOrnaments::OrnamentsSize.y);
     lua_pushnumber(pL, Base::PlayerData::WeaponOrnaments::OrnamentsSize.z);
     return 3;
 }
-static int Gmae_Player_Weapon_SetOrnamentsCoordinate(lua_State* pL) {
+static int Game_Player_Weapon_SetOrnamentsCoordinate(lua_State* pL) {
     float x = (float)lua_tonumber(pL, 1);
     float y = (float)lua_tonumber(pL, 2);
     float z = (float)lua_tonumber(pL, 3);
     Base::PlayerData::WeaponOrnaments::SetOrnamentsCoordinate(x, y, z);
     return 0;
 }
-static int Gmae_Player_Weapon_SetOrnamentsSize(lua_State* pL) {
+static int Game_Player_Weapon_SetOrnamentsSize(lua_State* pL) {
     float x = (float)lua_tonumber(pL, 1);
     float y = (float)lua_tonumber(pL, 2);
     float z = (float)lua_tonumber(pL, 3);
     Base::PlayerData::WeaponOrnaments::SetOrnamentsSize(x, y, z);
     return 0;
 }
-static int Gmae_Player_Weapon_DecontrolOrnamentsCoordinate(lua_State* pL) {
+static int Game_Player_Weapon_DecontrolOrnamentsCoordinate(lua_State* pL) {
     Base::PlayerData::WeaponOrnaments::DecontrolOrnamentsCoordinate();
     return 0;
 }
-static int Gmae_Player_Weapon_DecontrolOrnamentsSize(lua_State* pL) {
+static int Game_Player_Weapon_DecontrolOrnamentsSize(lua_State* pL) {
     Base::PlayerData::WeaponOrnaments::DecontrolOrnamentsSize();
     return 0;
 }
-static int Gmae_Player_Weapon_GetMainWeaponCoordinate(lua_State* pL) {
+static int Game_Player_Weapon_GetMainWeaponCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Weapons::MainWeaponCoordinate.x);
     lua_pushnumber(pL, Base::PlayerData::Weapons::MainWeaponCoordinate.y);
     lua_pushnumber(pL, Base::PlayerData::Weapons::MainWeaponCoordinate.z);
     return 3;
 }
-static int Gmae_Player_Weapon_GetMainWeaponSize(lua_State* pL) {
+static int Game_Player_Weapon_GetMainWeaponSize(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Weapons::MainWeaponSize.x);
     lua_pushnumber(pL, Base::PlayerData::Weapons::MainWeaponSize.y);
     lua_pushnumber(pL, Base::PlayerData::Weapons::MainWeaponSize.z);
     return 3;
 }
-static int Gmae_Player_Weapon_SetMainWeaponCoordinate(lua_State* pL) {
+static int Game_Player_Weapon_SetMainWeaponCoordinate(lua_State* pL) {
     float x = (float)lua_tonumber(pL, 1);
     float y = (float)lua_tonumber(pL, 2);
     float z = (float)lua_tonumber(pL, 3);
     Base::PlayerData::Weapons::SetMainWeaponCoordinate(x, y, z);
     return 0;
 }
-static int Gmae_Player_Weapon_SetMainWeaponSize(lua_State* pL) {
+static int Game_Player_Weapon_SetMainWeaponSize(lua_State* pL) {
     float x = (float)lua_tonumber(pL, 1);
     float y = (float)lua_tonumber(pL, 2);
     float z = (float)lua_tonumber(pL, 3);
     Base::PlayerData::Weapons::SetMainWeaponSize(x, y, z);
     return 0;
 }
-static int Gmae_Player_Weapon_DecontrolMainWeaponCoordinate(lua_State* pL) {
+static int Game_Player_Weapon_DecontrolMainWeaponCoordinate(lua_State* pL) {
     Base::PlayerData::Weapons::DecontrolMainWeaponCoordinate();
     return 0;
 }
-static int Gmae_Player_Weapon_DecontrolMainWeaponSize(lua_State* pL) {
+static int Game_Player_Weapon_DecontrolMainWeaponSize(lua_State* pL) {
     Base::PlayerData::Weapons::DecontrolMainWeaponSize();
     return 0;
 }
-static int Gmae_Player_Weapon_GetSecondaryWeaponCoordinate(lua_State* pL) {
+static int Game_Player_Weapon_GetSecondaryWeaponCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Weapons::SecondaryWeaponCoordinate.x);
     lua_pushnumber(pL, Base::PlayerData::Weapons::SecondaryWeaponCoordinate.y);
     lua_pushnumber(pL, Base::PlayerData::Weapons::SecondaryWeaponCoordinate.z);
     return 3;
 }
-static int Gmae_Player_Weapon_GetSecondaryWeaponSize(lua_State* pL) {
+static int Game_Player_Weapon_GetSecondaryWeaponSize(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Weapons::SecondaryWeaponSize.x);
     lua_pushnumber(pL, Base::PlayerData::Weapons::SecondaryWeaponSize.y);
     lua_pushnumber(pL, Base::PlayerData::Weapons::SecondaryWeaponSize.z);
     return 3;
 }
-static int Gmae_Player_Weapon_SetSecondaryWeaponCoordinate(lua_State* pL) {
+static int Game_Player_Weapon_SetSecondaryWeaponCoordinate(lua_State* pL) {
     float x = (float)lua_tonumber(pL, 1);
     float y = (float)lua_tonumber(pL, 2);
     float z = (float)lua_tonumber(pL, 3);
     Base::PlayerData::Weapons::SetSecondaryWeaponCoordinate(x, y, z);
     return 0;
 }
-static int Gmae_Player_Weapon_SetSecondaryWeaponSize(lua_State* pL) {
+static int Game_Player_Weapon_SetSecondaryWeaponSize(lua_State* pL) {
     float x = (float)lua_tonumber(pL, 1);
     float y = (float)lua_tonumber(pL, 2);
     float z = (float)lua_tonumber(pL, 3);
     Base::PlayerData::Weapons::SetSecondaryWeaponSize(x, y, z);
     return 0;
 }
-static int Gmae_Player_Weapon_DecontrolSecondaryWeaponCoordinate(lua_State* pL) {
+static int Game_Player_Weapon_DecontrolSecondaryWeaponCoordinate(lua_State* pL) {
     Base::PlayerData::Weapons::DecontrolSecondaryWeaponCoordinate();
     return 0;
 }
-static int Gmae_Player_Weapon_DecontrolSecondaryWeaponSize(lua_State* pL) {
+static int Game_Player_Weapon_DecontrolSecondaryWeaponSize(lua_State* pL) {
     Base::PlayerData::Weapons::DecontrolSecondaryWeaponSize();
     return 0;
 }
-static int Gmae_Player_Weapon_CharacteristicIntValue(lua_State* pL) {
+static int Game_Player_Weapon_CharacteristicIntValue(lua_State* pL) {
     string ptr = "0x" + (string)lua_tostring(pL, 1);
     lua_pushinteger(pL, Component::GetWeaponCharacteristicIntValue(ptr));
     return 1;
 }
-static int Gmae_Player_Weapon_CharacteristicFloatValue(lua_State* pL) {
+static int Game_Player_Weapon_CharacteristicFloatValue(lua_State* pL) {
     string ptr = "0x" + (string)lua_tostring(pL, 1);
     lua_pushinteger(pL, Component::GetWeaponCharacteristicFloatValue(ptr));
     return 1;
 }
-static int Gmae_Player_GetFsmData(lua_State* pL) {
-    lua_pushinteger(pL, Base::PlayerData::Fsm.Target);
-    lua_pushinteger(pL, Base::PlayerData::Fsm.Id);
+static int Game_Player_GetFsmData(lua_State* pL) {
+    lua_pushinteger(pL, Base::PlayerData::NowFsm.Target);
+    lua_pushinteger(pL, Base::PlayerData::NowFsm.Id);
     return 2;
 }
-static int Gmae_Player_RunFsmAction(lua_State* pL) {
+static int Game_Player_RunFsmAction(lua_State* pL) {
     int type = (int)lua_tonumber(pL, 1);
     int id = (int)lua_tonumber(pL, 2);
     Base::PlayerData::RunDerivedAction(type, id);
     return 0;
 }
-static int Gmae_Player_CheckRunFsmActionOver(lua_State* pL) {
+static int Game_Player_CheckRunFsmActionOver(lua_State* pL) {
     lua_pushboolean(pL, Base::PlayerData::CheckDerivedAction());
     return 1;
 }
-static int Gmae_Player_GetPlayerHealth(lua_State* pL) {
+static int Game_Player_GetPlayerHealth(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::BasicHealth);
     lua_pushnumber(pL, Base::PlayerData::MaxHealth);
     lua_pushnumber(pL, Base::PlayerData::CurrentHealth);
     return 3;
 }
-static int Gmae_Player_SetPlayerCurrentHealth(lua_State* pL) {
+static int Game_Player_SetPlayerCurrentHealth(lua_State* pL) {
     float health = (float)lua_tonumber(pL, 1);
     Component::SetPlayerHealth(health);
     return 0;
 }
-static int Gmae_Player_SetPlayerBasicHealth(lua_State* pL) {
+static int Game_Player_SetPlayerBasicHealth(lua_State* pL) {
     float health = (float)lua_tonumber(pL, 1);
     Component::SetPlayerBasicHealth(health);
     return 0;
 }
-static int Gmae_Player_GetPlayerEndurance(lua_State* pL) {
+static int Game_Player_GetPlayerEndurance(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::MaxEndurance);
     lua_pushnumber(pL, Base::PlayerData::CurrentEndurance);
     return 2;
 }
-static int Gmae_Player_SetPlayerCurrentEndurance(lua_State* pL) {
+static int Game_Player_SetPlayerCurrentEndurance(lua_State* pL) {
     float endurance = (float)lua_tonumber(pL, 1);
     Component::SetPlayerEndurance(endurance);
     return 0;
 }
-static int Gmae_Player_SetPlayerMaxEndurance(lua_State* pL) {
+static int Game_Player_SetPlayerMaxEndurance(lua_State* pL) {
     float endurance = (float)lua_tonumber(pL, 1);
     Component::SetPlayerMaxEndurance(endurance);
     return 0;
 }
-static int Gmae_Player_GetPlayerRoleInfo(lua_State* pL) {
+static int Game_Player_GetPlayerRoleInfo(lua_State* pL) {
     lua_pushstring(pL, Base::PlayerData::Name.c_str());
     lua_pushinteger(pL, Base::PlayerData::Hr);
     lua_pushinteger(pL, Base::PlayerData::Mr);
     return 3;
 }
-static int Gmae_World_GetMapId(lua_State* pL) {
+static int Game_World_GetMapId(lua_State* pL) {
     lua_pushinteger(pL, Base::World::MapId);
     return 1;
 }
@@ -380,7 +380,7 @@ static int Game_Environmental_DisableFilter(lua_State* pL) {
     Component::DisableEnvironmentalFilter();
     return 0;
 }
-static int Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange(lua_State* pL) {
+static int Game_Environmental_SetAllEnvironmentalCoordinatesInRange(lua_State* pL) {
     float x = (float)lua_tonumber(pL, 1);
     float y = (float)lua_tonumber(pL, 2);
     float z = (float)lua_tonumber(pL, 3);
@@ -389,7 +389,7 @@ static int Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange(lua_State* p
     Component::SetAllEnvironmentalCoordinates(Base::Vector3(x,y,z), min, max);
     return 0;
 }
-static int Gmae_Player_CreateWeaponProjectiles(lua_State* pL) {
+static int Game_Player_CreateWeaponProjectiles(lua_State* pL) {
     int id = (int)lua_tointeger(pL, 1);
     float startx = (float)lua_tonumber(pL, 2);
     float starty = (float)lua_tonumber(pL, 3);
@@ -402,7 +402,7 @@ static int Gmae_Player_CreateWeaponProjectiles(lua_State* pL) {
     ));
     return 1;
 }
-static int Gmae_Player_CreateBowgunProjectiles(lua_State* pL) {
+static int Game_Player_CreateBowgunProjectiles(lua_State* pL) {
     int id = (int)lua_tointeger(pL, 1);
     float startx = (float)lua_tonumber(pL, 2);
     float starty = (float)lua_tonumber(pL, 3);
@@ -748,40 +748,40 @@ static int Game_Environmental_GetAllEnvironmentalCoordinatesInRange(lua_State* p
     }
     return 1;
 }
-static int Gmae_Player_GetPlayerBuffDuration(lua_State* pL) {
+static int Game_Player_GetPlayerBuffDuration(lua_State* pL) {
     string buff = (string)lua_tostring(pL, -1);
     lua_pushnumber(pL, Base::PlayerData::GetPlayerBuff(buff));
     return 1;
 }
-static int Gmae_Player_SetPlayerBuffDuration(lua_State* pL) {
+static int Game_Player_SetPlayerBuffDuration(lua_State* pL) {
     string buff = (string)lua_tostring(pL, 1);
     float duration = (float)lua_tonumber(pL, 2);
     Base::PlayerData::SetPlayerBuff(buff, duration);
     return 0;
 }
-static int Gmae_Player_GetPlayerHookCoordinate(lua_State* pL) {
+static int Game_Player_GetPlayerHookCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Hook.x);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Hook.y);
     lua_pushnumber(pL, Base::PlayerData::Coordinate::Hook.z);
     return 3;
 }
-static int Gmae_Player_GetPlayerVisualDistance(lua_State* pL) {
+static int Game_Player_GetPlayerVisualDistance(lua_State* pL) {
     void* VisualOffset = *offsetPtr<undefined**>((undefined(*)())Base::BasicGameData::PlayerPlot, 0x7690);
     lua_pushnumber(pL, *offsetPtr<float>(VisualOffset, 0x5E8));
     return 1;
 }
-static int Gmae_Player_GetPlayerVisualHeight(lua_State* pL) {
+static int Game_Player_GetPlayerVisualHeight(lua_State* pL) {
     void* VisualOffset = *offsetPtr<undefined**>((undefined(*)())Base::BasicGameData::PlayerPlot, 0x7690);
     lua_pushnumber(pL, *offsetPtr<float>(VisualOffset, 0x5E4));
     return 1;
 }
-static int Gmae_Player_SetPlayerVisualDistance(lua_State* pL) {
+static int Game_Player_SetPlayerVisualDistance(lua_State* pL) {
     float distance = (float)lua_tonumber(pL, -1);
     void* VisualOffset = *offsetPtr<undefined**>((undefined(*)())Base::BasicGameData::PlayerPlot, 0x7690);
     *offsetPtr<float>(VisualOffset, 0x5E8) = distance;
     return 0;
 }
-static int Gmae_Player_SetPlayerVisualHeight(lua_State* pL) {
+static int Game_Player_SetPlayerVisualHeight(lua_State* pL) {
     float height = (float)lua_tonumber(pL, -1);
     void* VisualOffset = *offsetPtr<undefined**>((undefined(*)())Base::BasicGameData::PlayerPlot, 0x7690);
     *offsetPtr<float>(VisualOffset, 0x5E4) = height;
@@ -1049,125 +1049,125 @@ int Lua_Main(string LuaFile)
 #pragma region Game
     #pragma region Player
     //获取玩家坐标
-    lua_register(L, "Gmae_Player_GetPlayerCoordinate", Gmae_Player_GetPlayerCoordinate);
+    lua_register(L, "Game_Player_GetPlayerCoordinate", Game_Player_GetPlayerCoordinate);
     //设置玩家坐标
-    lua_register(L, "Gmae_Player_SetPlayerCoordinate", Gmae_Player_SetPlayerCoordinate);
+    lua_register(L, "Game_Player_SetPlayerCoordinate", Game_Player_SetPlayerCoordinate);
     //获取准星坐标
-    lua_register(L, "Gmae_Player_GetPlayerCollimatorCoordinate", Gmae_Player_GetPlayerCollimatorCoordinate);
+    lua_register(L, "Game_Player_GetPlayerCollimatorCoordinate", Game_Player_GetPlayerCollimatorCoordinate);
     //获取抛物线准星坐标
-    lua_register(L, "Gmae_Player_GetPlayerParabolaCollimatorCoordinate", Gmae_Player_GetPlayerParabolaCollimatorCoordinate);
+    lua_register(L, "Game_Player_GetPlayerParabolaCollimatorCoordinate", Game_Player_GetPlayerParabolaCollimatorCoordinate);
     //获取武器坐标
-    lua_register(L, "Gmae_Player_GetPlayerWeaponCoordinate", Gmae_Player_GetPlayerWeaponCoordinate);
+    lua_register(L, "Game_Player_GetPlayerWeaponCoordinate", Game_Player_GetPlayerWeaponCoordinate);
     //检查瞄准状态
-    lua_register(L, "Gmae_Player_CheckAimingStatus", Gmae_Player_CheckAimingStatus);
+    lua_register(L, "Game_Player_CheckAimingStatus", Game_Player_CheckAimingStatus);
     //获取增量坐标
-    lua_register(L, "Gmae_Player_GetPlayerIncrementCoordinate", Gmae_Player_GetPlayerIncrementCoordinate);
+    lua_register(L, "Game_Player_GetPlayerIncrementCoordinate", Game_Player_GetPlayerIncrementCoordinate);
     //获取导航坐标
-    lua_register(L, "Gmae_Player_GetPlayerNavigationCoordinate", Gmae_Player_GetPlayerNavigationCoordinate);
+    lua_register(L, "Game_Player_GetPlayerNavigationCoordinate", Game_Player_GetPlayerNavigationCoordinate);
     //获取相机坐标
-    lua_register(L, "Gmae_Player_GetPlayerVisualCoordinate", Gmae_Player_GetPlayerVisualCoordinate);
+    lua_register(L, "Game_Player_GetPlayerVisualCoordinate", Game_Player_GetPlayerVisualCoordinate);
     //设置相机坐标（xyz和持续时间4个参数）
-    lua_register(L, "Gmae_Player_SetPlayerVisualCoordinate", Gmae_Player_SetPlayerVisualCoordinate);
+    lua_register(L, "Game_Player_SetPlayerVisualCoordinate", Game_Player_SetPlayerVisualCoordinate);
     //解除相机坐标绑定
-    lua_register(L, "Gmae_Player_UnbindPlayerVisualCoordinate", Gmae_Player_UnbindPlayerVisualCoordinate);
+    lua_register(L, "Game_Player_UnbindPlayerVisualCoordinate", Game_Player_UnbindPlayerVisualCoordinate);
     //获取相机距离
-    lua_register(L, "Gmae_Player_GetPlayerVisualDistance", Gmae_Player_GetPlayerVisualDistance);
+    lua_register(L, "Game_Player_GetPlayerVisualDistance", Game_Player_GetPlayerVisualDistance);
     //获取相机高度
-    lua_register(L, "Gmae_Player_GetPlayerVisualHeight", Gmae_Player_GetPlayerVisualHeight);
+    lua_register(L, "Game_Player_GetPlayerVisualHeight", Game_Player_GetPlayerVisualHeight);
     //设置相机距离
-    lua_register(L, "Gmae_Player_SetPlayerVisualDistance", Gmae_Player_SetPlayerVisualDistance);
+    lua_register(L, "Game_Player_SetPlayerVisualDistance", Game_Player_SetPlayerVisualDistance);
     //设置相机高度
-    lua_register(L, "Gmae_Player_SetPlayerVisualHeight", Gmae_Player_SetPlayerVisualHeight);
+    lua_register(L, "Game_Player_SetPlayerVisualHeight", Game_Player_SetPlayerVisualHeight);
     //获取玩家动作id
-    lua_register(L, "Gmae_Player_GetPlayerActionId", Gmae_Player_GetPlayerActionId);
+    lua_register(L, "Game_Player_GetPlayerActionId", Game_Player_GetPlayerActionId);
     //获取面向角度
-    lua_register(L, "Gmae_Player_GetPlayerAngle", Gmae_Player_GetPlayerAngle);
+    lua_register(L, "Game_Player_GetPlayerAngle", Game_Player_GetPlayerAngle);
     //添加特效
-    lua_register(L, "Gmae_Player_AddEffect", Gmae_Player_AddEffect);
+    lua_register(L, "Game_Player_AddEffect", Game_Player_AddEffect);
 
     //获取玩家武器Id
-    lua_register(L, "Gmae_Player_Weapon_GetWeaponId", Gmae_Player_Weapon_GetWeaponId);
+    lua_register(L, "Game_Player_Weapon_GetWeaponId", Game_Player_Weapon_GetWeaponId);
     //获取玩家武器类型
-    lua_register(L, "Gmae_Player_Weapon_GetWeaponType", Gmae_Player_Weapon_GetWeaponType);
+    lua_register(L, "Game_Player_Weapon_GetWeaponType", Game_Player_Weapon_GetWeaponType);
     //更换玩家的武器
-    lua_register(L, "Gmae_Player_Weapon_ChangeWeapons", Gmae_Player_Weapon_ChangeWeapons);
+    lua_register(L, "Game_Player_Weapon_ChangeWeapons", Game_Player_Weapon_ChangeWeapons);
     //完全更换玩家的武器
-    lua_register(L, "Gmae_Player_Weapon_CompleteChangeWeapons", Gmae_Player_Weapon_CompleteChangeWeapons);
+    lua_register(L, "Game_Player_Weapon_CompleteChangeWeapons", Game_Player_Weapon_CompleteChangeWeapons);
     //获取玩家武器装饰物坐标
-    lua_register(L, "Gmae_Player_Weapon_GetOrnamentsCoordinate", Gmae_Player_Weapon_GetOrnamentsCoordinate);
+    lua_register(L, "Game_Player_Weapon_GetOrnamentsCoordinate", Game_Player_Weapon_GetOrnamentsCoordinate);
     //获取玩家武器装饰物模型大小
-    lua_register(L, "Gmae_Player_Weapon_GetOrnamentsSize", Gmae_Player_Weapon_GetOrnamentsSize);
+    lua_register(L, "Game_Player_Weapon_GetOrnamentsSize", Game_Player_Weapon_GetOrnamentsSize);
     //设置玩家武器装饰物坐标
-    lua_register(L, "Gmae_Player_Weapon_SetOrnamentsCoordinate", Gmae_Player_Weapon_SetOrnamentsCoordinate);
+    lua_register(L, "Game_Player_Weapon_SetOrnamentsCoordinate", Game_Player_Weapon_SetOrnamentsCoordinate);
     //设置玩家武器装饰物模型大小
-    lua_register(L, "Gmae_Player_Weapon_SetOrnamentsSize", Gmae_Player_Weapon_SetOrnamentsSize);
+    lua_register(L, "Game_Player_Weapon_SetOrnamentsSize", Game_Player_Weapon_SetOrnamentsSize);
     //解除玩家武器装饰物坐标设置
-    lua_register(L, "Gmae_Player_Weapon_DecontrolOrnamentsCoordinate", Gmae_Player_Weapon_DecontrolOrnamentsCoordinate);
+    lua_register(L, "Game_Player_Weapon_DecontrolOrnamentsCoordinate", Game_Player_Weapon_DecontrolOrnamentsCoordinate);
     //解除玩家武器装饰物模型大小设置
-    lua_register(L, "Gmae_Player_Weapon_DecontrolOrnamentsSize", Gmae_Player_Weapon_DecontrolOrnamentsSize);
+    lua_register(L, "Game_Player_Weapon_DecontrolOrnamentsSize", Game_Player_Weapon_DecontrolOrnamentsSize);
     //获取玩家主武器坐标
-    lua_register(L, "Gmae_Player_Weapon_GetMainWeaponCoordinate", Gmae_Player_Weapon_GetMainWeaponCoordinate);
+    lua_register(L, "Game_Player_Weapon_GetMainWeaponCoordinate", Game_Player_Weapon_GetMainWeaponCoordinate);
     //获取玩家主武器模型大小
-    lua_register(L, "Gmae_Player_Weapon_GetMainWeaponSize", Gmae_Player_Weapon_GetMainWeaponSize);
+    lua_register(L, "Game_Player_Weapon_GetMainWeaponSize", Game_Player_Weapon_GetMainWeaponSize);
     //设置玩家主武器坐标
-    lua_register(L, "Gmae_Player_Weapon_SetMainWeaponCoordinate", Gmae_Player_Weapon_SetMainWeaponCoordinate);
+    lua_register(L, "Game_Player_Weapon_SetMainWeaponCoordinate", Game_Player_Weapon_SetMainWeaponCoordinate);
     //设置玩家主武器模型大小
-    lua_register(L, "Gmae_Player_Weapon_SetMainWeaponSize", Gmae_Player_Weapon_SetMainWeaponSize);
+    lua_register(L, "Game_Player_Weapon_SetMainWeaponSize", Game_Player_Weapon_SetMainWeaponSize);
     //解除玩家主武器坐标设置
-    lua_register(L, "Gmae_Player_Weapon_DecontrolMainWeaponCoordinate", Gmae_Player_Weapon_DecontrolMainWeaponCoordinate);
+    lua_register(L, "Game_Player_Weapon_DecontrolMainWeaponCoordinate", Game_Player_Weapon_DecontrolMainWeaponCoordinate);
     //解除玩家主武器模型大小设置
-    lua_register(L, "Gmae_Player_Weapon_DecontrolMainWeaponSize", Gmae_Player_Weapon_DecontrolMainWeaponSize);
+    lua_register(L, "Game_Player_Weapon_DecontrolMainWeaponSize", Game_Player_Weapon_DecontrolMainWeaponSize);
     //获取玩家副武器坐标
-    lua_register(L, "Gmae_Player_Weapon_GetSecondaryWeaponCoordinate", Gmae_Player_Weapon_GetSecondaryWeaponCoordinate);
+    lua_register(L, "Game_Player_Weapon_GetSecondaryWeaponCoordinate", Game_Player_Weapon_GetSecondaryWeaponCoordinate);
     //获取玩家副武器模型大小
-    lua_register(L, "Gmae_Player_Weapon_GetSecondaryWeaponSize", Gmae_Player_Weapon_GetSecondaryWeaponSize);
+    lua_register(L, "Game_Player_Weapon_GetSecondaryWeaponSize", Game_Player_Weapon_GetSecondaryWeaponSize);
     //设置玩家副武器坐标
-    lua_register(L, "Gmae_Player_Weapon_SetSecondaryWeaponCoordinate", Gmae_Player_Weapon_SetSecondaryWeaponCoordinate);
+    lua_register(L, "Game_Player_Weapon_SetSecondaryWeaponCoordinate", Game_Player_Weapon_SetSecondaryWeaponCoordinate);
     //设置玩家副武器模型大小
-    lua_register(L, "Gmae_Player_Weapon_SetSecondaryWeaponSize", Gmae_Player_Weapon_SetSecondaryWeaponSize);
+    lua_register(L, "Game_Player_Weapon_SetSecondaryWeaponSize", Game_Player_Weapon_SetSecondaryWeaponSize);
     //解除玩家副武器坐标设置
-    lua_register(L, "Gmae_Player_Weapon_DecontrolSecondaryWeaponCoordinate", Gmae_Player_Weapon_DecontrolSecondaryWeaponCoordinate);
+    lua_register(L, "Game_Player_Weapon_DecontrolSecondaryWeaponCoordinate", Game_Player_Weapon_DecontrolSecondaryWeaponCoordinate);
     //解除玩家副武器模型大小设置
-    lua_register(L, "Gmae_Player_Weapon_DecontrolSecondaryWeaponSize", Gmae_Player_Weapon_DecontrolSecondaryWeaponSize);
+    lua_register(L, "Game_Player_Weapon_DecontrolSecondaryWeaponSize", Game_Player_Weapon_DecontrolSecondaryWeaponSize);
     //获取玩家武器特殊数值(整数型)
-    lua_register(L, "Gmae_Player_Weapon_CharacteristicIntValue", Gmae_Player_Weapon_CharacteristicIntValue);
+    lua_register(L, "Game_Player_Weapon_CharacteristicIntValue", Game_Player_Weapon_CharacteristicIntValue);
     //获取玩家武器特殊数值(浮点型)
-    lua_register(L, "Gmae_Player_Weapon_CharacteristicFloatValue", Gmae_Player_Weapon_CharacteristicFloatValue);
+    lua_register(L, "Game_Player_Weapon_CharacteristicFloatValue", Game_Player_Weapon_CharacteristicFloatValue);
     
     //获取玩家派生信息
-    lua_register(L, "Gmae_Player_GetFsmData", Gmae_Player_GetFsmData);
+    lua_register(L, "Game_Player_GetFsmData", Game_Player_GetFsmData);
     //执行指定的派生动作
-    lua_register(L, "Gmae_Player_RunFsmAction", Gmae_Player_RunFsmAction);
+    lua_register(L, "Game_Player_RunFsmAction", Game_Player_RunFsmAction);
     //检查执行的派生动作是否结束
-    lua_register(L, "Gmae_Player_CheckRunFsmActionOver", Gmae_Player_CheckRunFsmActionOver);
+    lua_register(L, "Game_Player_CheckRunFsmActionOver", Game_Player_CheckRunFsmActionOver);
     //获取玩家血量信息
-    lua_register(L, "Gmae_Player_GetPlayerHealth", Gmae_Player_GetPlayerHealth);
+    lua_register(L, "Game_Player_GetPlayerHealth", Game_Player_GetPlayerHealth);
     //设置玩家当前血量
-    lua_register(L, "Gmae_Player_SetPlayerCurrentHealth", Gmae_Player_SetPlayerCurrentHealth);
+    lua_register(L, "Game_Player_SetPlayerCurrentHealth", Game_Player_SetPlayerCurrentHealth);
     //设置玩家基础血量
-    lua_register(L, "Gmae_Player_SetPlayerBasicHealth", Gmae_Player_SetPlayerBasicHealth);
+    lua_register(L, "Game_Player_SetPlayerBasicHealth", Game_Player_SetPlayerBasicHealth);
     //获取玩家耐力信息
-    lua_register(L, "Gmae_Player_GetPlayerEndurance", Gmae_Player_GetPlayerEndurance);
+    lua_register(L, "Game_Player_GetPlayerEndurance", Game_Player_GetPlayerEndurance);
     //设置玩家当前耐力
-    lua_register(L, "Gmae_Player_SetPlayerCurrentEndurance", Gmae_Player_SetPlayerCurrentEndurance);
+    lua_register(L, "Game_Player_SetPlayerCurrentEndurance", Game_Player_SetPlayerCurrentEndurance);
     //设置玩家最大耐力
-    lua_register(L, "Gmae_Player_SetPlayerMaxEndurance", Gmae_Player_SetPlayerMaxEndurance);
+    lua_register(L, "Game_Player_SetPlayerMaxEndurance", Game_Player_SetPlayerMaxEndurance);
     //获取玩家角色信息
-    lua_register(L, "Gmae_Player_GetPlayerRoleInfo", Gmae_Player_GetPlayerRoleInfo);
+    lua_register(L, "Game_Player_GetPlayerRoleInfo", Game_Player_GetPlayerRoleInfo);
     //生成玩家武器投射物
-    lua_register(L, "Gmae_Player_CreateWeaponProjectiles", Gmae_Player_CreateWeaponProjectiles);
+    lua_register(L, "Game_Player_CreateWeaponProjectiles", Game_Player_CreateWeaponProjectiles);
     //生成玩家手弩投射物
-    lua_register(L, "Gmae_Player_CreateBowgunProjectiles", Gmae_Player_CreateBowgunProjectiles);
+    lua_register(L, "Game_Player_CreateBowgunProjectiles", Game_Player_CreateBowgunProjectiles);
     //获取玩家Buff剩余时间
-    lua_register(L, "Gmae_Player_GetPlayerBuffDuration", Gmae_Player_GetPlayerBuffDuration);
+    lua_register(L, "Game_Player_GetPlayerBuffDuration", Game_Player_GetPlayerBuffDuration);
     //设置玩家Buff剩余时间
-    lua_register(L, "Gmae_Player_SetPlayerBuffDuration", Gmae_Player_SetPlayerBuffDuration);
+    lua_register(L, "Game_Player_SetPlayerBuffDuration", Game_Player_SetPlayerBuffDuration);
     //获取玩家钩爪坐标
-    lua_register(L, "Gmae_Player_GetPlayerHookCoordinate", Gmae_Player_GetPlayerHookCoordinate);
+    lua_register(L, "Game_Player_GetPlayerHookCoordinate", Game_Player_GetPlayerHookCoordinate);
     
     #pragma endregion
     //获取当前地图Id
-    lua_register(L, "Gmae_World_GetMapId", Gmae_World_GetMapId);
+    lua_register(L, "Game_World_GetMapId", Game_World_GetMapId);
     #pragma region Monster
     //设置怪物筛选器
     lua_register(L, "Game_Monster_SetFilter", Game_Monster_SetFilter);
@@ -1230,7 +1230,7 @@ int Lua_Main(string LuaFile)
     //清除环境生物筛选器
     lua_register(L, "Game_Environmental_DisableFilter", Game_Environmental_DisableFilter);
     //设置范围内所有环境生物的坐标
-    lua_register(L, "Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange", Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange);
+    lua_register(L, "Game_Environmental_SetAllEnvironmentalCoordinatesInRange", Game_Environmental_SetAllEnvironmentalCoordinatesInRange);
     //获取范围内所有环境生物的坐标
     lua_register(L, "Game_Environmental_GetAllEnvironmentalCoordinatesInRange", Game_Environmental_GetAllEnvironmentalCoordinatesInRange);
     #pragma endregion

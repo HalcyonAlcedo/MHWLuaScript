@@ -7,17 +7,17 @@
 示例脚本为榴弹袭击脚本，可在使用动作决胜姿势2时对目视方向释放最少8发榴弹袭击
 
     function run ()
-		local x,y,z = Gmae_Player_GetPlayerCollimatorCoordinate()
-		local wpType = Gmae_Player_Weapon_GetWeaponType()
-		local wpId = Gmae_Player_Weapon_GetWeaponId()
-		if Gmae_Player_GetPlayerActionId() == 12390
+		local x,y,z = Game_Player_GetPlayerCollimatorCoordinate()
+		local wpType = Game_Player_Weapon_GetWeaponType()
+		local wpId = Game_Player_Weapon_GetWeaponId()
+		if Game_Player_GetPlayerActionId() == 12390
 		then
 			System_Chronoscope_AddChronoscope(1,'PreLaunchAction')
 		end
 		if System_Chronoscope_CheckChronoscope('PreLaunchAction')
 		then
-			Gmae_Player_Weapon_ChangeWeapons(12,30)
-			Gmae_Player_RunFsmAction(3,11)
+			Game_Player_Weapon_ChangeWeapons(12,30)
+			Game_Player_RunFsmAction(3,11)
 			System_Chronoscope_AddChronoscope(0.05,'LaunchAction')
 		end
 		if System_Chronoscope_CheckChronoscope('LaunchAction')
@@ -25,7 +25,7 @@
 			local monsterList = Game_Monster_GetAllMonsterCoordinatesInTargetPointRange(x,y,z,0,8000)
 			if #monsterList < 8 then
 				for i=0,8 - #monsterList,1 do
-					Gmae_Player_CreateWeaponProjectiles(
+					Game_Player_CreateWeaponProjectiles(
 						13,
 						x,y+1500,z,
 						x + Lua_Math_Rander(-500,500) ,y + Lua_Math_Rander(0,500) ,z + Lua_Math_Rander(-500,500)
@@ -33,14 +33,14 @@
 				end
 			end
 			for _, monster in pairs(monsterList) do
-				Gmae_Player_CreateWeaponProjectiles(
+				Game_Player_CreateWeaponProjectiles(
 					13,
 					x,y+1500,z,
 					monster.X + Lua_Math_Rander(-150,150) ,monster.Y + Lua_Math_Rander(-150,150) ,monster.Z + Lua_Math_Rander(-150,150)
 				)
 			end
-			Gmae_Player_Weapon_ChangeWeapons(wpType,wpId)
-			Gmae_Player_RunFsmAction(1,6)
+			Game_Player_Weapon_ChangeWeapons(wpType,wpId)
+			Game_Player_RunFsmAction(1,6)
 		end
 	end
 
@@ -90,65 +90,65 @@
 ### 玩家
 |                                         |示例							                                         |说明						   |
 |-----------------------------------------|----------------------------------------------------------|------------------|
-|Gmae_Player_GetPlayerCoordinate          |`local x,y,z = Gmae_Player_GetPlayerCoordinate()`         |获取玩家坐标       |
-|Gmae_Player_SetPlayerCoordinate          |`Gmae_Player_SetPlayerCoordinate(1.0,1.0,1.0)`            |设置玩家坐标       |
-|Gmae_Player_GetPlayerHookCoordinate      |`local x,y,z = Gmae_Player_GetPlayerHookCoordinate()`     |获取玩家钩爪坐标   |
-|Gmae_Player_GetPlayerCollimatorCoordinate|`local x,y,z = Gmae_Player_GetPlayerCollimatorCoordinate()`|获取准星坐标      |
-|Gmae_Player_GetPlayerParabolaCollimatorCoordinate|`local x,y,z = Gmae_Player_GetPlayerParabolaCollimatorCoordinate()`|获取抛物线准星坐标      |
-|Gmae_Player_GetPlayerWeaponCoordinate    |`local x,y,z = Gmae_Player_GetPlayerWeaponCoordinate()`   |获取武器坐标       |
-|Gmae_Player_GetPlayerIncrementCoordinate |`local x,y,z = Gmae_Player_GetPlayerIncrementCoordinate()`|获取坐标运动增量   |
-|Gmae_Player_GetPlayerNavigationCoordinate|`local x,y,z = Gmae_Player_GetPlayerNavigationCoordinate()`|获取导航坐标      |
-|Gmae_Player_GetPlayerVisualCoordinate    |`local x,y,z = Gmae_Player_GetPlayerVisualCoordinate()`   |获取视角相机坐标    |
-|Gmae_Player_SetPlayerVisualCoordinate    |`Gmae_Player_SetPlayerVisualCoordinate(1.0,1.0,1.0)`      |设置玩家视角相机坐标|
-|Gmae_Player_UnbindPlayerVisualCoordinate |`Gmae_Player_UnbindPlayerVisualCoordinate()`              |解除玩家视角相机坐标设置|
-|Gmae_Player_GetPlayerVisualDistance      |`Gmae_Player_GetPlayerVisualDistance()`                   |获取视角相机距离    |
-|Gmae_Player_GetPlayerVisualHeight        |`Gmae_Player_GetPlayerVisualHeight()`                     |获取视角相机高度    |
-|Gmae_Player_SetPlayerVisualDistance      |`Gmae_Player_SetPlayerVisualDistance()`                   |设置视角相机距离    |
-|Gmae_Player_SetPlayerVisualHeight        |`Gmae_Player_SetPlayerVisualHeight()`                     |设置视角相机高度    |
-|Gmae_Player_CheckAimingStatus            |`Gmae_Player_CheckAimingStatus()`                         |检查是否处于瞄准状态|
-|Gmae_Player_AddEffect                    |`Gmae_Player_AddEffect(0,0)`                              |为玩家添加特效     |
-|Gmae_Player_GetPlayerActionId            |`Gmae_Player_GetPlayerActionId()`                         |获取玩家动作ID     |
-|Gmae_Player_GetPlayerAngle               |`Gmae_Player_GetPlayerAngle()`                            |获取玩家面向角度   |
-|Gmae_Player_Weapon_GetWeaponId           |`Gmae_Player_Weapon_GetWeaponId()`                        |获取玩家武器ID     |
-|Gmae_Player_Weapon_GetWeaponType         |`Gmae_Player_Weapon_GetWeaponType()`                      |获取玩家武器类型   |
-|Gmae_Player_Weapon_ChangeWeapons         |`Gmae_Player_Weapon_ChangeWeapons(0,20)`                  |更换玩家的武器（武器类型，武器id）   |
-|Gmae_Player_Weapon_CompleteChangeWeapons |`Gmae_Player_Weapon_CompleteChangeWeapons(0,20)`          |完全更换玩家的武器（武器类型，武器id）   |
-|Gmae_Player_Weapon_GetOrnamentsCoordinate|`local x,y,z = Gmae_Player_Weapon_GetOrnamentsCoordinate()`|获取玩家武器装饰物坐标|
-|Gmae_Player_Weapon_GetOrnamentsSize      |`local x,y,z = Gmae_Player_Weapon_GetOrnamentsSize()`     |获取玩家武器装饰物模型大小|
-|Gmae_Player_Weapon_SetOrnamentsCoordinate|`Gmae_Player_Weapon_SetOrnamentsCoordinate(100,100,100)`  |设置玩家武器装饰物坐标|
-|Gmae_Player_Weapon_SetOrnamentsSize      |`Gmae_Player_Weapon_SetOrnamentsSize(1.5,1.5,1.5)`        |设置玩家武器装饰物模型大小|
-|Gmae_Player_Weapon_DecontrolOrnamentsCoordinate|`Gmae_Player_Weapon_DecontrolOrnamentsCoordinate()` |解除玩家武器装饰物坐标设置|
-|Gmae_Player_Weapon_DecontrolOrnamentsSize|`Gmae_Player_Weapon_DecontrolOrnamentsSize()`             |解除玩家武器装饰物模型大小设置|
-|Gmae_Player_Weapon_GetMainWeaponCoordinate|`local x,y,z = Gmae_Player_Weapon_GetMainWeaponCoordinate()`|获取玩家主武器坐标|
-|Gmae_Player_Weapon_GetMainWeaponSize      |`local x,y,z = Gmae_Player_Weapon_GetMainWeaponSize()`     |获取玩家主武器模型大小|
-|Gmae_Player_Weapon_SetMainWeaponCoordinate|`Gmae_Player_Weapon_SetMainWeaponCoordinate(100,100,100)`  |设置玩家主武器坐标|
-|Gmae_Player_Weapon_SetMainWeaponSize      |`Gmae_Player_Weapon_SetMainWeaponSize(1.5,1.5,1.5)`        |设置玩家主武器模型大小|
-|Gmae_Player_Weapon_DecontrolMainWeaponCoordinate|`Gmae_Player_Weapon_DecontrolMainWeaponCoordinate()` |解除玩家主武器坐标设置|
-|Gmae_Player_Weapon_DecontrolMainWeaponSize|`Gmae_Player_Weapon_DecontrolMainWeaponSize()`             |解除玩家主武器模型大小设置|
-|Gmae_Player_Weapon_GetSecondaryWeaponCoordinate|`local x,y,z = Gmae_Player_Weapon_GetSecondaryWeaponCoordinate()`|获取玩家副武器坐标|
-|Gmae_Player_Weapon_GetSecondaryWeaponSize|`local x,y,z = Gmae_Player_Weapon_GetSecondaryWeaponSize()`     |获取玩家副武器模型大小|
-|Gmae_Player_Weapon_SetSecondaryWeaponCoordinate|`Gmae_Player_Weapon_SetSecondaryWeaponCoordinate(100,100,100)`  |设置玩家副武器坐标|
-|Gmae_Player_Weapon_SetSecondaryWeaponSize|`Gmae_Player_Weapon_SetSecondaryWeaponSize(1.5,1.5,1.5)`        |设置玩家副武器模型大小|
-|Gmae_Player_Weapon_DecontrolSecondaryWeaponCoordinate|`Gmae_Player_Weapon_DecontrolSecondaryWeaponCoordinate()` |解除玩家副武器坐标设置|
-|Gmae_Player_Weapon_DecontrolSecondaryWeaponSize|`Gmae_Player_Weapon_DecontrolSecondaryWeaponSize()`             |解除玩家副武器模型大小设置|
-|Gmae_Player_Weapon_CharacteristicIntValue|`Gmae_Player_Weapon_CharacteristicIntValue('2d24')`       |获取玩家武器特殊数值(整数)   |
-|Gmae_Player_Weapon_CharacteristicFloatValue|`Gmae_Player_Weapon_CharacteristicFloatValue('2d24')`       |获取玩家武器特殊数值(浮点)   |
-|Gmae_Player_GetFsmData                   |`local type,id = Gmae_Player_GetFsmData()`                |获取玩家当前派生动作信息   |
-|Gmae_Player_RunFsmAction                 |`Gmae_Player_RunFsmAction(3,5)`                           |执行指定对象的派生动作，第一个参数为对象（玩家1，武器3）第二个参数为派生动作Id   |
-|Gmae_Player_CheckRunFsmActionOver        |`Gmae_Player_CheckRunFsmActionOver()`                     |检查执行的派生动作是否结束  |
-|Gmae_Player_GetPlayerHealth              |`local BasicHealth,MaxHealth,Health = Gmae_Player_GetPlayerHealth()`|获取玩家血量信息（基础，最大，当前）   |
-|Gmae_Player_SetPlayerCurrentHealth       |`Gmae_Player_SetPlayerCurrentHealth(10)`                  |设置玩家当前血量   |
-|Gmae_Player_SetPlayerBasicHealth         |`Gmae_Player_SetPlayerBasicHealth(100)`                   |设置玩家基础血量0-150   |
-|Gmae_Player_GetPlayerEndurance           |`local MaxEndurance,Endurance = Gmae_Player_GetPlayerEndurance()` |获取玩家耐力信息（最大，当前）   |
-|Gmae_Player_SetPlayerCurrentEndurance    |`Gmae_Player_SetPlayerCurrentEndurance(50)`               |设置玩家当前耐力   |
-|Gmae_Player_SetPlayerMaxEndurance        |`Gmae_Player_SetPlayerMaxEndurance(25)`                   |设置玩家最大耐力25-150  |
-|Gmae_Player_GetPlayerRoleInfo            |`local name,hr,mr = Gmae_Player_GetPlayerRoleInfo()`      |获取玩家角色信息   |
-|~~Gmae_Player_CreateProjectiles~~        |`Gmae_Player_CreateProjectiles(12,startX,startY,startZ,endX,endY,endZ)`|1.0.7弃用，请使用特定对象的方法 |
-|Gmae_Player_CreateWeaponProjectiles      |`Gmae_Player_CreateWeaponProjectiles(12,startX,startY,startZ,endX,endY,endZ)`|生成玩家武器投射物（投射物id,起始坐标,结束坐标） |
-|Gmae_Player_CreateBowgunProjectiles      |`Gmae_Player_CreateBowgunProjectiles(12,startX,startY,startZ,endX,endY,endZ)`|生成玩家手弩投射物（投射物id,起始坐标,结束坐标） |
-|Gmae_Player_GetPlayerBuffDuration        |`local buffDuration = Gmae_Player_GetPlayerBuffDuration('BuffName')`|获取玩家Buff剩余时间   |
-|Gmae_Player_SetPlayerBuffDuration        |`Gmae_Player_SetPlayerBuffDuration('BuffName',20)`           |设置玩家Buff持续时间   |
-|Gmae_World_GetMapId                      |`Gmae_World_GetMapId()`                                   |获取地图ID        |
+|Game_Player_GetPlayerCoordinate          |`local x,y,z = Game_Player_GetPlayerCoordinate()`         |获取玩家坐标       |
+|Game_Player_SetPlayerCoordinate          |`Game_Player_SetPlayerCoordinate(1.0,1.0,1.0)`            |设置玩家坐标       |
+|Game_Player_GetPlayerHookCoordinate      |`local x,y,z = Game_Player_GetPlayerHookCoordinate()`     |获取玩家钩爪坐标   |
+|Game_Player_GetPlayerCollimatorCoordinate|`local x,y,z = Game_Player_GetPlayerCollimatorCoordinate()`|获取准星坐标      |
+|Game_Player_GetPlayerParabolaCollimatorCoordinate|`local x,y,z = Game_Player_GetPlayerParabolaCollimatorCoordinate()`|获取抛物线准星坐标      |
+|Game_Player_GetPlayerWeaponCoordinate    |`local x,y,z = Game_Player_GetPlayerWeaponCoordinate()`   |获取武器坐标       |
+|Game_Player_GetPlayerIncrementCoordinate |`local x,y,z = Game_Player_GetPlayerIncrementCoordinate()`|获取坐标运动增量   |
+|Game_Player_GetPlayerNavigationCoordinate|`local x,y,z = Game_Player_GetPlayerNavigationCoordinate()`|获取导航坐标      |
+|Game_Player_GetPlayerVisualCoordinate    |`local x,y,z = Game_Player_GetPlayerVisualCoordinate()`   |获取视角相机坐标    |
+|Game_Player_SetPlayerVisualCoordinate    |`Game_Player_SetPlayerVisualCoordinate(1.0,1.0,1.0)`      |设置玩家视角相机坐标|
+|Game_Player_UnbindPlayerVisualCoordinate |`Game_Player_UnbindPlayerVisualCoordinate()`              |解除玩家视角相机坐标设置|
+|Game_Player_GetPlayerVisualDistance      |`Game_Player_GetPlayerVisualDistance()`                   |获取视角相机距离    |
+|Game_Player_GetPlayerVisualHeight        |`Game_Player_GetPlayerVisualHeight()`                     |获取视角相机高度    |
+|Game_Player_SetPlayerVisualDistance      |`Game_Player_SetPlayerVisualDistance()`                   |设置视角相机距离    |
+|Game_Player_SetPlayerVisualHeight        |`Game_Player_SetPlayerVisualHeight()`                     |设置视角相机高度    |
+|Game_Player_CheckAimingStatus            |`Game_Player_CheckAimingStatus()`                         |检查是否处于瞄准状态|
+|Game_Player_AddEffect                    |`Game_Player_AddEffect(0,0)`                              |为玩家添加特效     |
+|Game_Player_GetPlayerActionId            |`Game_Player_GetPlayerActionId()`                         |获取玩家动作ID     |
+|Game_Player_GetPlayerAngle               |`Game_Player_GetPlayerAngle()`                            |获取玩家面向角度   |
+|Game_Player_Weapon_GetWeaponId           |`Game_Player_Weapon_GetWeaponId()`                        |获取玩家武器ID     |
+|Game_Player_Weapon_GetWeaponType         |`Game_Player_Weapon_GetWeaponType()`                      |获取玩家武器类型   |
+|Game_Player_Weapon_ChangeWeapons         |`Game_Player_Weapon_ChangeWeapons(0,20)`                  |更换玩家的武器（武器类型，武器id）   |
+|Game_Player_Weapon_CompleteChangeWeapons |`Game_Player_Weapon_CompleteChangeWeapons(0,20)`          |完全更换玩家的武器（武器类型，武器id）   |
+|Game_Player_Weapon_GetOrnamentsCoordinate|`local x,y,z = Game_Player_Weapon_GetOrnamentsCoordinate()`|获取玩家武器装饰物坐标|
+|Game_Player_Weapon_GetOrnamentsSize      |`local x,y,z = Game_Player_Weapon_GetOrnamentsSize()`     |获取玩家武器装饰物模型大小|
+|Game_Player_Weapon_SetOrnamentsCoordinate|`Game_Player_Weapon_SetOrnamentsCoordinate(100,100,100)`  |设置玩家武器装饰物坐标|
+|Game_Player_Weapon_SetOrnamentsSize      |`Game_Player_Weapon_SetOrnamentsSize(1.5,1.5,1.5)`        |设置玩家武器装饰物模型大小|
+|Game_Player_Weapon_DecontrolOrnamentsCoordinate|`Game_Player_Weapon_DecontrolOrnamentsCoordinate()` |解除玩家武器装饰物坐标设置|
+|Game_Player_Weapon_DecontrolOrnamentsSize|`Game_Player_Weapon_DecontrolOrnamentsSize()`             |解除玩家武器装饰物模型大小设置|
+|Game_Player_Weapon_GetMainWeaponCoordinate|`local x,y,z = Game_Player_Weapon_GetMainWeaponCoordinate()`|获取玩家主武器坐标|
+|Game_Player_Weapon_GetMainWeaponSize      |`local x,y,z = Game_Player_Weapon_GetMainWeaponSize()`     |获取玩家主武器模型大小|
+|Game_Player_Weapon_SetMainWeaponCoordinate|`Game_Player_Weapon_SetMainWeaponCoordinate(100,100,100)`  |设置玩家主武器坐标|
+|Game_Player_Weapon_SetMainWeaponSize      |`Game_Player_Weapon_SetMainWeaponSize(1.5,1.5,1.5)`        |设置玩家主武器模型大小|
+|Game_Player_Weapon_DecontrolMainWeaponCoordinate|`Game_Player_Weapon_DecontrolMainWeaponCoordinate()` |解除玩家主武器坐标设置|
+|Game_Player_Weapon_DecontrolMainWeaponSize|`Game_Player_Weapon_DecontrolMainWeaponSize()`             |解除玩家主武器模型大小设置|
+|Game_Player_Weapon_GetSecondaryWeaponCoordinate|`local x,y,z = Game_Player_Weapon_GetSecondaryWeaponCoordinate()`|获取玩家副武器坐标|
+|Game_Player_Weapon_GetSecondaryWeaponSize|`local x,y,z = Game_Player_Weapon_GetSecondaryWeaponSize()`     |获取玩家副武器模型大小|
+|Game_Player_Weapon_SetSecondaryWeaponCoordinate|`Game_Player_Weapon_SetSecondaryWeaponCoordinate(100,100,100)`  |设置玩家副武器坐标|
+|Game_Player_Weapon_SetSecondaryWeaponSize|`Game_Player_Weapon_SetSecondaryWeaponSize(1.5,1.5,1.5)`        |设置玩家副武器模型大小|
+|Game_Player_Weapon_DecontrolSecondaryWeaponCoordinate|`Game_Player_Weapon_DecontrolSecondaryWeaponCoordinate()` |解除玩家副武器坐标设置|
+|Game_Player_Weapon_DecontrolSecondaryWeaponSize|`Game_Player_Weapon_DecontrolSecondaryWeaponSize()`             |解除玩家副武器模型大小设置|
+|Game_Player_Weapon_CharacteristicIntValue|`Game_Player_Weapon_CharacteristicIntValue('2d24')`       |获取玩家武器特殊数值(整数)   |
+|Game_Player_Weapon_CharacteristicFloatValue|`Game_Player_Weapon_CharacteristicFloatValue('2d24')`       |获取玩家武器特殊数值(浮点)   |
+|Game_Player_GetFsmData                   |`local type,id = Game_Player_GetFsmData()`                |获取玩家当前派生动作信息   |
+|Game_Player_RunFsmAction                 |`Game_Player_RunFsmAction(3,5)`                           |执行指定对象的派生动作，第一个参数为对象（玩家1，武器3）第二个参数为派生动作Id   |
+|Game_Player_CheckRunFsmActionOver        |`Game_Player_CheckRunFsmActionOver()`                     |检查执行的派生动作是否结束  |
+|Game_Player_GetPlayerHealth              |`local BasicHealth,MaxHealth,Health = Game_Player_GetPlayerHealth()`|获取玩家血量信息（基础，最大，当前）   |
+|Game_Player_SetPlayerCurrentHealth       |`Game_Player_SetPlayerCurrentHealth(10)`                  |设置玩家当前血量   |
+|Game_Player_SetPlayerBasicHealth         |`Game_Player_SetPlayerBasicHealth(100)`                   |设置玩家基础血量0-150   |
+|Game_Player_GetPlayerEndurance           |`local MaxEndurance,Endurance = Game_Player_GetPlayerEndurance()` |获取玩家耐力信息（最大，当前）   |
+|Game_Player_SetPlayerCurrentEndurance    |`Game_Player_SetPlayerCurrentEndurance(50)`               |设置玩家当前耐力   |
+|Game_Player_SetPlayerMaxEndurance        |`Game_Player_SetPlayerMaxEndurance(25)`                   |设置玩家最大耐力25-150  |
+|Game_Player_GetPlayerRoleInfo            |`local name,hr,mr = Game_Player_GetPlayerRoleInfo()`      |获取玩家角色信息   |
+|~~Game_Player_CreateProjectiles~~        |`Game_Player_CreateProjectiles(12,startX,startY,startZ,endX,endY,endZ)`|1.0.7弃用，请使用特定对象的方法 |
+|Game_Player_CreateWeaponProjectiles      |`Game_Player_CreateWeaponProjectiles(12,startX,startY,startZ,endX,endY,endZ)`|生成玩家武器投射物（投射物id,起始坐标,结束坐标） |
+|Game_Player_CreateBowgunProjectiles      |`Game_Player_CreateBowgunProjectiles(12,startX,startY,startZ,endX,endY,endZ)`|生成玩家手弩投射物（投射物id,起始坐标,结束坐标） |
+|Game_Player_GetPlayerBuffDuration        |`local buffDuration = Game_Player_GetPlayerBuffDuration('BuffName')`|获取玩家Buff剩余时间   |
+|Game_Player_SetPlayerBuffDuration        |`Game_Player_SetPlayerBuffDuration('BuffName',20)`           |设置玩家Buff持续时间   |
+|Game_World_GetMapId                      |`Game_World_GetMapId()`                                   |获取地图ID        |
 
 ### 怪物
 |                                         |示例                                                      |说明						   |
@@ -187,7 +187,7 @@
 |-----------------------------------------|----------------------------------------------------------|------------------|
 |Game_Environmental_SetFilter             |`Game_Environmental_SetFilter(1,0)`                       |设置环境生物筛选器  |
 |Game_Environmental_DisableFilter         |`Game_Environmental_DisableFilter()`                      |清除环境生物筛选器  |
-|Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange|`Gmae_Environmental_SetAllEnvironmentalCoordinatesInRange(100.0,100.0,100.0,0,1000)`|设置范围内所有环境生物的坐标,受筛选器影响  |
+|Game_Environmental_SetAllEnvironmentalCoordinatesInRange|`Game_Environmental_SetAllEnvironmentalCoordinatesInRange(100.0,100.0,100.0,0,1000)`|设置范围内所有环境生物的坐标,受筛选器影响  |
 |Game_Environmental_GetAllEnvironmentalCoordinatesInRange|`local environmentalList = Game_Environmental_GetAllEnvironmentalCoordinatesInRange(0,1000)`|获取范围内所有环境生物的坐标，受筛选器影响，包含属性X,Y,Z,Id,SubId  |
 
 

@@ -35,8 +35,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.1.5";
-		long long ModBuild = 115003211954;
+		string ModVersion = "v1.1.6 Alpha";
+		long long ModBuild = 115003222049;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -558,6 +558,7 @@ namespace Base {
 		int ActionId = 0;
 		//派生信息
 		FsmData Fsm = FsmData();
+		FsmData NowFsm = FsmData();
 		//玩家名称
 		string Name = "";
 		//hr等级
@@ -587,7 +588,7 @@ namespace Base {
 		//检查执行派生动作是否结束
 		static bool CheckDerivedAction() {
 			if (TempData::t_executingFsmAction) {
-				if (Fsm.Id != TempData::t_ManualFsmAction.Id and Fsm.Target != TempData::t_ManualFsmAction.Target) {
+				if (NowFsm.Id != TempData::t_ManualFsmAction.Id and NowFsm.Target != TempData::t_ManualFsmAction.Target) {
 					TempData::t_executingFsmAction = false;
 					return true;
 				}
@@ -694,6 +695,10 @@ namespace Base {
 			Fsm = FsmData(
 				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x628C),
 				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6290)
+			);
+			NowFsm = FsmData(
+				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6274),
+				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6278)
 			);
 			BasicHealth = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7628);
 			void* StatusManagementPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7630);
@@ -1034,7 +1039,7 @@ namespace Base {
 			if (PlayerDataOffset3 != nullptr)
 				BasicGameData::PlayerDataPlot = *offsetPtr<undefined**>((undefined(*)())PlayerDataOffset3, 0x48);
 			BasicGameData::PlayerInfoPlot = *offsetPtr<undefined**>((undefined(*)())PlayerInfoPlot, 0xA8);
-			BasicGameData::GameTimePlot = (undefined(*)())MH::World::GmaeClock;
+			BasicGameData::GameTimePlot = (undefined(*)())MH::World::GameClock;
 			BasicGameData::MapPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7D20);
 			Draw::GameInitInfo += u8"\n 载入汇编数据";
 			if (
@@ -1232,6 +1237,7 @@ namespace Base {
 				PlayerData::AttackMonsterPlot = nullptr;
 				//清理玩家Fsm
 				PlayerData::Fsm = PlayerData::FsmData(0, 0);
+				PlayerData::NowFsm = PlayerData::FsmData(0, 0);
 				PlayerData::TempData::t_ManualFsmAction = PlayerData::FsmData(0, 0);
 				PlayerData::TempData::t_executingFsmAction = false;
 				//更新地址信息
