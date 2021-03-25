@@ -1093,18 +1093,6 @@ int Lua_Main(string LuaFile)
     lua_State* L = luaL_newstate();
     luaopen_base(L);
     luaL_openlibs(L);
-    int err = luaL_dofile(L, LuaFile.c_str());
-    if (err != 0)
-    {
-        int type = lua_type(L, -1);
-        if (type == 4) {
-            string error = lua_tostring(L, -1);
-            LuaErrorRecord(error);
-        }
-        lua_close(L);
-        return -1;
-    }
-    Nowlua = LuaFile;
 
 #pragma region Game
     #pragma region Player
@@ -1372,6 +1360,17 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Lua_Http_GetHttpData", Lua_Http_GetHttpData);
 #pragma endregion
 
+    int err = luaL_dofile(L, LuaFile.c_str());
+    if (err != 0)
+    {
+        int type = lua_type(L, -1);
+        if (type == 4) {
+            string error = lua_tostring(L, -1);
+            LuaErrorRecord(error);
+        }
+        return -1;
+    }
+    Nowlua = LuaFile;
     //设置错误回调函数
     lua_pushcfunction(L, LuaErrorCallBack);
     //获取栈顶的位置即错误回调函数的位置
