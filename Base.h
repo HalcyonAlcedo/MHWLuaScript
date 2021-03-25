@@ -31,6 +31,7 @@ namespace Base {
 		bool InitErrInfo = true;
 		int InitErrCount = 0;
 		vector<string> LuaFiles;
+		vector<string> LuaError;
 		bool ModConsole = false;
 		//可设置参数
 		string ModName = "LuaScript";
