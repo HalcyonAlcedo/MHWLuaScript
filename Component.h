@@ -760,6 +760,14 @@ namespace Component {
 				return *offsetPtr<float>(WeaponEntityPlot, Ptr);
 			}
 		}
+		static char GetWeaponCharacteristicByteValue(string ptr) {
+			int Ptr = 0;
+			sscanf_s(ptr.c_str(), "%x", &Ptr);
+			void* WeaponEntityPlot = *offsetPtr<void*>(Base::BasicGameData::PlayerPlot, 0x76B0);
+			if (WeaponEntityPlot != nullptr) {
+				return *offsetPtr<char>(WeaponEntityPlot, Ptr);
+			}
+		}
 #pragma endregion
 /*
 	获取对玩家仇恨的怪物
@@ -781,6 +789,41 @@ namespace Component {
 				}
 			}
 			return monsterList;
+		}
+#pragma endregion
+/*
+	获取指定实体的属性
+*/
+#pragma region GetEntityProperties
+		struct EntityProperties {
+			Base::Vector3 Coordinate;
+			Base::Vector3 Size;
+			EntityProperties(
+				Base::Vector3 Coordinate = Base::Vector3(),
+				Base::Vector3 Size = Base::Vector3())
+				:Coordinate(Coordinate), Size(Size) {
+			};
+		};
+		static EntityProperties GetEntityProperties(string ptr) {
+			int Ptr = 0;
+			sscanf_s(ptr.c_str(), "%x", &Ptr);
+			void* EntityAddress = (void*)Ptr;
+
+			if (EntityAddress != nullptr) {
+				return EntityProperties(
+					Base::Vector3(
+						*offsetPtr<float>(EntityAddress, 0x160),
+						*offsetPtr<float>(EntityAddress, 0x164),
+						*offsetPtr<float>(EntityAddress, 0x168)
+					),
+					Base::Vector3(
+						*offsetPtr<float>(EntityAddress, 0x180),
+						*offsetPtr<float>(EntityAddress, 0x184),
+						*offsetPtr<float>(EntityAddress, 0x188)
+					)
+				);
+			}
+			return EntityProperties();
 		}
 #pragma endregion
 #pragma region GetMonstersName_CN

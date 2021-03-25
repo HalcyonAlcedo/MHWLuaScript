@@ -215,6 +215,11 @@ static int Game_Player_Weapon_CharacteristicFloatValue(lua_State* pL) {
     lua_pushinteger(pL, Component::GetWeaponCharacteristicFloatValue(ptr));
     return 1;
 }
+static int Game_Player_Weapon_CharacteristicByteValue(lua_State* pL) {
+    string ptr = "0x" + (string)lua_tostring(pL, 1);
+    lua_pushinteger(pL, Component::GetWeaponCharacteristicByteValue(ptr));
+    return 1;
+}
 static int Game_Player_GetFsmData(lua_State* pL) {
     lua_pushinteger(pL, Base::PlayerData::NowFsm.Target);
     lua_pushinteger(pL, Base::PlayerData::NowFsm.Id);
@@ -1188,6 +1193,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Player_Weapon_CharacteristicIntValue", Game_Player_Weapon_CharacteristicIntValue);
     //获取玩家武器特殊数值(浮点型)
     lua_register(L, "Game_Player_Weapon_CharacteristicFloatValue", Game_Player_Weapon_CharacteristicFloatValue);
+    //获取玩家武器特殊数值(字节)
+    lua_register(L, "Game_Player_Weapon_CharacteristicByteValue", Game_Player_Weapon_CharacteristicByteValue);
     
     //获取玩家派生信息
     lua_register(L, "Game_Player_GetFsmData", Game_Player_GetFsmData);

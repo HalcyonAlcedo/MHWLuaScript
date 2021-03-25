@@ -133,6 +133,7 @@
 |Game_Player_Weapon_DecontrolSecondaryWeaponSize|`Game_Player_Weapon_DecontrolSecondaryWeaponSize()`             |解除玩家副武器模型大小设置|
 |Game_Player_Weapon_CharacteristicIntValue|`Game_Player_Weapon_CharacteristicIntValue('2d24')`       |获取玩家武器特殊数值(整数)   |
 |Game_Player_Weapon_CharacteristicFloatValue|`Game_Player_Weapon_CharacteristicFloatValue('2d24')`       |获取玩家武器特殊数值(浮点)   |
+|Game_Player_Weapon_CharacteristicByteValue|`Game_Player_Weapon_CharacteristicByteValue('2d24')`       |获取玩家武器特殊数值(浮点)   |
 |Game_Player_GetFsmData                   |`local type,id = Game_Player_GetFsmData()`                |获取玩家当前派生动作信息   |
 |Game_Player_RunFsmAction                 |`Game_Player_RunFsmAction(3,5)`                           |执行指定对象的派生动作，第一个参数为对象（玩家1，武器3）第二个参数为派生动作Id   |
 |Game_Player_CheckRunFsmActionOver        |`Game_Player_CheckRunFsmActionOver()`                     |检查执行的派生动作是否结束  |
