@@ -792,9 +792,9 @@ namespace Component {
 		}
 #pragma endregion
 /*
-	获取指定实体的属性
+	实体属性操作
 */
-#pragma region GetEntityProperties
+#pragma region EntityProperties
 		struct EntityProperties {
 			Base::Vector3 Coordinate;
 			Base::Vector3 Size;
@@ -805,25 +805,44 @@ namespace Component {
 			};
 		};
 		static EntityProperties GetEntityProperties(string ptr) {
-			int Ptr = 0;
-			sscanf_s(ptr.c_str(), "%x", &Ptr);
-			void* EntityAddress = (void*)Ptr;
-
+			long long Ptr = 0;
+			sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+			void* EntityAddress = (double*)Ptr;
 			if (EntityAddress != nullptr) {
 				return EntityProperties(
 					Base::Vector3(
-						*offsetPtr<float>(EntityAddress, 0x160),
-						*offsetPtr<float>(EntityAddress, 0x164),
-						*offsetPtr<float>(EntityAddress, 0x168)
+						*(float*)(Ptr + 0x160),
+						*(float*)(Ptr + 0x164),
+						*(float*)(Ptr + 0x168)
 					),
 					Base::Vector3(
-						*offsetPtr<float>(EntityAddress, 0x180),
-						*offsetPtr<float>(EntityAddress, 0x184),
-						*offsetPtr<float>(EntityAddress, 0x188)
+						*(float*)(Ptr + 0x180),
+						*(float*)(Ptr + 0x184),
+						*(float*)(Ptr + 0x188)
 					)
 				);
 			}
 			return EntityProperties();
+		}
+		static void SetEntityCoordinate(string ptr, Base::Vector3 Coordinate) {
+			long long Ptr = 0;
+			sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+			void* EntityAddress = (double*)Ptr;
+			if (EntityAddress != nullptr) {
+				*(float*)(Ptr + 0x160) = Coordinate.x;
+				*(float*)(Ptr + 0x164) = Coordinate.y;
+				*(float*)(Ptr + 0x168) = Coordinate.z;
+			}
+		}
+		static void SetEntitySize(string ptr, Base::Vector3 Size) {
+			long long Ptr = 0;
+			sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+			void* EntityAddress = (double*)Ptr;
+			if (EntityAddress != nullptr) {
+				*(float*)(Ptr + 0x180) = Size.x;
+				*(float*)(Ptr + 0x184) = Size.y;
+				*(float*)(Ptr + 0x188) = Size.z;
+			}
 		}
 #pragma endregion
 #pragma region GetMonstersName_CN

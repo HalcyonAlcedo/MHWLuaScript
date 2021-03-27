@@ -375,6 +375,11 @@ static int Game_Monster_GetLastHitMonsterCoordinates(lua_State* pL) {
     lua_pushnumber(pL, Coordinate.z);
     return 3;
 }
+static int Game_Monster_GetMonsterCNName(lua_State* pL) {
+    int monsterId = (int)lua_tointeger(pL, -1);
+    lua_pushstring(pL, Component::GetMonstersName_CN(monsterId).c_str());
+    return 1;
+}
 static int Game_Environmental_SetFilter(lua_State* pL) {
     int id = (int)lua_tointeger(pL, 1);
     int subId = (int)lua_tointeger(pL, 2);
@@ -749,6 +754,12 @@ static int Game_Environmental_GetAllEnvironmentalCoordinatesInRange(lua_State* p
         lua_pushstring(pL, "SubId");//怪物SubId
         lua_pushinteger(pL, environmentalData.SubId);
         lua_settable(pL, -3);
+        lua_pushstring(pL, "Ptr");//怪物指针
+        ostringstream ptr;
+        ptr << environmentalData.Plot;
+        string ptrstr = ptr.str();
+        lua_pushstring(pL, ptrstr.c_str());
+        lua_settable(pL, -3);
         lua_settable(pL, -3);//弹出到顶层
     }
     return 1;
@@ -806,7 +817,53 @@ static int Game_Player_SetPlayerVisualHeight(lua_State* pL) {
     *offsetPtr<float>(VisualOffset, 0x5E4) = height;
     return 0;
 }
+static int Game_Entity_GetEntityProperties(lua_State* pL) {
+    string entity = "0x" + (string)lua_tostring(pL, -1);
+    Component::EntityProperties entityProperties = Component::GetEntityProperties(entity);
+    lua_newtable(pL);
+    lua_pushstring(pL, "Coordinate");
+        lua_newtable(pL);
+        lua_pushstring(pL, "x");
+        lua_pushnumber(pL, entityProperties.Coordinate.x);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "y");
+        lua_pushnumber(pL, entityProperties.Coordinate.y);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "z");
+        lua_pushnumber(pL, entityProperties.Coordinate.z);
+        lua_settable(pL, -3);
+    lua_settable(pL, -3);
 
+    lua_pushstring(pL, "Size");
+        lua_newtable(pL);
+        lua_pushstring(pL, "x");
+        lua_pushnumber(pL, entityProperties.Size.x);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "y");
+        lua_pushnumber(pL, entityProperties.Size.y);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "z");
+        lua_pushnumber(pL, entityProperties.Size.z);
+        lua_settable(pL, -3);
+    lua_settable(pL, -3);
+    return 1;
+}
+static int Game_Entity_SetEntityCoordinate(lua_State* pL) {
+    string entity = "0x" + (string)lua_tostring(pL, 1);
+    float x = (float)lua_tonumber(pL, 2);
+    float y = (float)lua_tonumber(pL, 3);
+    float z = (float)lua_tonumber(pL, 4);
+    Component::SetEntityCoordinate(entity, Base::Vector3(x, y, z));
+    return 0;
+}
+static int Game_Entity_SetEntitySize(lua_State* pL) {
+    string entity = "0x" + (string)lua_tostring(pL, 1);
+    float x = (float)lua_tonumber(pL, 2);
+    float y = (float)lua_tonumber(pL, 3);
+    float z = (float)lua_tonumber(pL, 4);
+    Component::SetEntitySize(entity, Base::Vector3(x, y, z));
+    return 0;
+}
 #pragma endregion
 #pragma region SystemFun
 static int System_Keyboard_CheckKey(lua_State* pL) {    
@@ -1275,6 +1332,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Monster_GetAllMonsterHealthInTargetPointRange", Game_Monster_GetAllMonsterHealthInTargetPointRange);
     //获取目标点范围内所有怪物的异常状态(计划中)
     lua_register(L, "Game_Monster_GetAllMonsterDebuffInTargetPointRange", Game_Monster_GetAllMonsterDebuffInTargetPointRange);
+    //获取指定id怪物的中文名
+    lua_register(L, "Game_Monster_GetMonsterCNName", Game_Monster_GetMonsterCNName);
     #pragma endregion
     #pragma region Environmental
     //设置环境生物筛选器
@@ -1286,6 +1345,15 @@ int Lua_Main(string LuaFile)
     //获取范围内所有环境生物的坐标
     lua_register(L, "Game_Environmental_GetAllEnvironmentalCoordinatesInRange", Game_Environmental_GetAllEnvironmentalCoordinatesInRange);
     #pragma endregion
+    #pragma region Entity
+    //获取实体属性
+    lua_register(L, "Game_Entity_GetEntityProperties", Game_Entity_GetEntityProperties);
+    //设置实体坐标
+    lua_register(L, "Game_Entity_SetEntityCoordinate", Game_Entity_SetEntityCoordinate);
+    //设置实体模型大小
+    lua_register(L, "Game_Entity_SetEntitySize", Game_Entity_SetEntitySize);
+    #pragma endregion
+    
 #pragma endregion
 #pragma region System
     //检查按键

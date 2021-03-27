@@ -189,7 +189,29 @@ namespace ControlProgram {
 					}
 					ImGui::TreePop();
 				}
-
+				if (ImGui::TreeNode(u8"环境生物信息"))
+				{
+					for (auto [environmental, environmentalData] : Base::World::EnvironmentalData::Environmentals) {
+						if (environmental != nullptr) {
+							ostringstream ptr;
+							ptr << environmentalData.Plot;
+							string ptrstr = ptr.str();
+							if (ImGui::TreeNode(ptrstr.c_str()))
+							{
+								ImGui::Text(u8"内存地址：%x", environmentalData.Plot);
+								ImGui::Text(u8"生物Id：%d", environmentalData.Id);
+								ImGui::Text(u8"生物变种：%d", environmentalData.SubId);
+								ImGui::Text(u8"当前坐标");
+								ImGui::Text(u8"X：%f", environmentalData.CoordinatesX);
+								ImGui::Text(u8"Y：%f", environmentalData.CoordinatesY);
+								ImGui::Text(u8"Z：%f", environmentalData.CoordinatesZ);
+								ImGui::TreePop();
+								ImGui::Separator();
+							}
+						}
+					}
+					ImGui::TreePop();
+				}
 
 				ImGui::TreePop();
 				ImGui::Separator();
