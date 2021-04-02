@@ -952,6 +952,46 @@ static int System_DeBug_CloseDeBugConsole(lua_State* pL) {
     Base::ModConfig::ModConsole = false;
     return 0;
 }
+static int System_Memory_GetOffsetAddress(lua_State* pL) {
+    string ptr = "0x" + (string)lua_tostring(pL, 1);
+    string offset = "0x" + (string)lua_tostring(pL, 2);
+    long long Ptr = 0;
+    sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+    long long Offset = 0;
+    sscanf_s(offset.c_str(), "%p", &Ptr, sizeof(long long));
+    void* offsetAddress = *offsetPtr<undefined**>((double(*)())Ptr, Offset);
+    ostringstream ptr;
+    ptr << offsetAddress;
+    string ptrstr = ptr.str();
+    lua_pushstring(pL, ptrstr.c_str());
+    lua_settable(pL, -3);
+    return 0;
+}
+static int System_Memory_GetAddressData(lua_State* pL) {
+    string ptr = "0x" + (string)lua_tostring(pL, 1);
+    string type = (string)lua_tostring(pL, 2);
+    long long Ptr = 0;
+    sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+    switch (type)
+    {
+    case "int":
+        lua_pushinteger(pL, *(int*)(Ptr));
+        break;
+    case "float":
+        lua_pushnumber(pL, *(float*)(Ptr));
+        break;
+    case "bool":
+        lua_pushboolean(pL, *(bool*)(Ptr));
+        break;
+    case "byte":
+        lua_pushinteger(pL, *(char*)(Ptr));
+        break;
+    default:
+        lua_pushinteger(pL, *(char*)(Ptr));
+        break;
+    }
+    return 1;
+}
 #pragma endregion
 #pragma region LuaFun
 //存入整数变量
@@ -1390,6 +1430,10 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_DeBug_OpenDeBugConsole", System_DeBug_OpenDeBugConsole);
     //关闭调试控制台
     lua_register(L, "System_DeBug_CloseDeBugConsole", System_DeBug_CloseDeBugConsole);
+    //获取偏移内存地址
+    lua_register(L, "System_Memory_GetOffsetAddress", System_Memory_GetOffsetAddress);
+    //获取内存地址数据
+    lua_register(L, "System_Memory_GetAddressData", System_Memory_GetAddressData);
 #pragma endregion
 #pragma region Lua
     //存入整数变量
