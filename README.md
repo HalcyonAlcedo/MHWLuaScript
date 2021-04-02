@@ -86,6 +86,8 @@
 |System_LuaScript_Version			|`System_LuaScript_Version()`       	                        |获取LuaScript插件发行版本                  |
 |System_DeBug_OpenDeBugConsole		|`System_DeBug_OpenDeBugConsole()`       	                    |打开调试控制台                       |
 |System_DeBug_CloseDeBugConsole		|`System_DeBug_CloseDeBugConsole()`       	                    |关闭调试控制台                       |
+|System_Memory_GetOffsetAddress		|`System_Memory_GetOffsetAddress('142153142','50')`       	                    |获取偏移内存地址                       |
+|System_Memory_GetAddressData		|`System_Memory_GetAddressData('142351472','int')`       	                    |获取内存地址数据                       |
 
 ### 玩家
 |                                         |示例							                                         |说明						   |
