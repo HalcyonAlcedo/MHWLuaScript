@@ -986,8 +986,6 @@ static int System_Memory_GetAddressData(lua_State* pL) {
             lua_pushnumber(pL, *(float*)(Ptr));
         else if (type == "bool")
             lua_pushboolean(pL, *(bool*)(Ptr));
-        else if (type == "float")
-            lua_pushnumber(pL, *(float*)(Ptr));
         else if (type == "byte")
             lua_pushinteger(pL, *(char*)(Ptr));
         else
