@@ -955,41 +955,43 @@ static int System_DeBug_CloseDeBugConsole(lua_State* pL) {
 static int System_Memory_GetOffsetAddress(lua_State* pL) {
     string ptr = "0x" + (string)lua_tostring(pL, 1);
     string offset = "0x" + (string)lua_tostring(pL, 2);
+    //ptr处理
     long long Ptr = 0;
     sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+    void* ptrAddress = *(double**)(void*)Ptr;
+    //offset处理
     long long Offset = 0;
-    sscanf_s(offset.c_str(), "%p", &Ptr, sizeof(long long));
-    void* offsetAddress = *offsetPtr<undefined**>((double(*)())Ptr, Offset);
-    ostringstream ptr;
-    ptr << offsetAddress;
-    string ptrstr = ptr.str();
-    lua_pushstring(pL, ptrstr.c_str());
-    lua_settable(pL, -3);
-    return 0;
+    sscanf_s(offset.c_str(), "%p", &Offset, sizeof(long long));
+
+    if (ptrAddress != nullptr) {
+        void* offsetAddress = *offsetPtr<undefined**>((undefined(*)())ptrAddress, Offset);
+        ostringstream ostptr;
+        ostptr << offsetAddress;
+        string ptrstr = ostptr.str();
+        lua_pushstring(pL, ptrstr.c_str());
+    } else
+        lua_pushstring(pL, "1");
+    return 1;
 }
 static int System_Memory_GetAddressData(lua_State* pL) {
     string ptr = "0x" + (string)lua_tostring(pL, 1);
     string type = (string)lua_tostring(pL, 2);
     long long Ptr = 0;
     sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
-    switch (type)
-    {
-    case "int":
-        lua_pushinteger(pL, *(int*)(Ptr));
-        break;
-    case "float":
-        lua_pushnumber(pL, *(float*)(Ptr));
-        break;
-    case "bool":
-        lua_pushboolean(pL, *(bool*)(Ptr));
-        break;
-    case "byte":
-        lua_pushinteger(pL, *(char*)(Ptr));
-        break;
-    default:
-        lua_pushinteger(pL, *(char*)(Ptr));
-        break;
-    }
+    void* ptrAddress = (void*)Ptr;
+    if (ptrAddress != nullptr) {
+        if (type == "int")
+            lua_pushinteger(pL, *(int*)(Ptr));
+        else if (type == "float")
+            lua_pushnumber(pL, *(float*)(Ptr));
+        else if (type == "bool")
+            lua_pushboolean(pL, *(bool*)(Ptr));
+        else if (type == "byte")
+            lua_pushinteger(pL, *(char*)(Ptr));
+        else
+            lua_pushinteger(pL, *(char*)(Ptr));
+    } else
+        lua_pushstring(pL, "Address error");
     return 1;
 }
 static int System_Memory_SetAddressData(lua_State* pL) {
