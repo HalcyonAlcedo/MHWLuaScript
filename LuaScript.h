@@ -212,7 +212,7 @@ static int Game_Player_Weapon_CharacteristicIntValue(lua_State* pL) {
 }
 static int Game_Player_Weapon_CharacteristicFloatValue(lua_State* pL) {
     string ptr = "0x" + (string)lua_tostring(pL, 1);
-    lua_pushinteger(pL, Component::GetWeaponCharacteristicFloatValue(ptr));
+    lua_pushnumber(pL, Component::GetWeaponCharacteristicFloatValue(ptr));
     return 1;
 }
 static int Game_Player_Weapon_CharacteristicByteValue(lua_State* pL) {

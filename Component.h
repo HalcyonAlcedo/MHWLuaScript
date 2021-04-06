@@ -745,28 +745,40 @@ namespace Component {
 */
 #pragma region GetWeaponCharacteristicValue
 		static int GetWeaponCharacteristicIntValue(string ptr) {
-			int Ptr = 0;
-			sscanf_s(ptr.c_str(), "%x", &Ptr);
-			void* WeaponEntityPlot = *offsetPtr<void*>(Base::BasicGameData::PlayerPlot, 0x76B0);
-			if (WeaponEntityPlot != nullptr){
-				return *offsetPtr<int>(WeaponEntityPlot, Ptr);
+			long long Ptr = 0;
+			sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+			void* ptrAddress = (void*)Ptr;
+			if (ptrAddress != nullptr) {
+				void* WeaponEntityPlot = *offsetPtr<void*>(Base::BasicGameData::PlayerPlot, 0x76B0);
+				if (WeaponEntityPlot != nullptr) {
+					return *offsetPtr<int>(WeaponEntityPlot, Ptr);
+				}
 			}
+			return 0;
 		}
 		static float GetWeaponCharacteristicFloatValue(string ptr) {
-			int Ptr = 0;
-			sscanf_s(ptr.c_str(), "%x", &Ptr);
-			void* WeaponEntityPlot = *offsetPtr<void*>(Base::BasicGameData::PlayerPlot, 0x76B0);
-			if (WeaponEntityPlot != nullptr) {
-				return *offsetPtr<float>(WeaponEntityPlot, Ptr);
+			long long Ptr = 0;
+			sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+			void* ptrAddress = (void*)Ptr;
+			if (ptrAddress != nullptr) {
+				void* WeaponEntityPlot = *offsetPtr<void*>(Base::BasicGameData::PlayerPlot, 0x76B0);
+				if (WeaponEntityPlot != nullptr) {
+					return *offsetPtr<float>(WeaponEntityPlot, Ptr);
+				}
 			}
+			return 0;
 		}
 		static char GetWeaponCharacteristicByteValue(string ptr) {
-			int Ptr = 0;
-			sscanf_s(ptr.c_str(), "%x", &Ptr);
-			void* WeaponEntityPlot = *offsetPtr<void*>(Base::BasicGameData::PlayerPlot, 0x76B0);
-			if (WeaponEntityPlot != nullptr) {
-				return *offsetPtr<char>(WeaponEntityPlot, Ptr);
+			long long Ptr = 0;
+			sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+			void* ptrAddress = (void*)Ptr;
+			if (ptrAddress != nullptr) {
+				void* WeaponEntityPlot = *offsetPtr<void*>(Base::BasicGameData::PlayerPlot, 0x76B0);
+				if (WeaponEntityPlot != nullptr) {
+					return *offsetPtr<char>(WeaponEntityPlot, Ptr);
+				}
 			}
+			return 0;
 		}
 #pragma endregion
 /*

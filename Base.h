@@ -36,7 +36,7 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.1.7";
+		string ModVersion = "v1.1.8";
 		long long ModBuild = 117004041645;
 		string Version = "421470";
 	}
@@ -1019,8 +1019,8 @@ namespace Base {
 			KeyState::RJoystickLeft = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC4C) < 0.0;
 			KeyState::LJoystickPress = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC64) != 0.0;
 			KeyState::RJoystickPress = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC68) != 0.0;
-			KeyState::LT = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC58) != 0.0;
-			KeyState::RT = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC5C) != 0.0;
+			KeyState::LT = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC88) != 0.0;
+			KeyState::RT = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC8C) != 0.0;
 			KeyState::LB = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC80) != 0.0;
 			KeyState::RB = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC84) != 0.0;
 			KeyState::Up = *offsetPtr<float>(BasicGameData::XboxPadPlot, 0xC70) != 0.0;
