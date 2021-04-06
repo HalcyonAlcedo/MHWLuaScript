@@ -992,6 +992,35 @@ static int System_Memory_GetAddressData(lua_State* pL) {
     }
     return 1;
 }
+static int System_Memory_SetAddressData(lua_State* pL) {
+    string ptr = "0x" + (string)lua_tostring(pL, 1);
+    string type = (string)lua_tostring(pL, 2);
+    long long Ptr = 0;
+    sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+    switch (type)
+    {
+    case "int":
+        *(int*)(Ptr) = (int)lua_tointeger(pL, 3);
+        lua_pushboolean(pL, true);
+        break;
+    case "float":
+        *(float*)(Ptr) = (float)lua_tonumber(pL, 3)
+        lua_pushboolean(pL, true);
+        break;
+    case "bool":
+        *(bool*)(Ptr) = (bool)lua_toboolean(pL, 3)
+        lua_pushboolean(pL, true);
+        break;
+    case "byte":
+        *(char*)(Ptr) = (char)lua_tointeger(pL, 3)
+        lua_pushboolean(pL, true);
+        break;
+    default:
+        lua_pushboolean(pL, false);
+        break;
+    }
+    return 1;
+}
 #pragma endregion
 #pragma region LuaFun
 //存入整数变量
@@ -1434,6 +1463,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_Memory_GetOffsetAddress", System_Memory_GetOffsetAddress);
     //获取内存地址数据
     lua_register(L, "System_Memory_GetAddressData", System_Memory_GetAddressData);
+    //获取内存地址数据
+    lua_register(L, "System_Memory_SetAddressData", System_Memory_SetAddressData);
 #pragma endregion
 #pragma region Lua
     //存入整数变量

@@ -88,6 +88,7 @@
 |System_DeBug_CloseDeBugConsole		|`System_DeBug_CloseDeBugConsole()`       	                    |关闭调试控制台                       |
 |System_Memory_GetOffsetAddress		|`System_Memory_GetOffsetAddress('142153142','50')`       	                    |获取偏移内存地址                       |
 |System_Memory_GetAddressData		|`System_Memory_GetAddressData('142351472','int')`       	                    |获取内存地址数据                       |
+|System_Memory_SetAddressData		|`System_Memory_SetAddressData('142351472','int',50)`       	                    |写入内存地址数据                       |
 
 ### 玩家
 |                                         |示例							                                         |说明						   |
