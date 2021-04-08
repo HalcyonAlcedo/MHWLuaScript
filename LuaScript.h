@@ -944,6 +944,10 @@ static int System_LuaScript_Version(lua_State* pL) {
     lua_pushstring(pL, Base::ModConfig::ModVersion.c_str());
     return 1;
 }
+static int System_GetUUID(lua_State* pL) {
+    lua_pushstring(pL, Base::Calculation::GetUUID().c_str());
+    return 1;
+}
 static int System_DeBug_OpenDeBugConsole(lua_State* pL) {
     Base::ModConfig::ModConsole = true;
     return 0;
@@ -1458,6 +1462,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_LuaScript_Build", System_LuaScript_Build);
     //获取LuaScript插件构建版本
     lua_register(L, "System_LuaScript_Version", System_LuaScript_Version);
+    //获取UUID
+    lua_register(L, "System_GetUUID", System_GetUUID);
     //打开调试控制台
     lua_register(L, "System_DeBug_OpenDeBugConsole", System_DeBug_OpenDeBugConsole);
     //关闭调试控制台
