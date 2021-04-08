@@ -1,7 +1,8 @@
 #pragma once
-#include "imgui.h"  
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
+#include "imgui/imgui.h"  
+#include "imgui/imgui_impl_win32.h"
+#include "imgui/imgui_impl_dx11.h"
+#include "implot/implot.h"
 #include <d3d11.h>
 #include <dxgi.h>
 #define DIRECTINPUT_VERSION 0x0800
@@ -32,6 +33,7 @@ namespace ControlProgram {
 	void InitImGui()
 	{
 		ImGui::CreateContext();
+		ImPlot::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		auto fonts = ImGui::GetIO().Fonts;
 		fonts->AddFontFromFileTTF(

@@ -159,8 +159,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="deps\imgui_impl_dx11.cpp" />
-    <ClCompile Include="deps\imgui_impl_win32.cpp" />
+    <ClCompile Include="deps\imgui\imgui.cpp" />
+    <ClCompile Include="deps\imgui\imgui_demo.cpp" />
+    <ClCompile Include="deps\imgui\imgui_draw.cpp" />
+    <ClCompile Include="deps\imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="deps\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="deps\imgui\imgui_tables.cpp" />
+    <ClCompile Include="deps\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="deps\implot\implot.cpp" />
+    <ClCompile Include="deps\implot\implot_demo.cpp" />
+    <ClCompile Include="deps\implot\implot_items.cpp" />
     <ClCompile Include="deps\kiero.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="HttpClient.cpp" />
@@ -186,8 +194,16 @@
     <ClInclude Include="Base.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ControlProgram.h" />
-    <ClInclude Include="deps\imgui_impl_dx11.h" />
-    <ClInclude Include="deps\imgui_impl_win32.h" />
+    <ClInclude Include="deps\imgui\imconfig.h" />
+    <ClInclude Include="deps\imgui\imgui.h" />
+    <ClInclude Include="deps\imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="deps\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="deps\imgui\imgui_internal.h" />
+    <ClInclude Include="deps\imgui\imstb_rectpack.h" />
+    <ClInclude Include="deps\imgui\imstb_textedit.h" />
+    <ClInclude Include="deps\imgui\imstb_truetype.h" />
+    <ClInclude Include="deps\implot\implot.h" />
+    <ClInclude Include="deps\implot\implot_internal.h" />
     <ClInclude Include="deps\kiero.h" />
     <ClInclude Include="Execution.h" />
     <ClInclude Include="impl\d3d11_impl.h" />

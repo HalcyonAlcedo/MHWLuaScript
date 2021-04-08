@@ -3,8 +3,8 @@
 #include "win32_impl.h"
 #include <Windows.h>
 
-#include "imgui.h"
-#include "imgui_impl_win32.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_win32.h"
 
 static WNDPROC oWndProc = NULL;
 
