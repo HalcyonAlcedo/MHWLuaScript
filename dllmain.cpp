@@ -29,9 +29,9 @@ __declspec(dllexport) extern bool Load()
 		LOG(WARN) << Base::ModConfig::ModName << " : Wrong version";
 		return false;
 	}
-	Component::getFiles("nativePC\\LuaScript\\", Base::ModConfig::LuaFiles);
+	Component::getFiles("nativePC\\LuaScript\\", Base::LuaHandle::LuaFiles);
 	LOG(INFO) << "Lua file load:";
-	for (string file_name : Base::ModConfig::LuaFiles) {
+	for (string file_name : Base::LuaHandle::LuaFiles) {
 		LOG(INFO) << file_name;
 	}
 	//初始化钩子
@@ -44,8 +44,9 @@ __declspec(dllexport) extern bool Load()
 				Base::RealTimeUpdate();
 				//Execution::Main();
 				if (Base::ModConfig::GameDataInit) {
-					for (string file_name : Base::ModConfig::LuaFiles) {
-						Lua_Main(file_name);
+					for (string file_name : Base::LuaHandle::LuaFiles) {
+						if(Base::LuaHandle::LuaCode[file_name].start)
+							Lua_Main(file_name);
 					}
 				}
 			}

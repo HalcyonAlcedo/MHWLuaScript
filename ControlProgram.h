@@ -83,8 +83,15 @@ namespace ControlProgram {
 
 			if (ImGui::TreeNode(u8"Lua脚本列表"))
 			{
-				for (string file_name : Base::ModConfig::LuaFiles) {
-					ImGui::TextColored(ImVec4(0.0f, 0.8f, 0.0f, 1.0f), Component::string_To_UTF8(file_name).c_str());
+				if (ImGui::Button(u8"更新脚本代码")) {
+					for (string file_name : Base::LuaHandle::LuaFiles) { Base::LuaHandle::LuaCode[file_name].Update(); }
+				}
+				for (string file_name : Base::LuaHandle::LuaFiles) {
+					ImGui::TextColored(Base::LuaHandle::LuaCode[file_name].start ? ImVec4(0.0f, 0.8f, 0.0f, 1.0f) : ImVec4(0.8f, 0.0f, 0.0f, 1.0f), Component::string_To_UTF8(file_name).c_str());
+					if (!Base::LuaHandle::LuaCode[file_name].hotReload) {
+						ImGui::SameLine();
+						ImGui::Checkbox(u8"启用", &Base::LuaHandle::LuaCode[file_name].start);
+					}
 				}
 				ImGui::TreePop();
 				ImGui::Separator();

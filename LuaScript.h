@@ -1210,11 +1210,11 @@ int LuaErrorCallBack(lua_State *L)
 }
 int LuaErrorRecord(string error) {
     vector<string>::iterator it;
-    for (it = Base::ModConfig::LuaError.begin(); it != Base::ModConfig::LuaError.end(); it++)
+    for (it = Base::LuaHandle::LuaError.begin(); it != Base::LuaHandle::LuaError.end(); it++)
     {
         if (*it == error) return 0;
     }
-    Base::ModConfig::LuaError.push_back(error);
+    Base::LuaHandle::LuaError.push_back(error);
 
     return 1;
 }
@@ -1511,8 +1511,15 @@ int Lua_Main(string LuaFile)
     //获取网络数据
     lua_register(L, "Lua_Http_GetHttpData", Lua_Http_GetHttpData);
 #pragma endregion
+    int err = 0;
+    
+    if (Base::LuaHandle::LuaCode[LuaFile].hotReload) {
+        err = luaL_dofile(L, Base::LuaHandle::LuaCode[LuaFile].file.c_str());
+    }
+    else {
+        err = luaL_dostring(L, Base::LuaHandle::LuaCode[LuaFile].code.c_str());
+    }
 
-    int err = luaL_dofile(L, LuaFile.c_str());
     if (err != 0)
     {
         int type = lua_type(L, -1);

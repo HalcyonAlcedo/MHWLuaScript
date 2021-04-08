@@ -17,14 +17,44 @@ namespace Base {
 	//常用结构
 	struct Vector3 {
 		float x, y, z;
-		Vector3(float x = 0, float y = 0, float z = 0) :x(x), y(y), z(z) {
-		};
+		Vector3(float x = 0, float y = 0, float z = 0) :x(x), y(y), z(z) { };
 	};
 	struct Vector2 {
 		float x, y;
-		Vector2(float x = 0, float y = 0) :x(x), y(y) {
-		};
+		Vector2(float x = 0, float y = 0) :x(x), y(y) { };
 	};
+#pragma region LuaHandle
+	namespace LuaHandle {
+		struct LuaCodeData {
+			string name;
+			string code;
+			string file;
+			bool start;
+			bool hotReload;//hotReload模式下lua会直接读取文件而不通过缓存的数据执行代码
+			void Update()
+			{
+				ifstream ifile(file);
+				ostringstream buf;
+				char ch;
+				while (buf && ifile.get(ch))
+					buf.put(ch);
+				code = buf.str();
+				if (string _Tmpy = "--NotHotReload"; string::npos != code.find(_Tmpy))
+					hotReload = false;
+			};
+			LuaCodeData(
+				string name = "",
+				string code = "",
+				string file = "",
+				bool start = true,
+				bool hotReload = true
+			) :name(name), code(code), file(file), start(start), hotReload(hotReload) { };
+		};
+		vector<string> LuaFiles;
+		vector<string> LuaError;
+		map<string, LuaCodeData> LuaCode;
+	}
+#pragma endregion
 #pragma region ModConfig
 	namespace ModConfig {
 		//内置参数

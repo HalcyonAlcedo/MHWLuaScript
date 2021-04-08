@@ -902,7 +902,9 @@ namespace Component {
 			{
 				if (!(fileinfo.attrib & _A_SUBDIR))
 				{
-					files.push_back(p.assign(path).append("\\").append(fileinfo.name));
+					Base::LuaHandle::LuaCode[fileinfo.name] = Base::LuaHandle::LuaCodeData(fileinfo.name,"", p.assign(path).append("\\").append(fileinfo.name),true);
+					Base::LuaHandle::LuaCode[fileinfo.name].Update();
+					files.push_back(fileinfo.name);
 				}
 			} while (_findnext(hFile, &fileinfo) == 0);
 			_findclose(hFile);
