@@ -90,7 +90,7 @@ namespace ControlProgram {
 					ImGui::TextColored(Base::LuaHandle::LuaCode[file_name].start ? ImVec4(0.0f, 0.8f, 0.0f, 1.0f) : ImVec4(0.8f, 0.0f, 0.0f, 1.0f), Component::string_To_UTF8(file_name).c_str());
 					if (!Base::LuaHandle::LuaCode[file_name].hotReload) {
 						ImGui::SameLine();
-						ImGui::Checkbox(u8"∆Ù”√", &Base::LuaHandle::LuaCode[file_name].start);
+						ImGui::Checkbox((u8"∆Ù”√" + file_name).c_str(), &Base::LuaHandle::LuaCode[file_name].start);
 					}
 				}
 				ImGui::TreePop();

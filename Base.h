@@ -41,6 +41,8 @@ namespace Base {
 				code = buf.str();
 				if (string _Tmpy = "--NotHotReload"; string::npos != code.find(_Tmpy))
 					hotReload = false;
+				if (string _Tmpy = "--Disable"; string::npos != code.find(_Tmpy))
+					start = false;
 			};
 			LuaCodeData(
 				string name = "",
@@ -202,7 +204,7 @@ namespace Base {
 			{
 				return "create guid error";
 			}
-			_snprintf(buffer, sizeof(buffer),
+			_snprintf_s(buffer, sizeof(buffer),
 				"%08X-%04X-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X",
 				guid.Data1, guid.Data2, guid.Data3,
 				guid.Data4[0], guid.Data4[1], guid.Data4[2],

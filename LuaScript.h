@@ -962,7 +962,7 @@ static int System_Memory_GetOffsetAddress(lua_State* pL) {
     //ptr处理
     long long Ptr = 0;
     sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
-    void* ptrAddress = *(double**)(void*)Ptr;
+    void* ptrAddress = (void*)Ptr;
     //offset处理
     long long Offset = 0;
     sscanf_s(offset.c_str(), "%p", &Offset, sizeof(long long));
