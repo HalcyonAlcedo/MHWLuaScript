@@ -12,6 +12,7 @@ using namespace loader;
 extern "C" long long _stdcall Navigation(float*, float*, float*);
 extern "C" void* _stdcall GetVisualPtr(void*);
 extern "C" void* _stdcall GetWeaponPtr(void*);
+extern "C" void* _stdcall GetHitPtr(void*);
 
 namespace Base {
 	//常用结构
@@ -70,7 +71,7 @@ namespace Base {
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
 		string ModVersion = "v1.1.8";
-		long long ModBuild = 117004041645;
+		long long ModBuild = 117004091539;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -513,6 +514,7 @@ namespace Base {
 			namespace TempData {
 				void* t_mainWeapon = nullptr;
 				void* t_secondaryWeapon = nullptr;
+				void* t_weaponHit = nullptr;
 				bool t_setMainWeaponCoordinate = false;
 				Vector3 t_SetMainWeaponCoordinate;
 				bool t_setMainWeaponSize = false;
@@ -534,6 +536,8 @@ namespace Base {
 			Vector3 SecondaryWeaponCoordinate = Vector3();
 			//副武器模型大小
 			Vector3 SecondaryWeaponSize = Vector3();
+			//武器命中坐标
+			Vector3 HitCoordinate = Vector3();
 			//更换武器（武器类型，武器ID）
 			static void ChangeWeapons(int type, int id, bool Complete = true) {
 				if (type <= 13 and type >= 0 and id >= 0) {
@@ -781,10 +785,10 @@ namespace Base {
 				CurrentEndurance = 0;
 				MaxEndurance = 0;
 			}
-			Name = *offsetPtr<string>(BasicGameData::PlayerInfoPlot, 0x50);
+			char* PlayerName = offsetPtr<char>(BasicGameData::PlayerInfoPlot, 0x50);
+			if(strcmp(PlayerName, "\0")) Name = PlayerName;
 			Hr = *offsetPtr<int>(BasicGameData::PlayerInfoPlot, 0x90);
 			Mr = *offsetPtr<int>(BasicGameData::PlayerInfoPlot, 0xD4);
-			
 		}
 	}
 #pragma endregion
@@ -1249,6 +1253,18 @@ namespace Base {
 						return original();
 					});
 				Draw::GameInitInfo += u8"\n 武器系统加载";
+				//获取命中信息
+				HookLambda(MH::Weapon::Hit,
+					[]() {
+						GetHitPtr(&Base::PlayerData::Weapons::TempData::t_weaponHit);
+						Base::PlayerData::Weapons::HitCoordinate = Vector3(
+							*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_weaponHit, 0x60),
+							*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_weaponHit, 0x64),
+							*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_weaponHit, 0x68)
+						);
+						return original();
+					});
+				Draw::GameInitInfo += u8"\n 命中数据加载";
 				MH_ApplyQueued();
 				ModConfig::GameDataInit = true;
 				LOG(INFO) << ModConfig::ModName << " : Game data initialization complete!";

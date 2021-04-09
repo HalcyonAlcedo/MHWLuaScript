@@ -25,4 +25,10 @@ GetWeaponPtr proc
 	ret
 GetWeaponPtr endp
 
+GetHitPtr proc
+    mov rax, [rdi+24]
+	mov [rcx], rax
+	ret
+GetHitPtr endp
+
 end

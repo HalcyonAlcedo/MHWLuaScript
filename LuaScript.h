@@ -220,6 +220,12 @@ static int Game_Player_Weapon_CharacteristicByteValue(lua_State* pL) {
     lua_pushinteger(pL, Component::GetWeaponCharacteristicByteValue(ptr));
     return 1;
 }
+static int Game_Player_Weapon_GetHitCoordinate(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::Weapons::HitCoordinate.x);
+    lua_pushnumber(pL, Base::PlayerData::Weapons::HitCoordinate.y);
+    lua_pushnumber(pL, Base::PlayerData::Weapons::HitCoordinate.z);
+    return 3;
+}
 static int Game_Player_GetFsmData(lua_State* pL) {
     lua_pushinteger(pL, Base::PlayerData::NowFsm.Target);
     lua_pushinteger(pL, Base::PlayerData::NowFsm.Id);
@@ -1316,7 +1322,9 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Player_Weapon_CharacteristicFloatValue", Game_Player_Weapon_CharacteristicFloatValue);
     //获取玩家武器特殊数值(字节)
     lua_register(L, "Game_Player_Weapon_CharacteristicByteValue", Game_Player_Weapon_CharacteristicByteValue);
-    
+    //获取玩家武器最后命中的坐标
+    lua_register(L, "Game_Player_Weapon_GetHitCoordinate", Game_Player_Weapon_GetHitCoordinate);
+
     //获取玩家派生信息
     lua_register(L, "Game_Player_GetFsmData", Game_Player_GetFsmData);
     //执行指定的派生动作
