@@ -89,6 +89,7 @@
 |System_Memory_GetOffsetAddress		|`System_Memory_GetOffsetAddress('142153142','50')`       	                    |获取偏移内存地址                       |
 |System_Memory_GetAddressData		|`System_Memory_GetAddressData('142351472','int')`       	                    |获取内存地址数据                       |
 |System_Memory_SetAddressData		|`System_Memory_SetAddressData('142351472','int',50)`       	                    |写入内存地址数据                       |
+|System_GetUUID		                |`System_GetUUID()`       	                                     |获取UUID                       |
 
 ### 玩家
 |                                         |示例							                                         |说明						   |
@@ -137,6 +138,7 @@
 |Game_Player_Weapon_CharacteristicIntValue|`Game_Player_Weapon_CharacteristicIntValue('2d24')`       |获取玩家武器特殊数值(整数)   |
 |Game_Player_Weapon_CharacteristicFloatValue|`Game_Player_Weapon_CharacteristicFloatValue('2d24')`       |获取玩家武器特殊数值(浮点)   |
 |Game_Player_Weapon_CharacteristicByteValue|`Game_Player_Weapon_CharacteristicByteValue('2d24')`       |获取玩家武器特殊数值(浮点)   |
+|Game_Player_Weapon_GetHitCoordinate|`Game_Player_Weapon_GetHitCoordinate()`       |获取玩家武器命中的坐标   |
 |Game_Player_GetFsmData                   |`local type,id = Game_Player_GetFsmData()`                |获取玩家当前派生动作信息   |
 |Game_Player_RunFsmAction                 |`Game_Player_RunFsmAction(3,5)`                           |执行指定对象的派生动作，第一个参数为对象（玩家1，武器3）第二个参数为派生动作Id   |
 |Game_Player_CheckRunFsmActionOver        |`Game_Player_CheckRunFsmActionOver()`                     |检查执行的派生动作是否结束  |
