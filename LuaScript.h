@@ -273,10 +273,10 @@ static int Game_Player_SetPlayerMaxEndurance(lua_State* pL) {
     return 0;
 }
 static int Game_Player_GetPlayerRoleInfo(lua_State* pL) {
-    lua_pushstring(pL, Base::PlayerData::Name.c_str());
+    //lua_pushstring(pL, Base::PlayerData::Name.c_str());
     lua_pushinteger(pL, Base::PlayerData::Hr);
     lua_pushinteger(pL, Base::PlayerData::Mr);
-    return 3;
+    return 2;
 }
 static int Game_World_GetMapId(lua_State* pL) {
     lua_pushinteger(pL, Base::World::MapId);
@@ -1034,6 +1034,20 @@ static int System_Memory_SetAddressData(lua_State* pL) {
         lua_pushboolean(pL, false);
     return 1;
 }
+static int System_UI_DrawImage(lua_State* pL) {
+    string name = (string)lua_tostring(pL, 1);
+    string img = (string)lua_tostring(pL, 2);
+    float x = (float)lua_tonumber(pL, 3);
+    float y = (float)lua_tonumber(pL, 4);
+    Base::Draw::Img[name] = Base::Draw::NewImage(0, Base::Vector2(x, y), name, img);
+    return 0;
+}
+static int System_UI_RemoveImage(lua_State* pL) {
+    string name = (string)lua_tostring(pL, 1);
+    Base::Draw::Img.erase(name);
+    return 0;
+}
+
 #pragma endregion
 #pragma region LuaFun
 //存入整数变量
@@ -1482,6 +1496,10 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_Memory_GetAddressData", System_Memory_GetAddressData);
     //获取内存地址数据
     lua_register(L, "System_Memory_SetAddressData", System_Memory_SetAddressData);
+    //向屏幕添加图片
+    lua_register(L, "System_UI_DrawImage", System_UI_DrawImage);
+    //移除添加的图片
+    lua_register(L, "System_UI_RemoveImage", System_UI_RemoveImage);
 #pragma endregion
 #pragma region Lua
     //存入整数变量

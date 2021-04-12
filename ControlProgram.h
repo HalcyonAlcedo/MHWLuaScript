@@ -5,6 +5,8 @@
 #include "implot/implot.h"
 #include <d3d11.h>
 #include <dxgi.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <tchar.h>
@@ -45,6 +47,52 @@ namespace ControlProgram {
 		io.ConfigFlags = ImGuiConfigFlags_NoMouseCursorChange;
 		ImGui_ImplWin32_Init(window);
 		ImGui_ImplDX11_Init(pDevice, pContext);
+	}
+	//加载图片并写入纹理
+	bool LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
+	{
+		// Load from disk into a raw RGBA buffer
+		int image_width = 0;
+		int image_height = 0;
+		unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
+		if (image_data == NULL)
+			return false;
+
+		// Create texture
+		D3D11_TEXTURE2D_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Width = image_width;
+		desc.Height = image_height;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		desc.SampleDesc.Count = 1;
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		desc.CPUAccessFlags = 0;
+
+		ID3D11Texture2D* pTexture = NULL;
+		D3D11_SUBRESOURCE_DATA subResource;
+		subResource.pSysMem = image_data;
+		subResource.SysMemPitch = desc.Width * 4;
+		subResource.SysMemSlicePitch = 0;
+		pDevice->CreateTexture2D(&desc, &subResource, &pTexture);
+
+		// Create texture view
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+		ZeroMemory(&srvDesc, sizeof(srvDesc));
+		srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = desc.MipLevels;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+		pDevice->CreateShaderResourceView(pTexture, &srvDesc, out_srv);
+		pTexture->Release();
+
+		*out_width = image_width;
+		*out_height = image_height;
+		stbi_image_free(image_data);
+
+		return true;
 	}
 
 	HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)
@@ -225,6 +273,27 @@ namespace ControlProgram {
 				ImGui::TreePop();
 				ImGui::Separator();
 			}
+			ImGui::End();
+		}
+
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
+		
+		for (auto [Begin, Data] : Base::Draw::Img) {
+			//初始化图形纹理缓存
+			int my_image_width = 0;
+			int my_image_height = 0;
+			ID3D11ShaderResourceView* my_texture = NULL;
+			bool ret = LoadTextureFromFile(Data.ImageFile.c_str(), &my_texture, &my_image_width, &my_image_height);
+			IM_ASSERT(ret);
+			//创建窗口
+			ImGui::SetNextWindowBgAlpha(Data.BgAlpha);
+			ImGui::SetNextWindowPos(ImVec2(
+				ImGui::GetMainViewport()->Pos.x + ImGui::GetMainViewport()->Size.x * Data.Pos.x,
+				ImGui::GetMainViewport()->Pos.y + ImGui::GetMainViewport()->Size.y * Data.Pos.y
+			), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+			ImGui::Begin(Data.Name.c_str(), NULL, window_flags);
+				//绘制图像
+				ImGui::Image((void*)my_texture, ImVec2(my_image_width, my_image_height));
 			ImGui::End();
 		}
 		ImGui::Render();

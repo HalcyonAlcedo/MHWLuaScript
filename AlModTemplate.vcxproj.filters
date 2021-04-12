@@ -155,6 +155,9 @@
     <ClInclude Include="deps\implot\implot_internal.h">
       <Filter>源代码\implot</Filter>
     </ClInclude>
+    <ClInclude Include="deps\stb_image.h">
+      <Filter>源代码</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="asm.asm">

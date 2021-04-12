@@ -70,8 +70,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.1.8";
-		long long ModBuild = 118004091539;
+		string ModVersion = "v1.1.9 Alpha";
+		long long ModBuild = 118004121030;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -218,29 +218,19 @@ namespace Base {
 	//图形绘制
 #pragma region Draw
 	namespace Draw {
-		HWND GameHandle;
-		bool HandleInit = false;
-		//初始化图形绘制
-		static void InitDraw() {
-			string GameName = "MONSTER HUNTER: WORLD(" + ModConfig::Version + ")";
-			GameHandle = FindWindow(NULL, GameName.c_str());
-			if(GameHandle != nullptr)
-				HandleInit = true;
-		}
-		//绘制 待完善
-		static void Draw() {
-			HDC hdc = ::GetDC(GameHandle);
-			RECT rect;
-			::GetWindowRect(GameHandle, &rect);
-			::MoveToEx(hdc, 0, 0, NULL);
-			::LineTo(hdc, rect.right, rect.bottom);
-			::MoveToEx(hdc, rect.right, 0, NULL);
-			::LineTo(hdc, 0, rect.bottom);
-			::ReleaseDC(GameHandle, hdc);
-		}
-#pragma region imgui
-		string GameInitInfo = u8"LuaScript系统初始化";
-#pragma endregion
+		struct NewImage {
+			float BgAlpha = 0;
+			Vector2 Pos = Vector2();
+			string Name = "";
+			string ImageFile = "";
+			NewImage(
+				float BgAlpha = 0,
+				Vector2 Pos = Vector2(),
+				string Name = "",
+				string ImageFile = ""
+				) :BgAlpha(BgAlpha), Pos(Pos), Name(Name), ImageFile(ImageFile) { };
+		};
+		map<string, NewImage> Img;
 	}
 #pragma endregion
 	//委托
@@ -785,8 +775,10 @@ namespace Base {
 				CurrentEndurance = 0;
 				MaxEndurance = 0;
 			}
+			/*
 			char* PlayerName = offsetPtr<char>(BasicGameData::PlayerInfoPlot, 0x50);
 			if(strcmp(PlayerName, "\0")) Name = PlayerName;
+			*/
 			Hr = *offsetPtr<int>(BasicGameData::PlayerInfoPlot, 0x90);
 			Mr = *offsetPtr<int>(BasicGameData::PlayerInfoPlot, 0xD4);
 		}
@@ -1095,7 +1087,6 @@ namespace Base {
 			return true;
 		else
 		{
-			Draw::GameInitInfo += u8"\n 初始化数据指针";
 			BasicGameData::XboxPadPlot = *(undefined**)MH::GamePad::XboxPadPtr;
 			void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 			void* PlayerInfoPlot = *(undefined**)MH::Player::BasePtr;
@@ -1112,7 +1103,6 @@ namespace Base {
 			BasicGameData::PlayerInfoPlot = *offsetPtr<undefined**>((undefined(*)())PlayerInfoPlot, 0xA8);
 			BasicGameData::GameTimePlot = (undefined(*)())MH::World::GameClock;
 			BasicGameData::MapPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7D20);
-			Draw::GameInitInfo += u8"\n 载入汇编数据";
 			if (
 				BasicGameData::PlayerPlot != nullptr and
 				BasicGameData::MapPlot != nullptr and
@@ -1130,7 +1120,6 @@ namespace Base {
 						);
 						return original(x1, x2);
 					});
-				Draw::GameInitInfo += u8"\n 坐标系统加载";
 				//环境生物地址获取
 				HookLambda(MH::EnvironmentalBiological::ctor,
 					[](auto environmental, auto id, auto subId) {
@@ -1140,7 +1129,6 @@ namespace Base {
 						);
 						return ret;
 					});
-				Draw::GameInitInfo += u8"\n 环境生物模块加载";
 				//怪物地址获取
 				HookLambda(MH::Monster::ctor,
 					[](auto monster, auto id, auto subId) {
@@ -1155,7 +1143,6 @@ namespace Base {
 						Base::Monster::Monsters.erase(monster);
 						return original(monster);
 					});
-				Draw::GameInitInfo += u8"\n 怪物模块加载";
 				//视角相机坐标修改
 				HookLambda(MH::Player::Visual,
 					[]() {
@@ -1172,7 +1159,6 @@ namespace Base {
 						}
 						return original();
 					});
-				Draw::GameInitInfo += u8"\n 视角模块加载";
 				//武器装饰物修改
 				HookLambda(MH::Weapon::WeaponOrnaments,
 					[]() {
@@ -1252,7 +1238,6 @@ namespace Base {
 						}
 						return original();
 					});
-				Draw::GameInitInfo += u8"\n 武器系统加载";
 				//获取命中信息
 				HookLambda(MH::Weapon::Hit,
 					[]() {
@@ -1264,14 +1249,12 @@ namespace Base {
 						);
 						return original();
 					});
-				Draw::GameInitInfo += u8"\n 命中数据加载";
 				MH_ApplyQueued();
 				ModConfig::GameDataInit = true;
 				LOG(INFO) << ModConfig::ModName << " : Game data initialization complete!";
 				LOG(INFO) << " |  Mod：" << ModConfig::ModName;
 				LOG(INFO) << " |  Author：" << ModConfig::ModAuthor;
 				LOG(INFO) << " |  Version：" << ModConfig::ModVersion;
-				Draw::GameInitInfo += u8"\n 系统初始化完成";
 				//Draw::GameInit = true;
 				return true;
 			}

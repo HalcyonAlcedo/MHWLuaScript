@@ -205,6 +205,9 @@
     <ClInclude Include="deps\implot\implot.h" />
     <ClInclude Include="deps\implot\implot_internal.h" />
     <ClInclude Include="deps\kiero.h" />
+    <ClInclude Include="deps\stb_image.h">
+      <DeploymentContent>false</DeploymentContent>
+    </ClInclude>
     <ClInclude Include="Execution.h" />
     <ClInclude Include="impl\d3d11_impl.h" />
     <ClInclude Include="impl\shared.h" />
