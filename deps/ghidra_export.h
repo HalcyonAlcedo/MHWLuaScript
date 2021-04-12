@@ -41,6 +41,7 @@ namespace MH {
         static void(*Effects)(undefined*,int,int) = (void(*)(undefined*,int,int))0x140ae3aa0;
         static undefined(*Visual)() = (undefined(*)())0x141FBB736;
         static void* PlayerDataPlot = (void*)0x1452253A8;
+        static void* PlayerDataHandlePlot = (void*)0x14522C850;
     }
     namespace EnvironmentalBiological {
         static undefined * (*ctor)(undefined*, undefined4, undefined4) = (undefined * (*)(undefined*, undefined4, undefined4))0x141D442C0;

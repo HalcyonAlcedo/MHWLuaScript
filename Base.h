@@ -71,7 +71,7 @@ namespace Base {
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
 		string ModVersion = "v1.1.9 Alpha";
-		long long ModBuild = 118004121030;
+		long long ModBuild = 118004122202;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -723,8 +723,8 @@ namespace Base {
 			else
 				AimingState = false;
 			if (BasicGameData::PlayerDataPlot != nullptr) {
-				AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerDataPlot, 0x4298);
-				Angle = *offsetPtr<float>(BasicGameData::PlayerDataPlot, 0x41C8) * 180.0;
+				AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerDataPlot, 0x2C8);
+				Angle = *offsetPtr<float>(BasicGameData::PlayerDataPlot, 0x1F8) * 180.0;
 				Radian = 4 * atan(1.0) / 180 * PlayerData::Angle;
 			}
 			void* ActionPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
@@ -1092,14 +1092,24 @@ namespace Base {
 			void* PlayerInfoPlot = *(undefined**)MH::Player::BasePtr;
 			BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
 			void* PlayerDataOffset1 = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
-			void* PlayerDataOffset2 = nullptr;
-			if (PlayerDataOffset1 != nullptr)
-				PlayerDataOffset2 = *offsetPtr<undefined**>((undefined(*)())PlayerDataOffset1, 0x4c0);
-			void* PlayerDataOffset3 = nullptr;
-			if (PlayerDataOffset2 != nullptr)
-				PlayerDataOffset3 = *offsetPtr<undefined**>((undefined(*)())PlayerDataOffset2, 0x98);
-			if (PlayerDataOffset3 != nullptr)
-				BasicGameData::PlayerDataPlot = *offsetPtr<undefined**>((undefined(*)())PlayerDataOffset3, 0x48);
+			void* PlayerDataHandlePlot = *(undefined**)MH::Player::PlayerDataHandlePlot;
+			void* PlayerDataHandleOffset1 = nullptr;
+			if (PlayerDataHandlePlot != nullptr)
+				PlayerDataHandleOffset1 = *offsetPtr<undefined**>((undefined(*)())PlayerDataHandlePlot, 0x48);
+			void* PlayerDataHandleOffset2 = nullptr;
+			if (PlayerDataHandleOffset1 != nullptr)
+				PlayerDataHandleOffset2 = *offsetPtr<undefined**>((undefined(*)())PlayerDataHandleOffset1, 0x58);
+			void* PlayerDataHandleOffset3 = nullptr;
+			if (PlayerDataHandleOffset2 != nullptr)
+				PlayerDataHandleOffset3 = *offsetPtr<undefined**>((undefined(*)())PlayerDataHandleOffset2, 0x58);
+			void* PlayerDataHandleOffset4 = nullptr;
+			if (PlayerDataHandleOffset3 != nullptr)
+				PlayerDataHandleOffset4 = *offsetPtr<undefined**>((undefined(*)())PlayerDataHandleOffset3, 0x40);
+			void* PlayerDataHandleOffset5 = nullptr;
+			if (PlayerDataHandleOffset4 != nullptr)
+				PlayerDataHandleOffset5 = *offsetPtr<undefined**>((undefined(*)())PlayerDataHandleOffset4, 0xD0);
+			if (PlayerDataHandleOffset5 != nullptr)
+				BasicGameData::PlayerDataPlot = *offsetPtr<undefined**>((undefined(*)())PlayerDataHandleOffset5, 0x8);
 			BasicGameData::PlayerInfoPlot = *offsetPtr<undefined**>((undefined(*)())PlayerInfoPlot, 0xA8);
 			BasicGameData::GameTimePlot = (undefined(*)())MH::World::GameClock;
 			BasicGameData::MapPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7D20);
