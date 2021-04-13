@@ -67,6 +67,7 @@ namespace Base {
 		vector<string> LuaFiles;
 		vector<string> LuaError;
 		bool ModConsole = false;
+		bool HotKeyEdit = false;
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";

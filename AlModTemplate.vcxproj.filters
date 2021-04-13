@@ -158,6 +158,9 @@
     <ClInclude Include="deps\stb_image.h">
       <Filter>源代码</Filter>
     </ClInclude>
+    <ClInclude Include="deps\imHotKey.h">
+      <Filter>源代码</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="asm.asm">

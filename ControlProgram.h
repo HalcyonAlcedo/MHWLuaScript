@@ -11,10 +11,10 @@
 #include <dinput.h>
 #include <tchar.h>
 #include "kiero.h"
+#include "imHotKey.h"
 #pragma comment ( lib, "D3D11.lib")
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-//extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace ControlProgram {
 	bool initConsole = false;
@@ -31,6 +31,24 @@ namespace ControlProgram {
 	ID3D11DeviceContext* pContext = NULL;
 	ID3D11RenderTargetView* mainRenderTargetView;
 	HMODULE hMod;
+
+	//热键列表
+	static vector<ImHotKey::HotKey> hotkeys = { 
+		{ u8"控制台", u8"打开或关闭控制台", 0xFFFF1D44}
+	};
+
+	//纹理缓存
+	struct TextureCache {
+		int width = 0;
+		int height = 0;
+		ID3D11ShaderResourceView* texture = NULL;
+		TextureCache(
+			int width = 0,
+			int height = 0,
+			ID3D11ShaderResourceView* texture = NULL
+		) :width(width), height(height), texture(texture) { };
+	};
+	map<string, TextureCache> ImgTextureCache;
 
 	void InitImGui()
 	{
@@ -118,6 +136,15 @@ namespace ControlProgram {
 				return oPresent(pSwapChain, SyncInterval, Flags);
 		}
 
+		//按键处理
+		int hotkey = ImHotKey::GetHotKey(hotkeys.data(), hotkeys.size());
+		if (hotkey != -1)
+		{
+			if (hotkeys.at(hotkey).functionName == u8"控制台") {
+				Base::ModConfig::ModConsole = !Base::ModConfig::ModConsole;
+			}
+		}
+
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
@@ -185,6 +212,9 @@ namespace ControlProgram {
 						ImGui::TreePop();
 					}
 					ImGui::TreePop();
+				}
+				if (ImGui::Button(u8"快捷键编辑")) {
+					Base::ModConfig::HotKeyEdit = true;
 				}
 				ImGui::TreePop();
 				ImGui::Separator();
@@ -276,15 +306,30 @@ namespace ControlProgram {
 			ImGui::End();
 		}
 
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
+		ImGui::Begin("HotKeysEdit", NULL, window_flags);
+		if (Base::ModConfig::HotKeyEdit) {
+			Base::ModConfig::HotKeyEdit = false;
+			ImGui::OpenPopup(u8"热键编辑器");
+		}
+		ImHotKey::Edit(hotkeys.data(), hotkeys.size(), u8"热键编辑器");
+		ImGui::End();
+
+
+		window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
 		
 		for (auto [Begin, Data] : Base::Draw::Img) {
-			//初始化图形纹理缓存
-			int my_image_width = 0;
-			int my_image_height = 0;
-			ID3D11ShaderResourceView* my_texture = NULL;
-			bool ret = LoadTextureFromFile(Data.ImageFile.c_str(), &my_texture, &my_image_width, &my_image_height);
-			IM_ASSERT(ret);
+			if (ImgTextureCache.find(Data.ImageFile) != ImgTextureCache.end()) {
+				if (ImgTextureCache[Data.ImageFile].texture == NULL) {
+					bool ret = LoadTextureFromFile(Data.ImageFile.c_str(), &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height);
+					IM_ASSERT(ret);
+				}
+			}
+			else {
+				ImgTextureCache[Data.ImageFile] = TextureCache();
+				bool ret = LoadTextureFromFile(Data.ImageFile.c_str(), &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height);
+				IM_ASSERT(ret);
+			}
 			//创建窗口
 			ImGui::SetNextWindowBgAlpha(Data.BgAlpha);
 			ImGui::SetNextWindowPos(ImVec2(
@@ -293,7 +338,7 @@ namespace ControlProgram {
 			), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 			ImGui::Begin(Data.Name.c_str(), NULL, window_flags);
 				//绘制图像
-				ImGui::Image((void*)my_texture, ImVec2(my_image_width, my_image_height));
+				ImGui::Image((void*)ImgTextureCache[Data.ImageFile].texture, ImVec2(ImgTextureCache[Data.ImageFile].width, ImgTextureCache[Data.ImageFile].height));
 			ImGui::End();
 		}
 		ImGui::Render();

@@ -202,6 +202,7 @@
     <ClInclude Include="deps\imgui\imstb_rectpack.h" />
     <ClInclude Include="deps\imgui\imstb_textedit.h" />
     <ClInclude Include="deps\imgui\imstb_truetype.h" />
+    <ClInclude Include="deps\imHotKey.h" />
     <ClInclude Include="deps\implot\implot.h" />
     <ClInclude Include="deps\implot\implot_internal.h" />
     <ClInclude Include="deps\kiero.h" />
