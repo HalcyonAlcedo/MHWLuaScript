@@ -75,6 +75,8 @@
 |System_XboxPad_CheckKey			|`System_XboxPad_CheckKey(20)`                                  |检查Xbox手柄按键是否按下，按键详见对照表           |
 |System_XboxPad_CheckDoubleKey		|`System_XboxPad_CheckDoubleKey(20)`                            |检查是否双击Xbox手柄按键，按键详见对照表           |
 |System_XboxPad_CheckKeyIsPressed	|`System_XboxPad_CheckKeyIsPressed(20)`                         |检查Xbox手柄按键是否处于按下状态，按键详见对照表    |
+|System_HotKey_AddHotKey	        |`System_HotKey_AddHotKey('name','describe',0xffff1d44)`        |注册快捷键    |
+|System_HotKey_CheckKey	            |`System_HotKey_CheckKey('name')`                               |检查快捷键是否按下   |
 |System_Chronoscope_AddChronoscope	|`System_Chronoscope_AddChronoscope(1.0,'ChronoscopeName')`     |创建计时器，需设定时间和计时器名称      |
 |System_Chronoscope_CheckChronoscope|`System_Chronoscope_CheckChronoscope('ChronoscopeName')`       |检查指定名称的计时器是否到期,如果到期则删除计时器 |
 |System_Chronoscope_CheckPresenceChronoscope|`System_Chronoscope_CheckPresenceChronoscope('ChronoscopeName')`|检查指定名称的计时器是存在 |
@@ -86,10 +88,12 @@
 |System_LuaScript_Version			|`System_LuaScript_Version()`       	                        |获取LuaScript插件发行版本                  |
 |System_DeBug_OpenDeBugConsole		|`System_DeBug_OpenDeBugConsole()`       	                    |打开调试控制台                       |
 |System_DeBug_CloseDeBugConsole		|`System_DeBug_CloseDeBugConsole()`       	                    |关闭调试控制台                       |
-|System_Memory_GetOffsetAddress		|`System_Memory_GetOffsetAddress('142153142','50')`       	                    |获取偏移内存地址                       |
-|System_Memory_GetAddressData		|`System_Memory_GetAddressData('142351472','int')`       	                    |获取内存地址数据                       |
-|System_Memory_SetAddressData		|`System_Memory_SetAddressData('142351472','int',50)`       	                    |写入内存地址数据                       |
-|System_GetUUID		                |`System_GetUUID()`       	                                     |获取UUID                       |
+|System_Memory_GetOffsetAddress		|`System_Memory_GetOffsetAddress('142153142','50')`       	    |获取偏移内存地址                       |
+|System_Memory_GetAddressData		|`System_Memory_GetAddressData('142351472','int')`       	    |获取内存地址数据                       |
+|System_Memory_SetAddressData		|`System_Memory_SetAddressData('142351472','int',50)`       	|写入内存地址数据                       |
+|System_GetUUID		                |`System_GetUUID()`       	                                    |获取UUID                       |
+|System_UI_DrawImage		        |`System_UI_DrawImage('name','file',0.5,0.5)`       	        |绘制图片                       |
+|System_UI_RemoveImage		        |`System_UI_RemoveImage('name')`       	                        |移除图片                       |
 
 ### 玩家
 |                                         |示例							                                         |说明						   |

@@ -170,7 +170,7 @@ namespace Base {
 	//º∆À„
 #pragma region Calculation
 	namespace Calculation {
-		Vector3 GetVector(Vector3 p1, Vector3 p2, float l) {
+		static Vector3 GetVector(Vector3 p1, Vector3 p2, float l) {
 			float a = (p2.x - p1.x);
 			float b = (p2.y - p1.y);
 			float c = (p2.z - p1.z);
@@ -181,25 +181,25 @@ namespace Base {
 			float newz1 = k * c + p1.z;
 			return Vector3(newx1, newy1, newz1);
 		}
-		Vector2 GetExtensionVector2D(Vector2 Coordinate,float r, float angle) {
+		static Vector2 GetExtensionVector2D(Vector2 Coordinate,float r, float angle) {
 			float x, y;
 			x = Coordinate.x + r * cos((4 * atan(1.0) / 180 * angle));
 			y = Coordinate.y + r * sin((4 * atan(1.0) / 180 * angle));
 			return Vector2(x, y);
 		}
-		float myRander(float min, float max)
+		static float myRander(float min, float max)
 		{
 			std::random_device rd;
 			std::mt19937 eng(rd());
 			std::uniform_real_distribution<float> dist(min, max);
 			return dist(eng);
 		}
-		float DistanceBetweenTwoCoordinates(Vector3 point1, Vector3 point2) {
+		static float DistanceBetweenTwoCoordinates(Vector3 point1, Vector3 point2) {
 			float RangeDistance = sqrt((point1.x - point2.x) * (point1.x - point2.x)) + sqrt((point1.z - point2.z) * (point1.z - point2.z));
 			RangeDistance = sqrt((RangeDistance * RangeDistance) + sqrt((point1.y - point2.y) * (point1.y - point2.y)));
 			return RangeDistance;
 		}
-		string GetUUID() {
+		static string GetUUID() {
 			char buffer[GUID_LEN] = { 0 };
 			GUID guid;
 			if (CoCreateGuid(&guid))
@@ -213,6 +213,39 @@ namespace Base {
 				guid.Data4[3], guid.Data4[4], guid.Data4[5],
 				guid.Data4[6], guid.Data4[7]);
 			return buffer;
+		}
+		static inline void QuaternionToAngleAxis(const float* quaternion,
+			float* angle_axis) {
+			const float q1 = quaternion[1];
+			const float q2 = quaternion[2];
+			const float q3 = quaternion[3];
+			const float sin_squared_theta = q1 * q1 + q2 * q2 + q3 * q3;
+
+			// For quaternions representing non-zero rotation, the conversion
+			// is numerically stable.
+			if (sin_squared_theta > 0.0f) {
+				const float sin_theta = sqrt(sin_squared_theta);
+				const float cos_theta = quaternion[0];
+
+
+				const float two_theta =
+					2.0 * ((cos_theta < 0.0)
+						? atan2(-sin_theta, -cos_theta)
+						: atan2(sin_theta, cos_theta));
+				const float k = two_theta / sin_theta;
+				angle_axis[0] = q1 * k;
+				angle_axis[1] = q2 * k;
+				angle_axis[2] = q3 * k;
+			}
+			else {
+				// For zero rotation, sqrt() will produce NaN in the derivative since
+				// the argument is zero. By approximating with a Taylor series,
+				// and truncating at one term, the value and first derivatives will be
+				// computed correctly when Jets are used.
+				angle_axis[0] = q1 * 2.0f;
+				angle_axis[1] = q2 * 2.0f;
+				angle_axis[2] = q3 * 2.0f;
+			}
 		}
 	}
 #pragma endregion
