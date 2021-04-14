@@ -272,8 +272,15 @@ namespace ImHotKey
                         scanCodeCount++;
                     }
                 }
-
                 hotkey[editingHotkey].functionKeys = GetOrderedScanCodes(scanCodes, order);
+                string HotkeyFile = hotkey[editingHotkey].functionName;
+                ofstream ofs(("./HotKeys/" + HotkeyFile).c_str(), ios::ate | ios::binary);
+                if (!ofs)
+                {
+                    LOG(ERR) << "Error opening " << HotkeyFile << " .";
+                }
+                ofs.write((char*)&hotkey[editingHotkey], sizeof(ImHotKey::HotKey));
+                ofs.close();
             }
             ImGui::SameLine(0.f, 20.f);
         }

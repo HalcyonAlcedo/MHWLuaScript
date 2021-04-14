@@ -890,6 +890,22 @@ static int System_Keyboard_CheckKeyIsPressed(lua_State* pL) {
     lua_pushboolean(pL, ret);
     return 1;
 }
+static int System_HotKey_AddHotKey(lua_State* pL) {
+    string name = (string)lua_tostring(pL, 1);
+    string describe = (string)lua_tostring(pL, 2);
+    unsigned int key = (unsigned int)lua_tointeger(pL, 3);
+    ControlProgram::hotkeys.push_back({ name.c_str(), describe.c_str(), key });
+    return 0;
+}
+static int System_HotKey_CheckKey(lua_State* pL) {
+    string name = (string)lua_tostring(pL, -1);
+    if (ControlProgram::Checkhotkey.find(name) != ControlProgram::Checkhotkey.end()) {
+        lua_pushboolean(pL, ControlProgram::Checkhotkey[name]);
+        ControlProgram::Checkhotkey[name] = false;
+    } else
+    lua_pushboolean(pL, false);
+    return 1;
+}
 static int System_Chronoscope_AddChronoscope(lua_State* pL) {
     float time = (float)lua_tonumber(pL, 1);
     string name = (string)lua_tostring(pL, 2);
@@ -1460,6 +1476,10 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_Keyboard_CheckDoubleKey", System_Keyboard_CheckDoubleKey);
     //检查按键是否处于按下状态
     lua_register(L, "System_Keyboard_CheckKeyIsPressed", System_Keyboard_CheckKeyIsPressed);
+    //注册快捷键
+    lua_register(L, "System_HotKey_AddHotKey", System_HotKey_AddHotKey);
+    //检查快捷键
+    lua_register(L, "System_HotKey_CheckKey", System_HotKey_CheckKey);
     //检查Xbox按键
     lua_register(L, "System_XboxPad_CheckKey", System_XboxPad_CheckKey);
     //检查Xbox按键双击
