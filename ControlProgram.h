@@ -314,7 +314,7 @@ namespace ControlProgram {
 			ImGui::End();
 		}
 
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysUseWindowPadding;
 		ImGui::Begin("HotKeysEdit", NULL, window_flags);
 		if (Base::ModConfig::HotKeyEdit) {
 			Base::ModConfig::HotKeyEdit = false;
@@ -335,9 +335,6 @@ namespace ControlProgram {
 		ImHotKey::Edit(hotkeys.data(), hotkeys.size(), u8"ÈÈ¼ü±à¼­Æ÷");
 		ImGui::End();
 
-
-		window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
-		
 		for (auto [Begin, Data] : Base::Draw::Img) {
 			if (ImgTextureCache.find(Data.ImageFile) != ImgTextureCache.end()) {
 				if (ImgTextureCache[Data.ImageFile].texture == NULL) {
