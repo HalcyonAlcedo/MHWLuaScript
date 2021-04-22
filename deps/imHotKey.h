@@ -243,6 +243,7 @@ namespace ImHotKey
         static bool keyDown[512] = {};
 
         ImGui::SetNextWindowSize(ImVec2(1060, 400));
+        ImGui::SetNextWindowBgAlpha(0.3);
         if (!ImGui::BeginPopupModal(popupModal, NULL, ImGuiWindowFlags_NoResize))
             return;
 

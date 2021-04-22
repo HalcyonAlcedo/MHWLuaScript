@@ -1067,7 +1067,7 @@ static int System_UI_DrawImage(lua_State* pL) {
     string img = (string)lua_tostring(pL, 2);
     float x = (float)lua_tonumber(pL, 3);
     float y = (float)lua_tonumber(pL, 4);
-    Base::Vector3 Channel = Base::Vector3();
+    Base::Vector3 Channel = Base::Vector3(1,1,1);
     float alpha = 1;
     if (lua_gettop(pL) > 4) {
         alpha = (float)lua_tonumber(pL, 5);
@@ -1092,7 +1092,7 @@ static int System_UI_DrawText(lua_State* pL) {
     string text = (string)lua_tostring(pL, 2);
     float x = (float)lua_tonumber(pL, 3);
     float y = (float)lua_tonumber(pL, 4);
-    Base::Vector3 color = Base::Vector3();
+    Base::Vector3 color = Base::Vector3(1,1,1);
     float alpha = 1;
     float size = 1;
     if (lua_gettop(pL) > 4) {
@@ -1534,9 +1534,9 @@ int Lua_Main(string LuaFile)
     //检查按键是否处于按下状态
     lua_register(L, "System_Keyboard_CheckKeyIsPressed", System_Keyboard_CheckKeyIsPressed);
     //注册快捷键
-    //lua_register(L, "System_HotKey_AddHotKey", System_HotKey_AddHotKey);
+    lua_register(L, "System_HotKey_AddHotKey", System_HotKey_AddHotKey);
     //检查快捷键
-    //lua_register(L, "System_HotKey_CheckKey", System_HotKey_CheckKey);
+    lua_register(L, "System_HotKey_CheckKey", System_HotKey_CheckKey);
     //检查Xbox按键
     lua_register(L, "System_XboxPad_CheckKey", System_XboxPad_CheckKey);
     //检查Xbox按键双击
@@ -1577,6 +1577,10 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_UI_DrawImage", System_UI_DrawImage);
     //移除添加的图片
     lua_register(L, "System_UI_RemoveImage", System_UI_RemoveImage);
+    //向屏幕添加文字
+    lua_register(L, "System_UI_DrawText", System_UI_DrawText);
+    //移除添加的文字
+    lua_register(L, "System_UI_RemoveText", System_UI_RemoveText);
 #pragma endregion
 #pragma region Lua
     //存入整数变量

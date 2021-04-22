@@ -72,7 +72,7 @@ namespace Base {
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
 		string ModVersion = "v1.1.9";
-		long long ModBuild = 119004221817;
+		long long ModBuild = 119004221902;
 		string Version = "421470";
 	}
 #pragma endregion
