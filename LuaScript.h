@@ -1055,7 +1055,19 @@ static int System_UI_DrawImage(lua_State* pL) {
     string img = (string)lua_tostring(pL, 2);
     float x = (float)lua_tonumber(pL, 3);
     float y = (float)lua_tonumber(pL, 4);
-    Base::Draw::Img[name] = Base::Draw::NewImage(0, Base::Vector2(x, y), name, img);
+    Base::Vector3 Channel = Base::Vector3();
+    float Alpha = 1;
+    if (lua_gettop(pL) > 4) {
+        Alpha = (float)lua_tonumber(pL, 5);
+    }
+    if (lua_gettop(pL) > 5) {
+        Channel = Base::Vector3(
+            (float)lua_tonumber(pL, 6),
+            (float)lua_tonumber(pL, 7),
+            (float)lua_tonumber(pL, 8)
+        );
+    }
+    Base::Draw::Img[name] = Base::Draw::NewImage(Alpha, Channel, Base::Vector2(x, y), name, img);
     return 0;
 }
 static int System_UI_RemoveImage(lua_State* pL) {

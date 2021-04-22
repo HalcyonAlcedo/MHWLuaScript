@@ -337,14 +337,14 @@ namespace ControlProgram {
 				IM_ASSERT(ret);
 			}
 			//创建窗口
-			ImGui::SetNextWindowBgAlpha(Data.BgAlpha);
+			ImGui::SetNextWindowBgAlpha(0);
 			ImGui::SetNextWindowPos(ImVec2(
 				ImGui::GetMainViewport()->Pos.x + ImGui::GetMainViewport()->Size.x * Data.Pos.x,
 				ImGui::GetMainViewport()->Pos.y + ImGui::GetMainViewport()->Size.y * Data.Pos.y
 			), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 			ImGui::Begin(Data.Name.c_str(), NULL, window_flags);
 				//绘制图像
-				ImGui::Image((void*)ImgTextureCache[Data.ImageFile].texture, ImVec2(ImgTextureCache[Data.ImageFile].width, ImgTextureCache[Data.ImageFile].height));
+				ImGui::Image((void*)ImgTextureCache[Data.ImageFile].texture, ImVec2(ImgTextureCache[Data.ImageFile].width, ImgTextureCache[Data.ImageFile].height), ImVec2(0.0, 0.0), ImVec2(1.0, 1.0), ImVec4(Data.Channel.x, Data.Channel.y, Data.Channel.z, Data.BgAlpha));
 			ImGui::End();
 		}
 		ImGui::Render();

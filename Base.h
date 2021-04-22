@@ -253,16 +253,18 @@ namespace Base {
 #pragma region Draw
 	namespace Draw {
 		struct NewImage {
-			float BgAlpha = 0;
+			float BgAlpha = 1;
+			Vector3 Channel = Vector3();
 			Vector2 Pos = Vector2();
 			string Name = "";
 			string ImageFile = "";
 			NewImage(
-				float BgAlpha = 0,
+				float BgAlpha = 1,
+				Vector3 Channel = Vector3(1,1,1),
 				Vector2 Pos = Vector2(),
 				string Name = "",
 				string ImageFile = ""
-				) :BgAlpha(BgAlpha), Pos(Pos), Name(Name), ImageFile(ImageFile) { };
+				) :BgAlpha(BgAlpha), Channel(Channel), Pos(Pos), Name(Name), ImageFile(ImageFile) { };
 		};
 		map<string, NewImage> Img;
 	}
