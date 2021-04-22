@@ -34,7 +34,6 @@ namespace ControlProgram {
 	HMODULE hMod;
 
 	//热键列表
-	static vector<ImHotKey::HotKey> hotkeys = {};
 	static map<string, bool> Checkhotkey;
 
 	//纹理缓存
@@ -129,8 +128,9 @@ namespace ControlProgram {
 				pBackBuffer->Release();
 				oWndProc = (WNDPROC)SetWindowLongPtr(window, GWLP_WNDPROC, (LONG_PTR)WndProc);
 				InitImGui();
-				hotkeys.push_back({ "Console", u8"打开或关闭控制台", 0xFFFF1D44 });
-				hotkeys.push_back({ "HotKeys", u8"快捷键设置", 0xFFFF1D25 });
+				ImHotKey::LoadHotKey();
+				ImHotKey::AddHotKey(u8"Console", u8"打开或关闭控制台", 0xFFFF1D44);
+				ImHotKey::AddHotKey(u8"HotKeys", u8"快捷键设置", 0xFFFF1D25);
 				string HotKeyDir = "./HotKeys/";
 				if (_access(HotKeyDir.c_str(), 0) == -1)
 					_mkdir(HotKeyDir.c_str());
@@ -141,16 +141,16 @@ namespace ControlProgram {
 		}
 
 		//按键处理
-		int hotkey = ImHotKey::GetHotKey(hotkeys.data(), hotkeys.size());
+		int hotkey = ImHotKey::GetHotKey(ImHotKey::hotkeys.data(), ImHotKey::hotkeys.size());
 		if (hotkey != -1)
 		{
-			if (hotkeys.at(hotkey).functionName == u8"Console") {
+			if ((string)ImHotKey::hotkeys.at(hotkey).functionName == u8"Console") {
 				Base::ModConfig::ModConsole = !Base::ModConfig::ModConsole;
 			}
-			if (hotkeys.at(hotkey).functionName == u8"HotKeys") {
+			if ((string)ImHotKey::hotkeys.at(hotkey).functionName == u8"HotKeys") {
 				Base::ModConfig::HotKeyEdit = true;
 			}
-			Checkhotkey[hotkeys.at(hotkey).functionName] = true;
+			Checkhotkey[(string)ImHotKey::hotkeys.at(hotkey).functionName] = true;
 		}
 
 		ImGui_ImplDX11_NewFrame();
@@ -318,21 +318,10 @@ namespace ControlProgram {
 		ImGui::Begin("HotKeysEdit", NULL, window_flags);
 		if (Base::ModConfig::HotKeyEdit) {
 			Base::ModConfig::HotKeyEdit = false;
-			vector<ImHotKey::HotKey>::iterator it = hotkeys.begin();
-			for (; it != hotkeys.end(); ++it)
-			{
-				string HotkeyFile = (*it).functionName;
-				struct stat buffer;
-				if (stat(("./HotKeys/" + HotkeyFile).c_str(), &buffer) == 0) {
-					ifstream ifs(("./HotKeys/" + HotkeyFile).c_str(), ios::binary);
-					ImHotKey::HotKey tempHotKey;
-					ifs.read((char*)&tempHotKey, sizeof(ImHotKey::HotKey));
-					*it = tempHotKey;
-				}
-			}
+			ImHotKey::LoadHotKey();
 			ImGui::OpenPopup(u8"热键编辑器");
 		}
-		ImHotKey::Edit(hotkeys.data(), hotkeys.size(), u8"热键编辑器");
+		ImHotKey::Edit(ImHotKey::hotkeys.data(), ImHotKey::hotkeys.size(), u8"热键编辑器");
 		ImGui::End();
 
 		for (auto [Begin, Data] : Base::Draw::Img) {

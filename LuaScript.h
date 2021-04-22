@@ -894,7 +894,7 @@ static int System_HotKey_AddHotKey(lua_State* pL) {
     string name = (string)lua_tostring(pL, 1);
     string describe = (string)lua_tostring(pL, 2);
     unsigned int key = (unsigned int)lua_tointeger(pL, 3);
-    ControlProgram::hotkeys.push_back({ name.c_str(), describe.c_str(), key });
+    ImHotKey::AddHotKey(name.c_str(), describe.c_str(), key);
     return 0;
 }
 static int System_HotKey_CheckKey(lua_State* pL) {

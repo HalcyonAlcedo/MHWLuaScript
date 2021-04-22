@@ -66,11 +66,84 @@ namespace ImHotKey
 {
     struct HotKey
     {
-        const char *functionName;
-        const char *functionLib;
+        const char* functionName;
+        const char* functionLib;
         unsigned int functionKeys;
     };
+    struct FileHotKey
+    {
+        char functionName[30];
+        char functionLib[100];
+        unsigned int functionKeys;
+    };
+    struct TempHotKey
+    {
+        std::string functionName;
+        std::string functionLib;
+        unsigned int functionKeys;
+        TempHotKey(
+            std::string functionName = "",
+            std::string functionLib = "",
+            unsigned int functionKeys = 0xFFFFFFFF
+        ) :functionName(functionName), functionLib(functionLib), functionKeys(functionKeys) { };
+    };
 
+    //ÈÈ¼ü
+    static std::vector<HotKey> hotkeys = {};
+    static std::map<std::string, TempHotKey> tempHotkeys;
+    static void AddHotKey(std::string name, std::string lib, unsigned int keys) {
+        tempHotkeys[name] = { name,lib,keys };
+        std::vector<HotKey>::iterator it;
+        for (it = hotkeys.begin(); it != hotkeys.end(); it++)
+        {
+            if ((*it).functionName == name) {
+                (*it).functionKeys = keys;
+                return;
+            }
+        }
+        hotkeys.push_back({ ImHotKey::tempHotkeys[name].functionName.c_str(), ImHotKey::tempHotkeys[name].functionLib.c_str(), ImHotKey::tempHotkeys[name].functionKeys });
+    }
+    static void SaveHotKey() {
+        std::ofstream out("./HotKeys/HotKeys", std::ios::binary);
+        if (!out.is_open()) {
+            out.close();
+            return;
+        }
+        static std::vector<FileHotKey> hotkeysTemp = {};
+        for (auto hotkeyData : hotkeys) {
+            FileHotKey a;
+            strcpy_s(
+                a.functionName,
+                (strlen(hotkeyData.functionName) + 1) <= 30 ? (strlen(hotkeyData.functionName) + 1) : 30,
+                hotkeyData.functionName
+            );
+            strcpy_s(
+                a.functionLib,
+                (strlen(hotkeyData.functionLib) + 1) <= 100 ? (strlen(hotkeyData.functionLib) + 1) : 100,
+                hotkeyData.functionLib
+            );
+            a.functionKeys = hotkeyData.functionKeys;
+            hotkeysTemp.push_back(a);
+        }
+        out.write(reinterpret_cast<char*>(hotkeysTemp.data()), hotkeysTemp.size() * sizeof(hotkeysTemp.front()));
+        out.close();
+    }
+    static void LoadHotKey() {
+        std::vector<FileHotKey> hotkeysTemp;
+        std::ifstream in("./HotKeys/HotKeys", std::ios::binary);
+        if (!in.is_open()) {
+            in.close();
+            return;
+        }
+        hotkeysTemp.resize(100);
+        in.read(reinterpret_cast<char*>(hotkeysTemp.data()), hotkeysTemp.size() * sizeof(hotkeysTemp.front()));
+        for (auto hotkeyData : hotkeysTemp) {
+            if ((std::string)hotkeyData.functionName != "") {
+                AddHotKey(hotkeyData.functionName, hotkeyData.functionLib, hotkeyData.functionKeys);
+            }
+        }
+        in.close();
+    }
     struct Key
     {
         const char* lib = nullptr;
@@ -128,7 +201,7 @@ namespace ImHotKey
         va_end(args);
     }
 
-    static void GetHotKeyLib(unsigned int functionKeys, char* buffer, size_t bufferSize, const char *functionLib = nullptr)
+    static void GetHotKeyLib(unsigned int functionKeys, char* buffer, size_t bufferSize, const char* functionLib = nullptr)
     {
         static const char* str[4] = { "%s", "%s + %s", "%s + %s +%s", "%s + %s + %s + %s" };
         static const char* strLib[4] = { "%s (%s)", "%s (%s + %s)", "%s (%s + %s +%s)", "%s (%s + %s + %s + %s)" };
@@ -149,7 +222,7 @@ namespace ImHotKey
             buffer[0] = 0;
             return;
         }
-        
+
         if (functionLib)
         {
             const char* fmt = strLib[scanCodeCount - 1];
@@ -162,7 +235,7 @@ namespace ImHotKey
         }
     }
 
-    static void Edit(HotKey *hotkey, size_t hotkeyCount, const char *popupModal)
+    static void Edit(HotKey* hotkey, size_t hotkeyCount, const char* popupModal)
     {
         static int editingHotkey = -1;
         if (!hotkeyCount)
@@ -170,12 +243,11 @@ namespace ImHotKey
         static bool keyDown[512] = {};
 
         ImGui::SetNextWindowSize(ImVec2(1060, 400));
-        ImGui::SetNextWindowBgAlpha(0.35f);
         if (!ImGui::BeginPopupModal(popupModal, NULL, ImGuiWindowFlags_NoResize))
             return;
 
         ImGui::BeginChildFrame(127, ImVec2(220, -1));
-        for(size_t i = 0;i< hotkeyCount;i++)
+        for (size_t i = 0; i < hotkeyCount; i++)
         {
             char hotKeyLib[128];
             GetHotKeyLib(hotkey[i].functionKeys, hotKeyLib, sizeof(hotKeyLib), hotkey[i].functionName);
@@ -213,7 +285,7 @@ namespace ImHotKey
             while (Keys[y][x].lib)
             {
                 const Key& key = Keys[y][x];
-                const float ofs = key.offset + (x?4.f:0.f);
+                const float ofs = key.offset + (x ? 4.f : 0.f);
 
                 const float width = key.width;
                 if (x)
@@ -272,15 +344,9 @@ namespace ImHotKey
                         scanCodeCount++;
                     }
                 }
+
                 hotkey[editingHotkey].functionKeys = GetOrderedScanCodes(scanCodes, order);
-                string HotkeyFile = hotkey[editingHotkey].functionName;
-                ofstream ofs(("./HotKeys/" + HotkeyFile).c_str(), ios::ate | ios::binary);
-                if (!ofs)
-                {
-                    LOG(ERR) << "Error opening " << HotkeyFile << " .";
-                }
-                ofs.write((char*)&hotkey[editingHotkey], sizeof(ImHotKey::HotKey));
-                ofs.close();
+                SaveHotKey();
             }
             ImGui::SameLine(0.f, 20.f);
         }
@@ -288,13 +354,13 @@ namespace ImHotKey
         {
             ImGui::SameLine(0.f, 100.f);
         }
-        
+
         if (ImGui::Button(u8"¹Ø±Õ", ImVec2(80, 40))) { ImGui::CloseCurrentPopup(); }
         ImGui::EndGroup();
         ImGui::EndPopup();
     }
 
-    static int GetHotKey(HotKey *hotkey, size_t hotkeyCount)
+    static int GetHotKey(HotKey* hotkey, size_t hotkeyCount)
     {
         static unsigned int lastHotKey = 0xFFFFFFFF;
         unsigned char scanCodes[4] = { 0xFF, 0xFF, 0xFF, 0xFF };
