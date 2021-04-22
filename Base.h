@@ -72,7 +72,7 @@ namespace Base {
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
 		string ModVersion = "v1.1.9";
-		long long ModBuild = 119004141229;
+		long long ModBuild = 119004221817;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -253,18 +253,37 @@ namespace Base {
 #pragma region Draw
 	namespace Draw {
 		struct NewImage {
-			float BgAlpha = 0;
+			float BgAlpha = 1;
+			Vector3 Channel = Vector3();
 			Vector2 Pos = Vector2();
 			string Name = "";
 			string ImageFile = "";
 			NewImage(
-				float BgAlpha = 0,
+				float BgAlpha = 1,
+				Vector3 Channel = Vector3(1,1,1),
 				Vector2 Pos = Vector2(),
 				string Name = "",
 				string ImageFile = ""
-				) :BgAlpha(BgAlpha), Pos(Pos), Name(Name), ImageFile(ImageFile) { };
+				) :BgAlpha(BgAlpha), Channel(Channel), Pos(Pos), Name(Name), ImageFile(ImageFile) { };
+		};
+		struct NewText {
+			float BgAlpha = 1;
+			Vector3 Color = Vector3();
+			Vector2 Pos = Vector2();
+			string Name = "";
+			string Text = "";
+			float Size = 1;
+			NewText(
+				float BgAlpha = 1,
+				Vector3 Color = Vector3(1, 1, 1),
+				Vector2 Pos = Vector2(),
+				string Name = "",
+				string Text = "",
+				float Size = 1
+			) :BgAlpha(BgAlpha), Color(Color), Pos(Pos), Name(Name), Text(Text), Size(Size) { };
 		};
 		map<string, NewImage> Img;
+		map<string, NewText> Text;
 	}
 #pragma endregion
 	//Î¯ÍÐ

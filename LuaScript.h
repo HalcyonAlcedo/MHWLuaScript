@@ -906,7 +906,7 @@ static int System_HotKey_AddHotKey(lua_State* pL) {
     string name = (string)lua_tostring(pL, 1);
     string describe = (string)lua_tostring(pL, 2);
     unsigned int key = (unsigned int)lua_tointeger(pL, 3);
-    ControlProgram::hotkeys.push_back({ name.c_str(), describe.c_str(), key });
+    ImHotKey::AddHotKey(name.c_str(), describe.c_str(), key);
     return 0;
 }
 static int System_HotKey_CheckKey(lua_State* pL) {
@@ -1067,12 +1067,53 @@ static int System_UI_DrawImage(lua_State* pL) {
     string img = (string)lua_tostring(pL, 2);
     float x = (float)lua_tonumber(pL, 3);
     float y = (float)lua_tonumber(pL, 4);
-    Base::Draw::Img[name] = Base::Draw::NewImage(0, Base::Vector2(x, y), name, img);
+    Base::Vector3 Channel = Base::Vector3();
+    float alpha = 1;
+    if (lua_gettop(pL) > 4) {
+        alpha = (float)lua_tonumber(pL, 5);
+    }
+    if (lua_gettop(pL) > 5) {
+        Channel = Base::Vector3(
+            (float)lua_tonumber(pL, 6),
+            (float)lua_tonumber(pL, 7),
+            (float)lua_tonumber(pL, 8)
+        );
+    }
+    Base::Draw::Img[name] = Base::Draw::NewImage(alpha, Channel, Base::Vector2(x, y), name, img);
     return 0;
 }
 static int System_UI_RemoveImage(lua_State* pL) {
     string name = (string)lua_tostring(pL, 1);
     Base::Draw::Img.erase(name);
+    return 0;
+}
+static int System_UI_DrawText(lua_State* pL) {
+    string name = (string)lua_tostring(pL, 1);
+    string text = (string)lua_tostring(pL, 2);
+    float x = (float)lua_tonumber(pL, 3);
+    float y = (float)lua_tonumber(pL, 4);
+    Base::Vector3 color = Base::Vector3();
+    float alpha = 1;
+    float size = 1;
+    if (lua_gettop(pL) > 4) {
+        size = (float)lua_tonumber(pL, 5);
+    }
+    if (lua_gettop(pL) > 5) {
+        alpha = (float)lua_tonumber(pL, 6);
+    }
+    if (lua_gettop(pL) > 6) {
+        color = Base::Vector3(
+            (float)lua_tonumber(pL, 7),
+            (float)lua_tonumber(pL, 8),
+            (float)lua_tonumber(pL, 9)
+        );
+    }
+    Base::Draw::Text[name] = Base::Draw::NewText(alpha,color,Base::Vector2(x,y),name,text,size);
+    return 0;
+}
+static int System_UI_RemoveText(lua_State* pL) {
+    string name = (string)lua_tostring(pL, 1);
+    Base::Draw::Text.erase(name);
     return 0;
 }
 

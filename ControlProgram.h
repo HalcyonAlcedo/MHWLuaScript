@@ -34,7 +34,6 @@ namespace ControlProgram {
 	HMODULE hMod;
 
 	//热键列表
-	static vector<ImHotKey::HotKey> hotkeys = {};
 	static map<string, bool> Checkhotkey;
 
 	//纹理缓存
@@ -129,8 +128,9 @@ namespace ControlProgram {
 				pBackBuffer->Release();
 				oWndProc = (WNDPROC)SetWindowLongPtr(window, GWLP_WNDPROC, (LONG_PTR)WndProc);
 				InitImGui();
-				hotkeys.push_back({ "Console", u8"打开或关闭控制台", 0xFFFF1D44 });
-				hotkeys.push_back({ "HotKeys", u8"快捷键设置", 0xFFFF1D25 });
+				ImHotKey::LoadHotKey();
+				ImHotKey::AddHotKey(u8"Console", u8"打开或关闭控制台", 0xFFFF1D44);
+				ImHotKey::AddHotKey(u8"HotKeys", u8"快捷键设置", 0xFFFF1D25);
 				string HotKeyDir = "./HotKeys/";
 				if (_access(HotKeyDir.c_str(), 0) == -1)
 					_mkdir(HotKeyDir.c_str());
@@ -141,16 +141,16 @@ namespace ControlProgram {
 		}
 
 		//按键处理
-		int hotkey = ImHotKey::GetHotKey(hotkeys.data(), hotkeys.size());
+		int hotkey = ImHotKey::GetHotKey(ImHotKey::hotkeys.data(), ImHotKey::hotkeys.size());
 		if (hotkey != -1)
 		{
-			if (hotkeys.at(hotkey).functionName == u8"Console") {
+			if ((string)ImHotKey::hotkeys.at(hotkey).functionName == u8"Console") {
 				Base::ModConfig::ModConsole = !Base::ModConfig::ModConsole;
 			}
-			if (hotkeys.at(hotkey).functionName == u8"HotKeys") {
+			if ((string)ImHotKey::hotkeys.at(hotkey).functionName == u8"HotKeys") {
 				Base::ModConfig::HotKeyEdit = true;
 			}
-			Checkhotkey[hotkeys.at(hotkey).functionName] = true;
+			Checkhotkey[(string)ImHotKey::hotkeys.at(hotkey).functionName] = true;
 		}
 
 		ImGui_ImplDX11_NewFrame();
@@ -282,7 +282,7 @@ namespace ControlProgram {
 								ImGui::Text(u8"Y：%f", monsterData.CoordinatesY);
 								ImGui::Text(u8"Z：%f", monsterData.CoordinatesZ);
 								void* MonstersHate = Base::Monster::GetHateTarget(monster);
-								ImGui::Text(u8"仇恨目标：%s", MonstersHate != nullptr ? 
+								ImGui::Text(u8"仇恨目标：%s", MonstersHate != nullptr ?
 									MonstersHate == Base::BasicGameData::PlayerPlot ? u8"玩家" : u8"其他"
 									: u8"无目标"
 								);
@@ -324,30 +324,17 @@ namespace ControlProgram {
 			}
 			ImGui::End();
 		}
-
+		//热键窗口
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysUseWindowPadding;
 		ImGui::Begin("HotKeysEdit", NULL, window_flags);
 		if (Base::ModConfig::HotKeyEdit) {
 			Base::ModConfig::HotKeyEdit = false;
-			/*
-			vector<ImHotKey::HotKey>::iterator it = hotkeys.begin();
-			for (; it != hotkeys.end(); ++it)
-			{
-				string HotkeyFile = (*it).functionName;
-				struct stat buffer;
-				if (stat(("./HotKeys/" + HotkeyFile).c_str(), &buffer) == 0) {
-					ifstream ifs(("./HotKeys/" + HotkeyFile).c_str(), ios::binary);
-					ImHotKey::HotKey tempHotKey;
-					ifs.read((char*)&tempHotKey, sizeof(ImHotKey::HotKey));
-					*it = tempHotKey;
-				}
-			}
-			*/
+			ImHotKey::LoadHotKey();
 			ImGui::OpenPopup(u8"热键编辑器");
 		}
-		ImHotKey::Edit(hotkeys.data(), hotkeys.size(), u8"热键编辑器");
+		ImHotKey::Edit(ImHotKey::hotkeys.data(), ImHotKey::hotkeys.size(), u8"热键编辑器");
 		ImGui::End();
-
+		//图片显示
 		for (auto [Begin, Data] : Base::Draw::Img) {
 			if (ImgTextureCache.find(Data.ImageFile) != ImgTextureCache.end()) {
 				if (ImgTextureCache[Data.ImageFile].texture == NULL) {
@@ -361,14 +348,25 @@ namespace ControlProgram {
 				IM_ASSERT(ret);
 			}
 			//创建窗口
-			ImGui::SetNextWindowBgAlpha(Data.BgAlpha);
+			ImGui::SetNextWindowBgAlpha(0);
 			ImGui::SetNextWindowPos(ImVec2(
 				ImGui::GetMainViewport()->Pos.x + ImGui::GetMainViewport()->Size.x * Data.Pos.x,
 				ImGui::GetMainViewport()->Pos.y + ImGui::GetMainViewport()->Size.y * Data.Pos.y
 			), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-			ImGui::Begin(Data.Name.c_str(), NULL, window_flags);
-				//绘制图像
-				ImGui::Image((void*)ImgTextureCache[Data.ImageFile].texture, ImVec2(ImgTextureCache[Data.ImageFile].width, ImgTextureCache[Data.ImageFile].height));
+			ImGui::Begin(("IMG_" + Data.Name).c_str(), NULL, window_flags);
+			ImGui::Image((void*)ImgTextureCache[Data.ImageFile].texture, ImVec2(ImgTextureCache[Data.ImageFile].width, ImgTextureCache[Data.ImageFile].height), ImVec2(0.0, 0.0), ImVec2(1.0, 1.0), ImVec4(Data.Channel.x, Data.Channel.y, Data.Channel.z, Data.BgAlpha));
+			ImGui::End();
+		}
+		//文字显示
+		for (auto [Begin, Data] : Base::Draw::Text) {
+			ImGui::SetNextWindowBgAlpha(0);
+			ImGui::SetNextWindowPos(ImVec2(
+				ImGui::GetMainViewport()->Pos.x + ImGui::GetMainViewport()->Size.x * Data.Pos.x,
+				ImGui::GetMainViewport()->Pos.y + ImGui::GetMainViewport()->Size.y * Data.Pos.y
+			), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+			ImGui::Begin(("TEXT_" + Data.Name).c_str(), NULL, window_flags);
+			ImGui::SetWindowFontScale(Data.Size);
+			ImGui::TextColored(ImVec4(Data.Color.x, Data.Color.y, Data.Color.z, Data.BgAlpha), Data.Text.c_str());
 			ImGui::End();
 		}
 		ImGui::Render();
