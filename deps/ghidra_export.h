@@ -42,6 +42,10 @@ namespace MH {
         static undefined(*Visual)() = (undefined(*)())0x141FBB736;
         static void* PlayerDataPlot = (void*)0x1452253A8;
         static void* PlayerDataHandlePlot = (void*)0x14522C850;
+        static void(*HookCoordinateChange)(undefined8*) = (void(*)(undefined8*))0x1412f7e8f;
+        static void(*HookCoordinateChange2)(undefined8*, undefined8*, undefined8*) = (void(*)(undefined8*, undefined8*, undefined8*))0x1412F7E2F;
+        static void(*HookCoordinateChange3)() = (void(*)())0x1412F7A3A;
+        static void(*HookCoordinateChange4)() = (void(*)())0x14176EA38;
     }
     namespace EnvironmentalBiological {
         static undefined * (*ctor)(undefined*, undefined4, undefined4) = (undefined * (*)(undefined*, undefined4, undefined4))0x141D442C0;

@@ -241,10 +241,21 @@ namespace ControlProgram {
 					}
 					ImGui::Text(u8"当前耐力：%f", Base::PlayerData::CurrentEndurance);
 					ImGui::Text(u8"当前血量：%f", Base::PlayerData::CurrentHealth);
-					ImGui::Text(u8"当前坐标");
-					ImGui::Text(u8"X：%f", Base::PlayerData::Coordinate::Entity.x);
-					ImGui::Text(u8"Y：%f", Base::PlayerData::Coordinate::Entity.y);
-					ImGui::Text(u8"Z：%f", Base::PlayerData::Coordinate::Entity.z);
+					if (ImGui::TreeNode(u8"当前坐标"))
+					{
+						ImGui::Text(u8"X：%f", Base::PlayerData::Coordinate::Entity.x);
+						ImGui::Text(u8"Y：%f", Base::PlayerData::Coordinate::Entity.y);
+						ImGui::Text(u8"Z：%f", Base::PlayerData::Coordinate::Entity.z);
+						ImGui::TreePop();
+					}
+					if (ImGui::TreeNode(u8"欧拉角"))
+					{
+						ImGui::Text(u8"X：%f", Base::PlayerData::EulerAngle.x);
+						ImGui::Text(u8"Y：%f", Base::PlayerData::EulerAngle.y);
+						ImGui::Text(u8"Z：%f", Base::PlayerData::EulerAngle.z);
+						ImGui::TreePop();
+					}
+					ImGui::Text(u8"朝向角：%f", Base::PlayerData::Angle);
 					ImGui::Text(u8"武器类型：%d", Base::PlayerData::Weapons::WeaponType);
 					ImGui::Text(u8"武器Id：%d", Base::PlayerData::Weapons::WeaponId);
 					ImGui::TreePop();
@@ -318,6 +329,7 @@ namespace ControlProgram {
 		ImGui::Begin("HotKeysEdit", NULL, window_flags);
 		if (Base::ModConfig::HotKeyEdit) {
 			Base::ModConfig::HotKeyEdit = false;
+			/*
 			vector<ImHotKey::HotKey>::iterator it = hotkeys.begin();
 			for (; it != hotkeys.end(); ++it)
 			{
@@ -330,6 +342,7 @@ namespace ControlProgram {
 					*it = tempHotKey;
 				}
 			}
+			*/
 			ImGui::OpenPopup(u8"热键编辑器");
 		}
 		ImHotKey::Edit(hotkeys.data(), hotkeys.size(), u8"热键编辑器");

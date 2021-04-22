@@ -15,15 +15,15 @@ Navigation proc
 	ret
 Navigation endp
 
-GetVisualPtr proc
+GetRBXPtr proc
     mov [rcx], rbx
 	ret
-GetVisualPtr endp
+GetRBXPtr endp
 
-GetWeaponPtr proc
-    mov [rcx], rbx
+GetRDIPtr proc
+    mov [rcx], rdi
 	ret
-GetWeaponPtr endp
+GetRDIPtr endp
 
 GetHitPtr proc
     mov rax, [rdi+24]

@@ -801,6 +801,18 @@ static int Game_Player_GetMonstersHateToPlayers(lua_State* pL) {
     lua_settable(pL, -3);
     return 1;
 }
+static int Game_Player_SetHookCoordinateChange(lua_State* pL) {
+    float x = (float)lua_tonumber(pL, 1);
+    float y = (float)lua_tonumber(pL, 2);
+    float z = (float)lua_tonumber(pL, 3);
+    Base::PlayerData::HookCoordinateChange = Base::Vector3(x, y, z);
+    Base::PlayerData::HookChange = true;
+    return 0;
+}
+static int Game_Player_CancelHookCoordinateChange(lua_State* pL) {
+    Base::PlayerData::HookChange = false;
+    return 0;
+}
 static int Game_Player_GetPlayerVisualDistance(lua_State* pL) {
     void* VisualOffset = *offsetPtr<undefined**>((undefined(*)())Base::BasicGameData::PlayerPlot, 0x7690);
     lua_pushnumber(pL, *offsetPtr<float>(VisualOffset, 0x5E8));
@@ -1387,6 +1399,10 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Player_GetPlayerHookCoordinate", Game_Player_GetPlayerHookCoordinate);
     //获取对玩家仇恨的怪物
     lua_register(L, "Game_Player_GetMonstersHateToPlayers", Game_Player_GetMonstersHateToPlayers);
+    //设置钩爪钩向的坐标
+    lua_register(L, "Game_Player_SetHookCoordinateChange", Game_Player_SetHookCoordinateChange);
+    //取消钩爪钩向坐标的设置
+    lua_register(L, "Game_Player_CancelHookCoordinateChange", Game_Player_CancelHookCoordinateChange);
     
     #pragma endregion
     //获取当前地图Id
@@ -1477,9 +1493,9 @@ int Lua_Main(string LuaFile)
     //检查按键是否处于按下状态
     lua_register(L, "System_Keyboard_CheckKeyIsPressed", System_Keyboard_CheckKeyIsPressed);
     //注册快捷键
-    lua_register(L, "System_HotKey_AddHotKey", System_HotKey_AddHotKey);
+    //lua_register(L, "System_HotKey_AddHotKey", System_HotKey_AddHotKey);
     //检查快捷键
-    lua_register(L, "System_HotKey_CheckKey", System_HotKey_CheckKey);
+    //lua_register(L, "System_HotKey_CheckKey", System_HotKey_CheckKey);
     //检查Xbox按键
     lua_register(L, "System_XboxPad_CheckKey", System_XboxPad_CheckKey);
     //检查Xbox按键双击

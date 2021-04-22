@@ -10,8 +10,8 @@ using namespace std;
 using namespace loader;
 
 extern "C" long long _stdcall Navigation(float*, float*, float*);
-extern "C" void* _stdcall GetVisualPtr(void*);
-extern "C" void* _stdcall GetWeaponPtr(void*);
+extern "C" void* _stdcall GetRBXPtr(void*);
+extern "C" void* _stdcall GetRDIPtr(void*);
 extern "C" void* _stdcall GetHitPtr(void*);
 
 namespace Base {
@@ -456,6 +456,8 @@ namespace Base {
 		namespace TempData {
 			FsmData t_ManualFsmAction;
 			bool t_executingFsmAction = false;
+			void* t_HookCoordinate = nullptr;
+			void* t_HookCoordinate2 = nullptr;
 		}
 
 		//坐标
@@ -643,6 +645,8 @@ namespace Base {
 		float Angle = 0;
 		//朝向弧度
 		float Radian = 0;
+		//欧拉角
+		Vector3 EulerAngle = Vector3();
 		//相机距离
 		float VisualDistance = 0;
 		//是否处于瞄准状态
@@ -704,6 +708,10 @@ namespace Base {
 			int buffPtr = PlayerBuff::GetBuffPtr(buff);
 			*offsetPtr<float>(BuffsPlot, buffPtr) = duration;
 		}
+		//钩爪变更坐标
+		Vector3 HookCoordinateChange = Vector3();
+		//钩爪变更坐标
+		bool HookChange = false;
 		//玩家数据更新
 		static void Updata() {
 			Coordinate::Entity = Vector3(
@@ -758,8 +766,33 @@ namespace Base {
 				AimingState = false;
 			if (BasicGameData::PlayerDataPlot != nullptr) {
 				AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerDataPlot, 0x2C8);
-				Angle = *offsetPtr<float>(BasicGameData::PlayerDataPlot, 0x1F8) * 180.0;
+				EulerAngle = Vector3(
+					*offsetPtr<float>(BasicGameData::PlayerDataPlot, 0x1F0),
+					*offsetPtr<float>(BasicGameData::PlayerDataPlot, 0x1F4),
+					*offsetPtr<float>(BasicGameData::PlayerDataPlot, 0x1F8)
+				);
+				Angle = EulerAngle.x * 180;
 				Radian = 4 * atan(1.0) / 180 * PlayerData::Angle;
+			}
+			else {
+				void* PlayerDataHandlePlot = *(undefined**)MH::Player::PlayerDataHandlePlot;
+				void* PlayerDataHandleOffset1 = nullptr;
+				if (PlayerDataHandlePlot != nullptr)
+					PlayerDataHandleOffset1 = *offsetPtr<undefined**>((undefined(*)())PlayerDataHandlePlot, 0x48);
+				void* PlayerDataHandleOffset2 = nullptr;
+				if (PlayerDataHandleOffset1 != nullptr)
+					PlayerDataHandleOffset2 = *offsetPtr<undefined**>((undefined(*)())PlayerDataHandleOffset1, 0x58);
+				void* PlayerDataHandleOffset3 = nullptr;
+				if (PlayerDataHandleOffset2 != nullptr)
+					PlayerDataHandleOffset3 = *offsetPtr<undefined**>((undefined(*)())PlayerDataHandleOffset2, 0x58);
+				void* PlayerDataHandleOffset4 = nullptr;
+				if (PlayerDataHandleOffset3 != nullptr)
+					PlayerDataHandleOffset4 = *offsetPtr<undefined**>((undefined(*)())PlayerDataHandleOffset3, 0x40);
+				void* PlayerDataHandleOffset5 = nullptr;
+				if (PlayerDataHandleOffset4 != nullptr)
+					PlayerDataHandleOffset5 = *offsetPtr<undefined**>((undefined(*)())PlayerDataHandleOffset4, 0xD0);
+				if (PlayerDataHandleOffset5 != nullptr)
+					BasicGameData::PlayerDataPlot = *offsetPtr<undefined**>((undefined(*)())PlayerDataHandleOffset5, 0x8);
 			}
 			void* ActionPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
 			if (ActionPlot != nullptr) {
@@ -1190,7 +1223,7 @@ namespace Base {
 				//视角相机坐标修改
 				HookLambda(MH::Player::Visual,
 					[]() {
-						GetVisualPtr(&Base::PlayerData::Coordinate::TempData::t_visual);
+						GetRBXPtr(&Base::PlayerData::Coordinate::TempData::t_visual);
 						if (Base::PlayerData::Coordinate::TempData::t_visual != nullptr) {
 							Base::PlayerData::Coordinate::Visual.x = *offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x0);
 							Base::PlayerData::Coordinate::Visual.y = *offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x4);
@@ -1206,7 +1239,7 @@ namespace Base {
 				//武器装饰物修改
 				HookLambda(MH::Weapon::WeaponOrnaments,
 					[]() {
-						GetWeaponPtr(&Base::PlayerData::WeaponOrnaments::TempData::t_ornaments);
+						GetRBXPtr(&Base::PlayerData::WeaponOrnaments::TempData::t_ornaments);
 						if (Base::PlayerData::WeaponOrnaments::TempData::t_ornaments != nullptr) {
 							Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.x = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x160);
 							Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.y = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x164);
@@ -1230,7 +1263,7 @@ namespace Base {
 				//武器坐标修改
 				HookLambda(MH::Weapon::MainWeaponPtr,
 					[]() {
-						GetWeaponPtr(&Base::PlayerData::Weapons::TempData::t_mainWeapon);
+						GetRBXPtr(&Base::PlayerData::Weapons::TempData::t_mainWeapon);
 						if (Base::PlayerData::Weapons::TempData::t_mainWeapon != nullptr) {
 							Base::PlayerData::Weapons::MainWeaponCoordinate = Vector3(
 								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x160),
@@ -1257,7 +1290,7 @@ namespace Base {
 					});
 				HookLambda(MH::Weapon::SecondaryWeaponPtr,
 					[]() {
-						GetWeaponPtr(&Base::PlayerData::Weapons::TempData::t_secondaryWeapon);
+						GetRBXPtr(&Base::PlayerData::Weapons::TempData::t_secondaryWeapon);
 						if (Base::PlayerData::Weapons::TempData::t_secondaryWeapon != nullptr) {
 							Base::PlayerData::Weapons::SecondaryWeaponCoordinate = Vector3(
 								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x160),
@@ -1293,6 +1326,46 @@ namespace Base {
 						);
 						return original();
 					});
+				//修改钩爪坐标
+				HookLambda(MH::Player::HookCoordinateChange,
+					[](auto ptr) {
+						if (Base::PlayerData::HookChange) {
+							*offsetPtr<float>(ptr, 0x60) = Base::PlayerData::HookCoordinateChange.x;
+							*offsetPtr<float>(ptr, 0x64) = Base::PlayerData::HookCoordinateChange.y;
+							*offsetPtr<float>(ptr, 0x68) = Base::PlayerData::HookCoordinateChange.z;
+						}
+						return original(ptr);
+					});
+				HookLambda(MH::Player::HookCoordinateChange2,
+					[](auto RCX, auto RDX,auto ptr) {
+						if (Base::PlayerData::HookChange) {
+							*offsetPtr<float>(ptr, 0x0) = Base::PlayerData::HookCoordinateChange.x;
+							*offsetPtr<float>(ptr, 0x4) = Base::PlayerData::HookCoordinateChange.y;
+							*offsetPtr<float>(ptr, 0x8) = Base::PlayerData::HookCoordinateChange.z;
+						}
+						return original(RCX,RDX,ptr);
+					});
+				HookLambda(MH::Player::HookCoordinateChange3,
+					[]() {
+						GetRDIPtr(&Base::PlayerData::TempData::t_HookCoordinate);
+						if (Base::PlayerData::HookChange) {
+							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0x0) = Base::PlayerData::HookCoordinateChange.x;
+							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0x4) = Base::PlayerData::HookCoordinateChange.y;
+							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0x8) = Base::PlayerData::HookCoordinateChange.z;
+						}
+						return original();
+					});
+				HookLambda(MH::Player::HookCoordinateChange4,
+					[]() {
+						GetRBXPtr(&Base::PlayerData::TempData::t_HookCoordinate2);
+						if (Base::PlayerData::HookChange) {
+							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate2, 0x130) = Base::PlayerData::HookCoordinateChange.x;
+							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate2, 0x134) = Base::PlayerData::HookCoordinateChange.y;
+							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate2, 0x138) = Base::PlayerData::HookCoordinateChange.z;
+						}
+						return original();
+					});
+				
 				MH_ApplyQueued();
 				ModConfig::GameDataInit = true;
 				LOG(INFO) << ModConfig::ModName << " : Game data initialization complete!";
@@ -1330,7 +1403,7 @@ namespace Base {
 			//实时更新地图地址信息
 			BasicGameData::MapPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7D20);
 			//写入地图信息和清除数据
-			if (World::MapId != *offsetPtr<int>(BasicGameData::MapPlot, 0xB88)) {
+			if (Chronoscope::NowTime > *offsetPtr<float>(BasicGameData::MapPlot, 0xC24)) {
 				World::MapId = *offsetPtr<int>(BasicGameData::MapPlot, 0xB88);
 				//清除计时器数据
 				Chronoscope::ChronoscopeList.clear();
