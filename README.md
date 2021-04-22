@@ -92,8 +92,10 @@
 |System_Memory_GetAddressData		|`System_Memory_GetAddressData('142351472','int')`       	    |获取内存地址数据                       |
 |System_Memory_SetAddressData		|`System_Memory_SetAddressData('142351472','int',50)`       	|写入内存地址数据                       |
 |System_GetUUID		                |`System_GetUUID()`       	                                    |获取UUID                       |
-|System_UI_DrawImage		        |`System_UI_DrawImage('name','file',0.5,0.5)`       	        |绘制图片                       |
-|System_UI_RemoveImage		        |`System_UI_RemoveImage('name')`       	                        |移除图片                       |
+|System_UI_DrawImage                |`System_UI_DrawImage('name','IMG.jpg',0.5,0.5,1,1,1,1)`       	|绘制图片                       |
+|System_UI_RemoveImage              |`System_UI_RemoveImage('name')`       	                        |移除图片                       |
+|System_UI_DrawText                 |`System_UI_DrawText('name','text',0.5,0.5,1,1,1,1,1)`       	|绘制文字                       |
+|System_UI_RemoveText               |`System_UI_RemoveText('name')`       	                        |移除文字                       |
 
 ### 玩家
 |                                         |示例							                                         |说明						   |

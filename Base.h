@@ -266,7 +266,24 @@ namespace Base {
 				string ImageFile = ""
 				) :BgAlpha(BgAlpha), Channel(Channel), Pos(Pos), Name(Name), ImageFile(ImageFile) { };
 		};
+		struct NewText {
+			float BgAlpha = 1;
+			Vector3 Color = Vector3();
+			Vector2 Pos = Vector2();
+			string Name = "";
+			string Text = "";
+			float Size = 1;
+			NewText(
+				float BgAlpha = 1,
+				Vector3 Color = Vector3(1, 1, 1),
+				Vector2 Pos = Vector2(),
+				string Name = "",
+				string Text = "",
+				float Size = 1
+			) :BgAlpha(BgAlpha), Color(Color), Pos(Pos), Name(Name), Text(Text), Size(Size) { };
+		};
 		map<string, NewImage> Img;
+		map<string, NewText> Text;
 	}
 #pragma endregion
 	//Î¯ÍÐ

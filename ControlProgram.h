@@ -313,7 +313,7 @@ namespace ControlProgram {
 			}
 			ImGui::End();
 		}
-
+		//热键窗口
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysUseWindowPadding;
 		ImGui::Begin("HotKeysEdit", NULL, window_flags);
 		if (Base::ModConfig::HotKeyEdit) {
@@ -323,7 +323,7 @@ namespace ControlProgram {
 		}
 		ImHotKey::Edit(ImHotKey::hotkeys.data(), ImHotKey::hotkeys.size(), u8"热键编辑器");
 		ImGui::End();
-
+		//图片显示
 		for (auto [Begin, Data] : Base::Draw::Img) {
 			if (ImgTextureCache.find(Data.ImageFile) != ImgTextureCache.end()) {
 				if (ImgTextureCache[Data.ImageFile].texture == NULL) {
@@ -342,11 +342,28 @@ namespace ControlProgram {
 				ImGui::GetMainViewport()->Pos.x + ImGui::GetMainViewport()->Size.x * Data.Pos.x,
 				ImGui::GetMainViewport()->Pos.y + ImGui::GetMainViewport()->Size.y * Data.Pos.y
 			), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-			ImGui::Begin(Data.Name.c_str(), NULL, window_flags);
+			ImGui::Begin(("IMG_" + Data.Name).c_str(), NULL, window_flags);
 				//绘制图像
 				ImGui::Image((void*)ImgTextureCache[Data.ImageFile].texture, ImVec2(ImgTextureCache[Data.ImageFile].width, ImgTextureCache[Data.ImageFile].height), ImVec2(0.0, 0.0), ImVec2(1.0, 1.0), ImVec4(Data.Channel.x, Data.Channel.y, Data.Channel.z, Data.BgAlpha));
 			ImGui::End();
 		}
+		//文字窗口
+		for (auto [Begin, Data] : Base::Draw::Text) {
+			//创建窗口
+			ImGui::SetNextWindowBgAlpha(0);
+			ImGui::SetNextWindowPos(ImVec2(
+				ImGui::GetMainViewport()->Pos.x + ImGui::GetMainViewport()->Size.x * Data.Pos.x,
+				ImGui::GetMainViewport()->Pos.y + ImGui::GetMainViewport()->Size.y * Data.Pos.y
+			), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+			ImGui::Begin(("TEXT_" + Data.Name).c_str(), NULL, window_flags);
+			//绘制文字
+			ImGui::SetWindowFontScale(Data.Size);
+			ImGui::TextColored(ImVec4(Data.Color.x, Data.Color.y, Data.Color.z, Data.BgAlpha), Data.Text.c_str());
+			ImGui::End();
+		}
+		
+
+
 		ImGui::Render();
 		pContext->OMSetRenderTargets(1, &mainRenderTargetView, NULL);
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
