@@ -44,6 +44,8 @@ namespace Base {
 					hotReload = false;
 				if (string _Tmpy = "--Disable"; string::npos != code.find(_Tmpy))
 					start = false;
+				if (string _Tmpy = "--About"; string::npos != code.find(_Tmpy))
+					Base::ModConfig::About = true;
 			};
 			LuaCodeData(
 				string name = "",
@@ -68,11 +70,12 @@ namespace Base {
 		vector<string> LuaError;
 		bool ModConsole = false;
 		bool HotKeyEdit = false;
+		bool About = false;
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.1.9";
-		long long ModBuild = 119004221902;
+		string ModVersion = "v1.2.0";
+		long long ModBuild = 120004221902;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -284,6 +287,7 @@ namespace Base {
 		};
 		map<string, NewImage> Img;
 		map<string, NewText> Text;
+		map<string, string> About;
 	}
 #pragma endregion
 	//委托
@@ -1386,6 +1390,16 @@ namespace Base {
 					});
 				
 				MH_ApplyQueued();
+				Draw::About["LuaScript"] = u8R"(# 关于
+LuaScript是集成了多个数据操作的怪物猎人世界Lua接口插件，可通过Lua脚本对MHW进行相关数据的操作。
+***
+___
+## 脚本
+LuaScript将加载位于nativePC/LuaScript/下的全部Lua脚本，脚本编写可参考[说明文档](https://docs.alcedogroup.com/)进行编写。
+## 发布
+LuaScript是由Alcedo进行编写并发布于[踩蘑菇](https://www.caimogu.net/post/19658.html)的免费脚本Mod
+Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
+)";
 				ModConfig::GameDataInit = true;
 				LOG(INFO) << ModConfig::ModName << " : Game data initialization complete!";
 				LOG(INFO) << " |  Mod：" << ModConfig::ModName;

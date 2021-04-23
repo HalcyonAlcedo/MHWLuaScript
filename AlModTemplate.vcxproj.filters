@@ -161,6 +161,9 @@
     <ClInclude Include="deps\imHotKey.h">
       <Filter>源代码</Filter>
     </ClInclude>
+    <ClInclude Include="deps\imgui\imgui_markdown.h">
+      <Filter>源代码\imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="asm.asm">

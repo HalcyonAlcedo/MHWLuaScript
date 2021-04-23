@@ -3,6 +3,7 @@
 #include "imgui/imgui_impl_win32.h"
 #include "imgui/imgui_impl_dx11.h"
 #include "implot/implot.h"
+#include "imgui/imgui_markdown.h"
 #include <d3d11.h>
 #include <dxgi.h>
 #define STB_IMAGE_IMPLEMENTATION
@@ -168,6 +169,10 @@ namespace ControlProgram {
 			{
 				if (ImGui::Button(u8"更新脚本代码")) {
 					for (string file_name : Base::LuaHandle::LuaFiles) { Base::LuaHandle::LuaCode[file_name].Update(); }
+				}
+				ImGui::SameLine();
+				if (ImGui::Button(u8"关于")) {
+					Base::ModConfig::About = true;
 				}
 				for (string file_name : Base::LuaHandle::LuaFiles) {
 					ImGui::TextColored(Base::LuaHandle::LuaCode[file_name].start ? ImVec4(0.0f, 0.8f, 0.0f, 1.0f) : ImVec4(0.8f, 0.0f, 0.0f, 1.0f), Component::string_To_UTF8(file_name).c_str());
@@ -367,6 +372,35 @@ namespace ControlProgram {
 			ImGui::Begin(("TEXT_" + Data.Name).c_str(), NULL, window_flags);
 			ImGui::SetWindowFontScale(Data.Size);
 			ImGui::TextColored(ImVec4(Data.Color.x, Data.Color.y, Data.Color.z, Data.BgAlpha), Data.Text.c_str());
+			ImGui::End();
+		}
+		//About
+		if (Base::ModConfig::About) {
+			ImGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
+			ImGui::Begin("About");
+			// Left
+			static string selected = "LuaScript";
+			{
+				ImGui::BeginChild("left pane", ImVec2(150, 0), true);
+				for (auto [title, text] : Base::Draw::About) {
+					if (ImGui::Selectable(title.c_str(), selected == title))
+						selected = title;
+				}
+				ImGui::EndChild();
+			}
+			ImGui::SameLine();
+			// Right
+			{
+				ImGui::BeginGroup();
+				ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
+				ImGui::Text(selected.c_str());
+				ImGui::Separator();
+				ImGui::MarkdownConfig mdConfig{ NULL, NULL, NULL, NULL, NULL, NULL };
+				ImGui::Markdown(Base::Draw::About[selected].c_str(), Base::Draw::About[selected].length(), mdConfig);
+				ImGui::EndChild();
+				if (ImGui::Button(u8"关闭")) { Base::ModConfig::About = false; }
+				ImGui::EndGroup();
+			}
 			ImGui::End();
 		}
 		ImGui::Render();

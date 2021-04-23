@@ -1270,6 +1270,12 @@ static int Lua_Http_GetHttpData(lua_State* pL) {
     lua_pushstring(pL, NetworkServer::GetHttpData(httpUrl).c_str());
     return 1;
 }
+//录入脚本关于信息
+static int Lua_About(lua_State* pL) {
+    string About = (string)lua_tostring(pL, -1);
+    Base::Draw::About[Nowlua] = About;
+    return 0;
+}
 #pragma endregion
 //==============================================
 // Handling error
@@ -1617,6 +1623,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Lua_Variable_DestroyGlobalVariable", Lua_Variable_DestroyGlobalVariable);
     //获取网络数据
     lua_register(L, "Lua_Http_GetHttpData", Lua_Http_GetHttpData);
+    //录入脚本关于信息
+    lua_register(L, "Lua_About", Lua_About);
 #pragma endregion
     int err = 0;
     
