@@ -24,6 +24,25 @@ namespace Base {
 		float x, y;
 		Vector2(float x = 0, float y = 0) :x(x), y(y) { };
 	};
+#pragma region ModConfig
+	namespace ModConfig {
+		//内置参数
+		bool GameDataInit = false;
+		bool InitErrInfo = true;
+		int InitErrCount = 0;
+		vector<string> LuaFiles;
+		vector<string> LuaError;
+		bool ModConsole = false;
+		bool HotKeyEdit = false;
+		bool About = false;
+		//可设置参数
+		string ModName = "LuaScript";
+		string ModAuthor = "Alcedo";
+		string ModVersion = "v1.2.0";
+		long long ModBuild = 120004221902;
+		string Version = "421470";
+	}
+#pragma endregion
 #pragma region LuaHandle
 	namespace LuaHandle {
 		struct LuaCodeData {
@@ -45,7 +64,7 @@ namespace Base {
 				if (string _Tmpy = "--Disable"; string::npos != code.find(_Tmpy))
 					start = false;
 				if (string _Tmpy = "--About"; string::npos != code.find(_Tmpy))
-					Base::ModConfig::About = true;
+					ModConfig::About = true;
 			};
 			LuaCodeData(
 				string name = "",
@@ -58,25 +77,6 @@ namespace Base {
 		vector<string> LuaFiles;
 		vector<string> LuaError;
 		map<string, LuaCodeData> LuaCode;
-	}
-#pragma endregion
-#pragma region ModConfig
-	namespace ModConfig {
-		//内置参数
-		bool GameDataInit = false;
-		bool InitErrInfo = true;
-		int InitErrCount = 0;
-		vector<string> LuaFiles;
-		vector<string> LuaError;
-		bool ModConsole = false;
-		bool HotKeyEdit = false;
-		bool About = false;
-		//可设置参数
-		string ModName = "LuaScript";
-		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.0";
-		long long ModBuild = 120004221902;
-		string Version = "421470";
 	}
 #pragma endregion
 	//游戏基础地址
