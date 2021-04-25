@@ -67,15 +67,7 @@ namespace ControlProgram {
 		ImGui_ImplDX11_Init(pDevice, pContext);
 	}
 	//加载图片并写入纹理
-	bool LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
-	{
-		// Load from disk into a raw RGBA buffer
-		int image_width = 0;
-		int image_height = 0;
-		unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
-		if (image_data == NULL)
-			return false;
-
+	void LoadTexture(unsigned char* image_data, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height, int image_width, int image_height) {
 		// Create texture
 		D3D11_TEXTURE2D_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
@@ -109,10 +101,26 @@ namespace ControlProgram {
 		*out_width = image_width;
 		*out_height = image_height;
 		stbi_image_free(image_data);
-
+	}
+	bool LoadTextureFromFile(const char* filename, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height)
+	{
+		// Load from disk into a raw RGBA buffer
+		int image_width = 0;
+		int image_height = 0;
+		unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
+		if (image_data == NULL)
+			return false;
+		LoadTexture(image_data, out_srv, out_width, out_height, image_width, image_height);
 		return true;
 	}
-
+	bool LoadTextureFromBase(string Base64Data, ID3D11ShaderResourceView** out_srv, int* out_width, int* out_height, int image_width, int image_height)
+	{
+		unsigned char* image_data = Base::Calculation::Base64ToImg(Base64Data);
+		if (image_data == NULL)
+			return false;
+		LoadTexture(image_data, out_srv, out_width, out_height, image_width, image_height);
+		return true;
+	}
 	HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)
 	{
 		if (!init)
@@ -343,13 +351,21 @@ namespace ControlProgram {
 		for (auto [Begin, Data] : Base::Draw::Img) {
 			if (ImgTextureCache.find(Data.ImageFile) != ImgTextureCache.end()) {
 				if (ImgTextureCache[Data.ImageFile].texture == NULL) {
-					bool ret = LoadTextureFromFile(Data.ImageFile.c_str(), &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height);
+					bool ret;
+					if (Data.Base64)
+						ret = LoadTextureFromFile(Data.ImageFile.c_str(), &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height);
+					else
+						ret = LoadTextureFromBase(Data.ImageFile, &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height, Data.Width, Data.Height);
 					IM_ASSERT(ret);
 				}
 			}
 			else {
 				ImgTextureCache[Data.ImageFile] = TextureCache();
-				bool ret = LoadTextureFromFile(Data.ImageFile.c_str(), &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height);
+				bool ret;
+				if (Data.Base64)
+					ret = LoadTextureFromFile(Data.ImageFile.c_str(), &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height);
+				else
+					ret = LoadTextureFromBase(Data.ImageFile, &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height, Data.Width, Data.Height);
 				IM_ASSERT(ret);
 			}
 			//创建窗口

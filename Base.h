@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include "Base64.h"
 #include "MonsterBuff.h"
 #include "PlayerBuff.h"
 #include "Network.h"
@@ -250,6 +251,12 @@ namespace Base {
 				angle_axis[2] = q3 * 2.0f;
 			}
 		}
+		static unsigned char* Base64ToImg(string Base64Data) {
+			vector<BYTE> decodedData = base64_decode(Base64Data);
+			unsigned char* img = new unsigned char[decodedData.size()];
+			copy(decodedData.begin(), decodedData.end(), img);
+			return (img);
+		}
 	}
 #pragma endregion
 	//Õº–ŒªÊ÷∆
@@ -261,13 +268,19 @@ namespace Base {
 			Vector2 Pos = Vector2();
 			string Name = "";
 			string ImageFile = "";
+			bool Base64 = false;
+			float Width = 0;
+			float Height = 0;
 			NewImage(
 				float BgAlpha = 1,
 				Vector3 Channel = Vector3(1,1,1),
 				Vector2 Pos = Vector2(),
 				string Name = "",
-				string ImageFile = ""
-				) :BgAlpha(BgAlpha), Channel(Channel), Pos(Pos), Name(Name), ImageFile(ImageFile) { };
+				string ImageFile = "",
+				bool Base64 = false,
+				float Width = 0,
+				float Height = 0
+				) :BgAlpha(BgAlpha), Channel(Channel), Pos(Pos), Name(Name), ImageFile(ImageFile), Base64(Base64), Width(Width), Height(Height){ };
 		};
 		struct NewText {
 			float BgAlpha = 1;

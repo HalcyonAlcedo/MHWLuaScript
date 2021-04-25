@@ -74,6 +74,9 @@
     <ClCompile Include="deps\implot\implot_items.cpp">
       <Filter>源代码\implot</Filter>
     </ClCompile>
+    <ClCompile Include="deps\base64.cpp">
+      <Filter>源代码</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="deps\minhook\libMinHook.x64.lib">
@@ -163,6 +166,9 @@
     </ClInclude>
     <ClInclude Include="deps\imgui\imgui_markdown.h">
       <Filter>源代码\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="deps\base64.h">
+      <Filter>源代码</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
