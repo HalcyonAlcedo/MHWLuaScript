@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include "Base64.h"
 #include "MonsterBuff.h"
 #include "PlayerBuff.h"
 #include "Network.h"
@@ -24,6 +25,25 @@ namespace Base {
 		float x, y;
 		Vector2(float x = 0, float y = 0) :x(x), y(y) { };
 	};
+#pragma region ModConfig
+	namespace ModConfig {
+		//内置参数
+		bool GameDataInit = false;
+		bool InitErrInfo = true;
+		int InitErrCount = 0;
+		vector<string> LuaFiles;
+		vector<string> LuaError;
+		bool ModConsole = false;
+		bool HotKeyEdit = false;
+		bool About = false;
+		//可设置参数
+		string ModName = "LuaScript";
+		string ModAuthor = "Alcedo";
+		string ModVersion = "v1.2.0";
+		long long ModBuild = 120004221902;
+		string Version = "421470";
+	}
+#pragma endregion
 #pragma region LuaHandle
 	namespace LuaHandle {
 		struct LuaCodeData {
@@ -45,7 +65,7 @@ namespace Base {
 				if (string _Tmpy = "--Disable"; string::npos != code.find(_Tmpy))
 					start = false;
 				if (string _Tmpy = "--About"; string::npos != code.find(_Tmpy))
-					Base::ModConfig::About = true;
+					ModConfig::About = true;
 			};
 			LuaCodeData(
 				string name = "",
@@ -58,25 +78,6 @@ namespace Base {
 		vector<string> LuaFiles;
 		vector<string> LuaError;
 		map<string, LuaCodeData> LuaCode;
-	}
-#pragma endregion
-#pragma region ModConfig
-	namespace ModConfig {
-		//内置参数
-		bool GameDataInit = false;
-		bool InitErrInfo = true;
-		int InitErrCount = 0;
-		vector<string> LuaFiles;
-		vector<string> LuaError;
-		bool ModConsole = false;
-		bool HotKeyEdit = false;
-		bool About = false;
-		//可设置参数
-		string ModName = "LuaScript";
-		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.0";
-		long long ModBuild = 120004221902;
-		string Version = "421470";
 	}
 #pragma endregion
 	//游戏基础地址
@@ -250,6 +251,12 @@ namespace Base {
 				angle_axis[2] = q3 * 2.0f;
 			}
 		}
+		static unsigned char* Base64ToImg(string Base64Data) {
+			vector<BYTE> decodedData = base64_decode(Base64Data);
+			unsigned char* img = new unsigned char[decodedData.size()];
+			copy(decodedData.begin(), decodedData.end(), img);
+			return (img);
+		}
 	}
 #pragma endregion
 	//图形绘制
@@ -261,13 +268,19 @@ namespace Base {
 			Vector2 Pos = Vector2();
 			string Name = "";
 			string ImageFile = "";
+			bool Base64 = false;
+			float Width = 0;
+			float Height = 0;
 			NewImage(
 				float BgAlpha = 1,
 				Vector3 Channel = Vector3(1,1,1),
 				Vector2 Pos = Vector2(),
 				string Name = "",
-				string ImageFile = ""
-				) :BgAlpha(BgAlpha), Channel(Channel), Pos(Pos), Name(Name), ImageFile(ImageFile) { };
+				string ImageFile = "",
+				bool Base64 = false,
+				float Width = 0,
+				float Height = 0
+				) :BgAlpha(BgAlpha), Channel(Channel), Pos(Pos), Name(Name), ImageFile(ImageFile), Base64(Base64), Width(Width), Height(Height){ };
 		};
 		struct NewText {
 			float BgAlpha = 1;

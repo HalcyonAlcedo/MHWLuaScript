@@ -1,6 +1,7 @@
 #pragma once
-#include <lua.hpp> 
+#include <luajit\lua.hpp>
 #include "loader.h"
+
 lua_State* L;
 static string Nowlua;
 static string Sublua;
@@ -1082,6 +1083,28 @@ static int System_UI_DrawImage(lua_State* pL) {
     Base::Draw::Img[name] = Base::Draw::NewImage(alpha, Channel, Base::Vector2(x, y), name, img);
     return 0;
 }
+static int System_UI_DrawBase64Image(lua_State* pL) {
+    string name = (string)lua_tostring(pL, 1);
+    string img = (string)lua_tostring(pL, 2);
+    float x = (float)lua_tonumber(pL, 3);
+    float y = (float)lua_tonumber(pL, 4);
+    float width = (float)lua_tonumber(pL, 5);
+    float height = (float)lua_tonumber(pL, 6);
+    Base::Vector3 Channel = Base::Vector3(1, 1, 1);
+    float alpha = 1;
+    if (lua_gettop(pL) > 6) {
+        alpha = (float)lua_tonumber(pL, 7);
+    }
+    if (lua_gettop(pL) > 7) {
+        Channel = Base::Vector3(
+            (float)lua_tonumber(pL, 8),
+            (float)lua_tonumber(pL, 9),
+            (float)lua_tonumber(pL, 10)
+        );
+    }
+    Base::Draw::Img[name] = Base::Draw::NewImage(alpha, Channel, Base::Vector2(x, y), name, img,true, width, height);
+    return 0;
+}
 static int System_UI_RemoveImage(lua_State* pL) {
     string name = (string)lua_tostring(pL, 1);
     Base::Draw::Img.erase(name);
@@ -1581,6 +1604,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_Memory_SetAddressData", System_Memory_SetAddressData);
     //向屏幕添加图片
     lua_register(L, "System_UI_DrawImage", System_UI_DrawImage);
+    //向屏幕添加Base64图片
+    lua_register(L, "System_UI_DrawBase64Image", System_UI_DrawBase64Image);
     //移除添加的图片
     lua_register(L, "System_UI_RemoveImage", System_UI_RemoveImage);
     //向屏幕添加文字
