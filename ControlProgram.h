@@ -351,22 +351,26 @@ namespace ControlProgram {
 		for (auto [Begin, Data] : Base::Draw::Img) {
 			if (ImgTextureCache.find(Data.ImageFile) != ImgTextureCache.end()) {
 				if (ImgTextureCache[Data.ImageFile].texture == NULL) {
-					bool ret;
-					if (Data.Base64)
-						ret = LoadTextureFromFile(Data.ImageFile.c_str(), &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height);
-					else
-						ret = LoadTextureFromBase(Data.ImageFile, &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height, Data.Width, Data.Height);
-					IM_ASSERT(ret);
+					if (Data.Base64) {
+						bool ret = LoadTextureFromBase(Data.ImageFile, &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height, Data.Width, Data.Height);
+						IM_ASSERT(ret);
+					}
+					else {
+						bool ret = LoadTextureFromFile(Data.ImageFile.c_str(), &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height);
+						IM_ASSERT(ret);
+					}
 				}
 			}
 			else {
 				ImgTextureCache[Data.ImageFile] = TextureCache();
-				bool ret;
-				if (Data.Base64)
-					ret = LoadTextureFromFile(Data.ImageFile.c_str(), &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height);
-				else
-					ret = LoadTextureFromBase(Data.ImageFile, &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height, Data.Width, Data.Height);
-				IM_ASSERT(ret);
+				if (Data.Base64) {
+					bool ret = LoadTextureFromBase(Data.ImageFile, &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height, Data.Width, Data.Height);
+					IM_ASSERT(ret);
+				}
+				else {
+					bool ret = LoadTextureFromFile(Data.ImageFile.c_str(), &ImgTextureCache[Data.ImageFile].texture, &ImgTextureCache[Data.ImageFile].width, &ImgTextureCache[Data.ImageFile].height);
+					IM_ASSERT(ret);
+				}
 			}
 			//´´½¨´°¿Ú
 			ImGui::SetNextWindowBgAlpha(0);
@@ -392,6 +396,7 @@ namespace ControlProgram {
 		}
 		//About
 		if (Base::ModConfig::About) {
+			ImGui::SetNextWindowBgAlpha(0.25f);
 			ImGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
 			ImGui::Begin("About");
 			// Left

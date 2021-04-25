@@ -269,8 +269,8 @@ namespace Base {
 			string Name = "";
 			string ImageFile = "";
 			bool Base64 = false;
-			float Width = 0;
-			float Height = 0;
+			int Width = 0;
+			int Height = 0;
 			NewImage(
 				float BgAlpha = 1,
 				Vector3 Channel = Vector3(1,1,1),
@@ -278,8 +278,8 @@ namespace Base {
 				string Name = "",
 				string ImageFile = "",
 				bool Base64 = false,
-				float Width = 0,
-				float Height = 0
+				int Width = 0,
+				int Height = 0
 				) :BgAlpha(BgAlpha), Channel(Channel), Pos(Pos), Name(Name), ImageFile(ImageFile), Base64(Base64), Width(Width), Height(Height){ };
 		};
 		struct NewText {

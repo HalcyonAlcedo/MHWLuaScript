@@ -1,5 +1,5 @@
 #pragma once
-#include <luajit\lua.hpp>
+#include <lua.hpp>
 #include "loader.h"
 
 lua_State* L;
@@ -1088,8 +1088,8 @@ static int System_UI_DrawBase64Image(lua_State* pL) {
     string img = (string)lua_tostring(pL, 2);
     float x = (float)lua_tonumber(pL, 3);
     float y = (float)lua_tonumber(pL, 4);
-    float width = (float)lua_tonumber(pL, 5);
-    float height = (float)lua_tonumber(pL, 6);
+    int width = (float)lua_tointeger(pL, 5);
+    int height = (float)lua_tointeger(pL, 6);
     Base::Vector3 Channel = Base::Vector3(1, 1, 1);
     float alpha = 1;
     if (lua_gettop(pL) > 6) {
@@ -1102,7 +1102,7 @@ static int System_UI_DrawBase64Image(lua_State* pL) {
             (float)lua_tonumber(pL, 10)
         );
     }
-    Base::Draw::Img[name] = Base::Draw::NewImage(alpha, Channel, Base::Vector2(x, y), name, img,true, width, height);
+    Base::Draw::Img[name] = Base::Draw::NewImage(alpha, Channel, Base::Vector2(x, y), name, img, true, width, height);
     return 0;
 }
 static int System_UI_RemoveImage(lua_State* pL) {
