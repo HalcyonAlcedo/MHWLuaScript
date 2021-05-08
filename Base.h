@@ -39,8 +39,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.0";
-		long long ModBuild = 120004221902;
+		string ModVersion = "v1.2.0 Alpha 2";
+		long long ModBuild = 120005081523;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -1521,6 +1521,8 @@ Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 			Commission::Run();
 			//更新Xbox手柄信息
 			XboxPad::Updata();
+			//WebSocket数据处理
+			NetworkServer::WSHandle();
 		}
 	}
 }

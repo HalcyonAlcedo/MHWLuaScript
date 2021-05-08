@@ -1,3 +1,7 @@
+#ifdef _WIN32
+#pragma comment( lib, "ws2_32" )
+#include <WinSock2.h>
+#endif
 #include <fstream>
 #include <queue>
 #include <functional>
@@ -34,6 +38,17 @@ __declspec(dllexport) extern bool Load()
 	for (string file_name : Base::LuaHandle::LuaFiles) {
 		LOG(INFO) << file_name;
 	}
+	//初始化WebSocket
+#ifdef _WIN32
+	INT rc;
+	WSADATA wsaData;
+
+	rc = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (rc) {
+		printf("WSAStartup Failed.\n");
+		return 1;
+	}
+#endif
 	//初始化钩子
 	MH_Initialize();
 	HookLambda(MH::World::MapClockLocal,

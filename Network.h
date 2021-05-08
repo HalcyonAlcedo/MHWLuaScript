@@ -1,7 +1,33 @@
 #pragma once
 #include "HttpClient.h"
+#include "easywsclient.hpp"
+#include <assert.h>
 
 namespace NetworkServer {
+	static easywsclient::WebSocket::pointer ws = NULL;
+	queue<string> MessageCache;
+
+	void handle_message(const string& message)
+	{
+		MessageCache.push(message);
+	}
+
+	static void LinkWS(string link) {
+		ws = easywsclient::WebSocket::from_url(link);
+		assert(ws);
+	}
+
+	static void WSSendMessage(string Message) {
+		ws->send(Message);
+	}
+
+	static void WSHandle() {
+		if (ws != NULL and ws->getReadyState() != easywsclient::WebSocket::CLOSED) {
+			ws->poll();
+			ws->dispatch(handle_message);
+		}
+	}
+	
     string GetHttpData(string url) {
 		HttpClient session;
 		HttpRequest req;

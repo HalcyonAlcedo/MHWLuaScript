@@ -1293,6 +1293,28 @@ static int Lua_Http_GetHttpData(lua_State* pL) {
     lua_pushstring(pL, NetworkServer::GetHttpData(httpUrl).c_str());
     return 1;
 }
+//连接到WS服务器
+static int Lua_WS_LinkWSServer(lua_State* pL) {
+    string WSSLink = (string)lua_tostring(pL, -1);
+    NetworkServer::LinkWS(WSSLink);
+    return 0;
+}
+//发送消息到WS服务器
+static int Lua_WS_SendMessage(lua_State* pL) {
+    string Message = (string)lua_tostring(pL, -1);
+    NetworkServer::WSSendMessage(Message);
+    return 0;
+}
+//从服务器消息堆栈中接收一条消息并弹出
+static int Lua_WS_GetMessage(lua_State* pL) {
+    if (!NetworkServer::MessageCache.empty()) {
+        lua_pushstring(pL, NetworkServer::MessageCache.front().c_str());
+        NetworkServer::MessageCache.pop();
+    }
+    else 
+        lua_pushstring(pL, "");
+    return 1;
+}
 //录入脚本关于信息
 static int Lua_About(lua_State* pL) {
     string About = (string)lua_tostring(pL, -1);
@@ -1648,6 +1670,12 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Lua_Variable_DestroyGlobalVariable", Lua_Variable_DestroyGlobalVariable);
     //获取网络数据
     lua_register(L, "Lua_Http_GetHttpData", Lua_Http_GetHttpData);
+    //连接到websocket服务器
+    lua_register(L, "Lua_WS_LinkWSServer", Lua_WS_LinkWSServer);
+    //发送信息至WS服务器
+    lua_register(L, "Lua_WS_SendMessage", Lua_WS_SendMessage);
+    //获取服务器消息堆栈中的一条数据并弹出该数据
+    lua_register(L, "Lua_WS_GetMessage", Lua_WS_GetMessage);
     //录入脚本关于信息
     lua_register(L, "Lua_About", Lua_About);
 #pragma endregion

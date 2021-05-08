@@ -77,6 +77,9 @@
     <ClCompile Include="deps\base64.cpp">
       <Filter>源代码</Filter>
     </ClCompile>
+    <ClCompile Include="easywsclient.cpp">
+      <Filter>源代码</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="deps\minhook\libMinHook.x64.lib">
@@ -168,6 +171,9 @@
       <Filter>源代码\imgui</Filter>
     </ClInclude>
     <ClInclude Include="deps\base64.h">
+      <Filter>源代码</Filter>
+    </ClInclude>
+    <ClInclude Include="easywsclient.hpp">
       <Filter>源代码</Filter>
     </ClInclude>
   </ItemGroup>

@@ -172,6 +172,7 @@
     <ClCompile Include="deps\implot\implot_items.cpp" />
     <ClCompile Include="deps\kiero.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="easywsclient.cpp" />
     <ClCompile Include="HttpClient.cpp" />
     <ClCompile Include="HttpClient.h" />
     <ClCompile Include="impl\d3d11_impl.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="deps\stb_image.h">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
+    <ClInclude Include="easywsclient.hpp" />
     <ClInclude Include="Execution.h" />
     <ClInclude Include="impl\d3d11_impl.h" />
     <ClInclude Include="impl\shared.h" />
