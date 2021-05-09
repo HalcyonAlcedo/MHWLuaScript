@@ -27,6 +27,17 @@ namespace NetworkServer {
 			ws->dispatch(handle_message);
 		}
 	}
+
+	static bool WSState() {
+		if (ws != NULL) {
+			if (
+				ws->getReadyState() == easywsclient::WebSocket::CONNECTING or
+				ws->getReadyState() == easywsclient::WebSocket::OPEN
+			)
+				return true;
+		}
+		return  false;
+	}
 	
     string GetHttpData(string url) {
 		HttpClient session;

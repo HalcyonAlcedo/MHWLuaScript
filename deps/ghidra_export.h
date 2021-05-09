@@ -55,11 +55,11 @@ namespace MH {
         static undefined8(*MapClockLocal)(float*, float) = (undefined8(*)(float*, float))0x140AE9EA0;
         static undefined(*GameClock)() = (undefined(*)())0x145073D60;
         static undefined(*GameClockControl)(float) = (undefined(*)(float))0x141B9EB37;
-        static undefined(*Message)() = (undefined(*)())0x144FE7D80;
+        static undefined(*Message)() = (undefined(*)())0x144D18278;
     }
     namespace Shlp {
-        static void* (*GetShlp)(void*, int) = (void* (*)(void*, int))0x140F86090;//����shlp·�� shlp��ַ shlpid
-        static void(*CallShlp)(void*, void*, void*, void*) = (void(*)(void*, void*, void*, void*))0x141ABA910;//shlp
+        static void* (*GetShlp)(void*, int) = (void* (*)(void*, int))0x140F86090;
+        static void(*CallShlp)(void*, void*, void*, void*) = (void(*)(void*, void*, void*, void*))0x141ABA910;
     }
     namespace Savefile {
         static bool(*CheckFlag)(longlong, uint) = (bool(*)(longlong, uint))0x14136bdf0;

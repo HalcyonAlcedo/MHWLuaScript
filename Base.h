@@ -40,7 +40,7 @@ namespace Base {
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
 		string ModVersion = "v1.2.0 Alpha 2";
-		long long ModBuild = 120005081523;
+		long long ModBuild = 120005082242;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -120,6 +120,7 @@ namespace Base {
 			pair<int, int> Filter(255, 255);
 		}
 		int MapId = 0;
+		string Massage = "";
 	}
 #pragma endregion
 	//计时器
@@ -1521,6 +1522,11 @@ Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 			Commission::Run();
 			//更新Xbox手柄信息
 			XboxPad::Updata();
+			//更新玩家消息内容
+			void* MassagePlot = *(undefined**)MH::World::Message;
+			void* PlayerMessageOffset = *offsetPtr<undefined**>((undefined(*)())MassagePlot, 0x38);
+			if(PlayerMessageOffset != nullptr)
+				World::Massage = offsetPtr<char>(PlayerMessageOffset, 0x80);
 			//WebSocket数据处理
 			NetworkServer::WSHandle();
 		}

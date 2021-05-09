@@ -283,6 +283,10 @@ static int Game_World_GetMapId(lua_State* pL) {
     lua_pushinteger(pL, Base::World::MapId);
     return 1;
 }
+static int Game_World_Message(lua_State* pL) {
+    lua_pushstring(pL, Base::World::Massage.c_str());
+    return 1;
+}
 static int Game_Monster_SetFilter(lua_State* pL) {
     int id = (int)lua_tointeger(pL, 1);
     int subId = (int)lua_tointeger(pL, 2);
@@ -1315,6 +1319,11 @@ static int Lua_WS_GetMessage(lua_State* pL) {
         lua_pushstring(pL, "");
     return 1;
 }
+//从服务器消息堆栈中接收一条消息并弹出
+static int Lua_WS_GetLinkState(lua_State* pL) {
+    lua_pushboolean(pL, NetworkServer::WSState());
+    return 1;
+}
 //录入脚本关于信息
 static int Lua_About(lua_State* pL) {
     string About = (string)lua_tostring(pL, -1);
@@ -1364,7 +1373,7 @@ int LuaErrorRecord(string error) {
 int Lua_Main(string LuaFile)
 {
     lua_State* L = luaL_newstate();
-    luaopen_base(L);
+    //luaopen_base(L);
     luaL_openlibs(L);
 
 #pragma region Game
@@ -1499,6 +1508,8 @@ int Lua_Main(string LuaFile)
     #pragma endregion
     //获取当前地图Id
     lua_register(L, "Game_World_GetMapId", Game_World_GetMapId);
+    //获取聊天消息
+    lua_register(L, "Game_World_Message", Game_World_Message);
     #pragma region Monster
     //设置怪物筛选器
     lua_register(L, "Game_Monster_SetFilter", Game_Monster_SetFilter);
@@ -1676,6 +1687,9 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Lua_WS_SendMessage", Lua_WS_SendMessage);
     //获取服务器消息堆栈中的一条数据并弹出该数据
     lua_register(L, "Lua_WS_GetMessage", Lua_WS_GetMessage);
+    //获取服务器连接状态
+    lua_register(L, "Lua_WS_GetLinkState", Lua_WS_GetLinkState);
+    
     //录入脚本关于信息
     lua_register(L, "Lua_About", Lua_About);
 #pragma endregion
