@@ -16,7 +16,7 @@ extern "C" void* _stdcall GetRDIPtr(void*);
 extern "C" void* _stdcall GetHitPtr(void*);
 
 namespace Base {
-	//å¸¸ç”¨ç»“æ„
+	//³£ÓÃ½á¹¹
 	struct Vector3 {
 		float x, y, z;
 		Vector3(float x = 0, float y = 0, float z = 0) :x(x), y(y), z(z) { };
@@ -27,7 +27,7 @@ namespace Base {
 	};
 #pragma region ModConfig
 	namespace ModConfig {
-		//å†…ç½®å‚æ•°
+		//ÄÚÖÃ²ÎÊı
 		bool GameDataInit = false;
 		bool InitErrInfo = true;
 		int InitErrCount = 0;
@@ -36,7 +36,7 @@ namespace Base {
 		bool ModConsole = false;
 		bool HotKeyEdit = false;
 		bool About = false;
-		//å¯è®¾ç½®å‚æ•°
+		//¿ÉÉèÖÃ²ÎÊı
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
 		string ModVersion = "v1.2.0 Alpha 2";
@@ -51,7 +51,7 @@ namespace Base {
 			string code;
 			string file;
 			bool start;
-			bool hotReload;//hotReloadæ¨¡å¼ä¸‹luaä¼šç›´æ¥è¯»å–æ–‡ä»¶è€Œä¸é€šè¿‡ç¼“å­˜çš„æ•°æ®æ‰§è¡Œä»£ç 
+			bool hotReload;//hotReloadÄ£Ê½ÏÂlua»áÖ±½Ó¶ÁÈ¡ÎÄ¼ş¶ø²»Í¨¹ı»º´æµÄÊı¾İÖ´ĞĞ´úÂë
 			void Update()
 			{
 				ifstream ifile(file);
@@ -80,9 +80,9 @@ namespace Base {
 		map<string, LuaCodeData> LuaCode;
 	}
 #pragma endregion
-	//æ¸¸æˆåŸºç¡€åœ°å€
+	//ÓÎÏ·»ù´¡µØÖ·
 #pragma region BasicGameData
-	//æ¸¸æˆåŸºå€æ•°æ®
+	//ÓÎÏ·»ùÖ·Êı¾İ
 	namespace BasicGameData {
 		void* PlayerPlot = nullptr;
 		void* PlayerInfoPlot = nullptr;
@@ -92,10 +92,10 @@ namespace Base {
 		void* XboxPadPlot = nullptr;
 	}
 #pragma endregion
-	//ä¸–ç•Œä¿¡æ¯
+	//ÊÀ½çĞÅÏ¢
 #pragma region World
 	namespace World {
-		//ç¯å¢ƒç”Ÿç‰©
+		//»·¾³ÉúÎï
 		namespace EnvironmentalData {
 			struct EnvironmentalData {
 				void* Plot = nullptr;
@@ -114,16 +114,16 @@ namespace Base {
 					:Plot(Plot), CoordinatesX(CoordinatesX), CoordinatesY(CoordinatesY), CoordinatesZ(CoordinatesZ), Id(Id), SubId(SubId) {
 				};
 			};
-			//ç¯å¢ƒç”Ÿç‰©åˆ—è¡¨
+			//»·¾³ÉúÎïÁĞ±í
 			map<void*, EnvironmentalData> Environmentals;
-			//æ€ªç‰©ç­›é€‰å™¨
+			//¹ÖÎïÉ¸Ñ¡Æ÷
 			pair<int, int> Filter(255, 255);
 		}
 		int MapId = 0;
 		string Massage = "";
 	}
 #pragma endregion
-	//è®¡æ—¶å™¨
+	//¼ÆÊ±Æ÷
 #pragma region Chronoscope
 	namespace Chronoscope {
 		struct ChronoscopeData {
@@ -131,11 +131,11 @@ namespace Base {
 			float EndTime = 0;
 		};
 
-		//ç°åœ¨çš„æ—¶é—´
+		//ÏÖÔÚµÄÊ±¼ä
 		float NowTime = 0;
-		//è®¡æ—¶å™¨åˆ—è¡¨
+		//¼ÆÊ±Æ÷ÁĞ±í
 		map<string, ChronoscopeData> ChronoscopeList;
-		//æ·»åŠ è®¡æ—¶å™¨(æ—¶é•¿ï¼Œè®¡æ—¶å™¨åç§°ï¼Œæ˜¯å¦è¦†ç›–)
+		//Ìí¼Ó¼ÆÊ±Æ÷(Ê±³¤£¬¼ÆÊ±Æ÷Ãû³Æ£¬ÊÇ·ñ¸²¸Ç)
 		static bool AddChronoscope(float duration, string name, bool Overlay = false) {
 			if (ChronoscopeList.find(name) == ChronoscopeList.end() || Overlay) {
 				ChronoscopeList[name].EndTime = NowTime + duration;
@@ -145,20 +145,20 @@ namespace Base {
 			else
 				return false;
 		}
-		//åˆ é™¤è®¡æ—¶å™¨
+		//É¾³ı¼ÆÊ±Æ÷
 		static void DelChronoscope(string name) {
 			if (ChronoscopeList.find(name) != ChronoscopeList.end()) {
 				ChronoscopeList.erase(name);
 			}
 		}
-		//æ£€æŸ¥è®¡æ—¶å™¨æ˜¯å¦å­˜åœ¨
+		//¼ì²é¼ÆÊ±Æ÷ÊÇ·ñ´æÔÚ
 		static bool CheckPresenceChronoscope(string name) {
 			if (ChronoscopeList.find(name) != ChronoscopeList.end()) {
 				return true;
 			}
 			return false;
 		}
-		//æ£€æŸ¥è®¡æ—¶å™¨æ˜¯å¦ç»“æŸ
+		//¼ì²é¼ÆÊ±Æ÷ÊÇ·ñ½áÊø
 		static bool CheckChronoscope(string name) {
 			if (ChronoscopeList.find(name) != ChronoscopeList.end()) {
 				if (ChronoscopeList[name].EndTime < NowTime) {
@@ -172,7 +172,7 @@ namespace Base {
 		}
 	}
 #pragma endregion
-	//è®¡ç®—
+	//¼ÆËã
 #pragma region Calculation
 	namespace Calculation {
 		static Vector3 GetVector(Vector3 p1, Vector3 p2, float l) {
@@ -186,7 +186,7 @@ namespace Base {
 			float newz1 = k * c + p1.z;
 			return Vector3(newx1, newy1, newz1);
 		}
-		static Vector2 GetExtensionVector2D(Vector2 Coordinate,float r, float angle) {
+		static Vector2 GetExtensionVector2D(Vector2 Coordinate, float r, float angle) {
 			float x, y;
 			x = Coordinate.x + r * cos((4 * atan(1.0) / 180 * angle));
 			y = Coordinate.y + r * sin((4 * atan(1.0) / 180 * angle));
@@ -260,7 +260,7 @@ namespace Base {
 		}
 	}
 #pragma endregion
-	//å›¾å½¢ç»˜åˆ¶
+	//Í¼ĞÎ»æÖÆ
 #pragma region Draw
 	namespace Draw {
 		struct NewImage {
@@ -274,14 +274,14 @@ namespace Base {
 			int Height = 0;
 			NewImage(
 				float BgAlpha = 1,
-				Vector3 Channel = Vector3(1,1,1),
+				Vector3 Channel = Vector3(1, 1, 1),
 				Vector2 Pos = Vector2(),
 				string Name = "",
 				string ImageFile = "",
 				bool Base64 = false,
 				int Width = 0,
 				int Height = 0
-				) :BgAlpha(BgAlpha), Channel(Channel), Pos(Pos), Name(Name), ImageFile(ImageFile), Base64(Base64), Width(Width), Height(Height){ };
+			) :BgAlpha(BgAlpha), Channel(Channel), Pos(Pos), Name(Name), ImageFile(ImageFile), Base64(Base64), Width(Width), Height(Height) { };
 		};
 		struct NewText {
 			float BgAlpha = 1;
@@ -304,7 +304,7 @@ namespace Base {
 		map<string, string> About;
 	}
 #pragma endregion
-	//å§”æ‰˜
+	//Î¯ÍĞ
 #pragma region Commission
 	namespace Commission {
 		namespace MoveEntity {
@@ -318,7 +318,7 @@ namespace Base {
 			static void MoveEntityToTarget() {
 				for (auto [entity, parameter] : CommissionList) {
 					if (entity != nullptr) {
-						//ç§»åŠ¨åˆ°ç›®æ ‡
+						//ÒÆ¶¯µ½Ä¿±ê
 						if (parameter.Entity != nullptr) {
 							float EntityX = *offsetPtr<float>(entity, 0x160);
 							float EntityY = *offsetPtr<float>(entity, 0x160);
@@ -365,7 +365,7 @@ namespace Base {
 								)
 								CommissionList.erase(entity);
 						}
-						//ç§»åŠ¨åˆ°ç‚¹
+						//ÒÆ¶¯µ½µã
 						else {
 							float EntityX = *offsetPtr<float>(entity, 0x160);
 							float EntityY = *offsetPtr<float>(entity, 0x160);
@@ -419,7 +419,7 @@ namespace Base {
 		}
 	}
 #pragma endregion
-	//æ€ªç‰©ä¿¡æ¯
+	//¹ÖÎïĞÅÏ¢
 #pragma region Monster
 	namespace Monster {
 		struct MonsterData {
@@ -435,26 +435,26 @@ namespace Base {
 				float CoordinatesY = 0,
 				float CoordinatesZ = 0,
 				int Id = 0,
-				int SubId = 0) 
-				:Plot(Plot), CoordinatesX(CoordinatesX), CoordinatesY(CoordinatesY), CoordinatesZ(CoordinatesZ), Id(Id), SubId(SubId){
+				int SubId = 0)
+				:Plot(Plot), CoordinatesX(CoordinatesX), CoordinatesY(CoordinatesY), CoordinatesZ(CoordinatesZ), Id(Id), SubId(SubId) {
 			};
 		};
-		//æ€ªç‰©åˆ—è¡¨
+		//¹ÖÎïÁĞ±í
 		map<void*, MonsterData> Monsters;
-		//æ€ªç‰©ç­›é€‰å™¨
-		pair<int, int> Filter(255,255);
-		//ç»™æ€ªç‰©è®¾ç½®buff
-		static void SetBuff(void* monster,string buff){
-			MonsterBuff::MonsterBuffState monsterBuff = MonsterBuff::GetMonsterBuffState(monster,buff);
+		//¹ÖÎïÉ¸Ñ¡Æ÷
+		pair<int, int> Filter(255, 255);
+		//¸ø¹ÖÎïÉèÖÃbuff
+		static void SetBuff(void* monster, string buff) {
+			MonsterBuff::MonsterBuffState monsterBuff = MonsterBuff::GetMonsterBuffState(monster, buff);
 			if (monsterBuff.MaxStateValue != 0) {
 				MonsterBuff::SetMonsterBuffState(monster, buff);
 			}
 		}
-		//è·å–æ€ªç‰©buffçŠ¶æ€
+		//»ñÈ¡¹ÖÎïbuff×´Ì¬
 		static MonsterBuff::MonsterBuffState GetBuff(void* monster, string buff) {
 			return MonsterBuff::GetMonsterBuffState(monster, buff);
 		}
-		//è·å–æ€ªç‰©buffçŠ¶æ€
+		//»ñÈ¡¹ÖÎïbuff×´Ì¬
 		static void* GetHateTarget(void* monster) {
 			void* HateTargetOffset1 = *offsetPtr<undefined**>((undefined(*)())monster, 0x98);
 			void* HateTargetOffset2 = nullptr;
@@ -470,26 +470,26 @@ namespace Base {
 				return *offsetPtr<void*>(HateTargetOffset4, 0x5D0);
 			return nullptr;
 		}
-		//è®¾ç½®æ€ªç‰©æ´¾ç”ŸåŠ¨ä½œ
+		//ÉèÖÃ¹ÖÎïÅÉÉú¶¯×÷
 		static void BehaviorControl(void* monster, int Fsm) {
-			//æ„Ÿè°¢å—é£ç„“å¤§ä½¬æä¾›çš„åœ°å€
+			//¸ĞĞ»ÄÏ·çìÊ´óÀĞÌá¹©µÄµØÖ·
 			MH::Monster::BehaviorControl((undefined*)monster, Fsm);
 		}
 	}
 #pragma endregion
-	//ç©å®¶ä¿¡æ¯
+	//Íæ¼ÒĞÅÏ¢
 #pragma region PlayerData
 	namespace PlayerData {
 		struct FsmData {
-			//å¯¹è±¡ 0ä¸ºäººç‰©3ä¸ºæ­¦å™¨
+			//¶ÔÏó 0ÎªÈËÎï3ÎªÎäÆ÷
 			int Target = 0;
-			//æ‰§è¡ŒId
+			//Ö´ĞĞId
 			int Id = 0;
 			FsmData(int Target = 0, int Id = 0) :Target(Target), Id(Id) {
 			};
 		};
 
-		//ç¼“å­˜æ•°æ®
+		//»º´æÊı¾İ
 		namespace TempData {
 			FsmData t_ManualFsmAction;
 			bool t_executingFsmAction = false;
@@ -497,38 +497,38 @@ namespace Base {
 			void* t_HookCoordinate2 = nullptr;
 		}
 
-		//åæ ‡
+		//×ø±ê
 		namespace Coordinate {
-			//ç¼“å­˜æ•°æ®
+			//»º´æÊı¾İ
 			namespace TempData {
 				void* t_visual = nullptr;
 				Vector3 t_SetVisualCoordinate;
 				void* t_SetVisualBind = nullptr;
 				bool t_SetVisual = false;
 			}
-			
-			//ç©å®¶åæ ‡
+
+			//Íæ¼Ò×ø±ê
 			Vector3 Entity = Vector3();
-			//å‡†æ˜Ÿåæ ‡
+			//×¼ĞÇ×ø±ê
 			Vector3 Collimator = Vector3();
-			//æŠ›ç‰©çº¿å‡†æ˜Ÿåæ ‡
+			//Å×ÎïÏß×¼ĞÇ×ø±ê
 			Vector3 Parabola = Vector3();
-			//ç¢°æ’è¿”å›åæ ‡
+			//Åö×²·µ»Ø×ø±ê
 			Vector3 Collision = Vector3();
-			//å¢é‡åæ ‡
+			//ÔöÁ¿×ø±ê
 			Vector3 Increment = Vector3();
-			//å¯¼èˆªåæ ‡
+			//µ¼º½×ø±ê
 			Vector3 Navigation = Vector3();
-			//ç›¸æœºåæ ‡
+			//Ïà»ú×ø±ê
 			Vector3 Visual = Vector3();
-			//æ­¦å™¨åæ ‡
+			//ÎäÆ÷×ø±ê
 			Vector3 Weapon = Vector3();
-			//ç©ºä¸­ä¸‹å¸§ä½ç§»åæ ‡
+			//¿ÕÖĞÏÂÖ¡Î»ÒÆ×ø±ê
 			Vector3 Param = Vector3();
-			//é’©çˆªåæ ‡
+			//¹³×¦×ø±ê
 			Vector3 Hook = Vector3();
-			
-			//ç©å®¶ä¼ é€(Xåæ ‡,Yåæ ‡,Zåæ ‡,æ˜¯å¦ç©¿å¢™)
+
+			//Íæ¼Ò´«ËÍ(X×ø±ê,Y×ø±ê,Z×ø±ê,ÊÇ·ñ´©Ç½)
 			static void TransportCoordinate(float X, float Y, float Z, bool Across = false) {
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x160) = X;
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x164) = Y;
@@ -540,9 +540,9 @@ namespace Base {
 				}
 			}
 		}
-		//æ­¦å™¨è£…é¥°ç‰©
+		//ÎäÆ÷×°ÊÎÎï
 		namespace WeaponOrnaments {
-			//ç¼“å­˜æ•°æ®
+			//»º´æÊı¾İ
 			namespace TempData {
 				void* t_ornaments = nullptr;
 				bool t_setOrnamentsCoordinate = false;
@@ -550,33 +550,33 @@ namespace Base {
 				bool t_setOrnamentsSize = false;
 				Vector3 t_SetOrnamentsSize;
 			}
-			//è£…é¥°ç‰©åæ ‡
+			//×°ÊÎÎï×ø±ê
 			Vector3 OrnamentsCoordinate = Vector3();
-			//è£…é¥°ç‰©æ¨¡å‹å¤§å°
+			//×°ÊÎÎïÄ£ĞÍ´óĞ¡
 			Vector3 OrnamentsSize = Vector3();
 
-			//è§£é™¤è£…é¥°ç‰©åæ ‡æ§åˆ¶
+			//½â³ı×°ÊÎÎï×ø±ê¿ØÖÆ
 			static void DecontrolOrnamentsCoordinate() {
 				TempData::t_setOrnamentsCoordinate = false;
 			}
-			//è§£é™¤è£…é¥°ç‰©å¤§å°æ§åˆ¶
+			//½â³ı×°ÊÎÎï´óĞ¡¿ØÖÆ
 			static void DecontrolOrnamentsSize() {
 				TempData::t_setOrnamentsSize = false;
 			}
-			//è£…é¥°ç‰©åæ ‡è®¾ç½®(Xåæ ‡,Yåæ ‡,Zåæ ‡)
+			//×°ÊÎÎï×ø±êÉèÖÃ(X×ø±ê,Y×ø±ê,Z×ø±ê)
 			static void SetOrnamentsCoordinate(float X, float Y, float Z) {
-				TempData::t_SetOrnamentsCoordinate = Vector3(X,Y,Z);
+				TempData::t_SetOrnamentsCoordinate = Vector3(X, Y, Z);
 				TempData::t_setOrnamentsCoordinate = true;
 			}
-			//è£…é¥°ç‰©å¤§å°è®¾ç½®(Xåæ ‡,Yåæ ‡,Zåæ ‡)
+			//×°ÊÎÎï´óĞ¡ÉèÖÃ(X×ø±ê,Y×ø±ê,Z×ø±ê)
 			static void SetOrnamentsSize(float X, float Y, float Z) {
 				TempData::t_SetOrnamentsSize = Vector3(X, Y, Z);
 				TempData::t_setOrnamentsSize = true;
 			}
 		}
-		//æ­¦å™¨
+		//ÎäÆ÷
 		namespace Weapons {
-			//ç¼“å­˜æ•°æ®
+			//»º´æÊı¾İ
 			namespace TempData {
 				void* t_mainWeapon = nullptr;
 				void* t_secondaryWeapon = nullptr;
@@ -590,21 +590,21 @@ namespace Base {
 				bool t_setSecondaryWeaponSize = false;
 				Vector3 t_SetSecondaryWeaponSize;
 			}
-			//æ­¦å™¨ç±»å‹
+			//ÎäÆ÷ÀàĞÍ
 			int WeaponType = 0;
-			//æ­¦å™¨ID
+			//ÎäÆ÷ID
 			int WeaponId = 0;
-			//ä¸»æ­¦å™¨åæ ‡
+			//Ö÷ÎäÆ÷×ø±ê
 			Vector3 MainWeaponCoordinate = Vector3();
-			//ä¸»æ­¦å™¨æ¨¡å‹å¤§å°
+			//Ö÷ÎäÆ÷Ä£ĞÍ´óĞ¡
 			Vector3 MainWeaponSize = Vector3();
-			//å‰¯æ­¦å™¨åæ ‡
+			//¸±ÎäÆ÷×ø±ê
 			Vector3 SecondaryWeaponCoordinate = Vector3();
-			//å‰¯æ­¦å™¨æ¨¡å‹å¤§å°
+			//¸±ÎäÆ÷Ä£ĞÍ´óĞ¡
 			Vector3 SecondaryWeaponSize = Vector3();
-			//æ­¦å™¨å‘½ä¸­åæ ‡
+			//ÎäÆ÷ÃüÖĞ×ø±ê
 			Vector3 HitCoordinate = Vector3();
-			//æ›´æ¢æ­¦å™¨ï¼ˆæ­¦å™¨ç±»å‹ï¼Œæ­¦å™¨IDï¼‰
+			//¸ü»»ÎäÆ÷£¨ÎäÆ÷ÀàĞÍ£¬ÎäÆ÷ID£©
 			static void ChangeWeapons(int type, int id, bool Complete = true) {
 				if (type <= 13 and type >= 0 and id >= 0) {
 					if (Complete) {
@@ -616,115 +616,111 @@ namespace Base {
 						MH::Weapon::ChangeWeapon(BasicGameData::PlayerPlot, type, id);
 				}
 			}
-			//è§£é™¤ä¸»æ­¦å™¨åæ ‡æ§åˆ¶
+			//½â³ıÖ÷ÎäÆ÷×ø±ê¿ØÖÆ
 			static void DecontrolMainWeaponCoordinate() {
 				TempData::t_setMainWeaponCoordinate = false;
 			}
-			//è§£é™¤ä¸»æ­¦å™¨å¤§å°æ§åˆ¶
+			//½â³ıÖ÷ÎäÆ÷´óĞ¡¿ØÖÆ
 			static void DecontrolMainWeaponSize() {
 				TempData::t_setMainWeaponSize = false;
 			}
-			//ä¸»æ­¦å™¨åæ ‡è®¾ç½®(Xåæ ‡,Yåæ ‡,Zåæ ‡)
+			//Ö÷ÎäÆ÷×ø±êÉèÖÃ(X×ø±ê,Y×ø±ê,Z×ø±ê)
 			static void SetMainWeaponCoordinate(float X, float Y, float Z) {
 				TempData::t_SetMainWeaponCoordinate = Vector3(X, Y, Z);
 				TempData::t_setMainWeaponCoordinate = true;
 			}
-			//ä¸»æ­¦å™¨å¤§å°è®¾ç½®(Xåæ ‡,Yåæ ‡,Zåæ ‡)
+			//Ö÷ÎäÆ÷´óĞ¡ÉèÖÃ(X×ø±ê,Y×ø±ê,Z×ø±ê)
 			static void SetMainWeaponSize(float X, float Y, float Z) {
 				TempData::t_SetMainWeaponSize = Vector3(X, Y, Z);
 				TempData::t_setMainWeaponSize = true;
 			}
 
-			//è§£é™¤å‰¯æ­¦å™¨åæ ‡æ§åˆ¶
+			//½â³ı¸±ÎäÆ÷×ø±ê¿ØÖÆ
 			static void DecontrolSecondaryWeaponCoordinate() {
 				TempData::t_setSecondaryWeaponCoordinate = false;
 			}
-			//è§£é™¤å‰¯æ­¦å™¨å¤§å°æ§åˆ¶
+			//½â³ı¸±ÎäÆ÷´óĞ¡¿ØÖÆ
 			static void DecontrolSecondaryWeaponSize() {
 				TempData::t_setSecondaryWeaponSize = false;
 			}
-			//å‰¯æ­¦å™¨åæ ‡è®¾ç½®(Xåæ ‡,Yåæ ‡,Zåæ ‡)
+			//¸±ÎäÆ÷×ø±êÉèÖÃ(X×ø±ê,Y×ø±ê,Z×ø±ê)
 			static void SetSecondaryWeaponCoordinate(float X, float Y, float Z) {
 				TempData::t_SetSecondaryWeaponCoordinate = Vector3(X, Y, Z);
 				TempData::t_setSecondaryWeaponCoordinate = true;
 			}
-			//å‰¯æ­¦å™¨å¤§å°è®¾ç½®(Xåæ ‡,Yåæ ‡,Zåæ ‡)
+			//¸±ÎäÆ÷´óĞ¡ÉèÖÃ(X×ø±ê,Y×ø±ê,Z×ø±ê)
 			static void SetSecondaryWeaponSize(float X, float Y, float Z) {
 				TempData::t_SetSecondaryWeaponSize = Vector3(X, Y, Z);
 				TempData::t_setSecondaryWeaponSize = true;
 			}
 		}
-		//ç‰¹æ•ˆ
+		//ÌØĞ§
 		namespace Effects {
-			//ç”Ÿæˆç‰¹æ•ˆ(ç‰¹æ•ˆç»„ï¼Œç‰¹æ•ˆid)
+			//Éú³ÉÌØĞ§(ÌØĞ§×é£¬ÌØĞ§id)
 			static void GenerateSpecialEffects(int group, int record) {
-				//æ„Ÿè°¢å—é£ç„“å¤§ä½¬æä¾›çš„åœ°å€
+				//¸ĞĞ»ÄÏ·çìÊ´óÀĞÌá¹©µÄµØÖ·
 				void* Effects = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x8808);
-				//ç‰¹æ•ˆæ·»åŠ 
+				//ÌØĞ§Ìí¼Ó
 				MH::Player::Effects((undefined*)Effects, group, record);
 			}
 		}
-		//ç›¸æœºç»‘å®š
+		//Ïà»ú°ó¶¨
 		static void SetVisual(void* bind, float Duration = 0) {
 			Coordinate::TempData::t_SetVisualBind = bind;
 			Coordinate::TempData::t_SetVisual = true;
 		}
-		//è§£é™¤ç›¸æœºè®¾ç½®
+		//½â³ıÏà»úÉèÖÃ
 		static void UnbindVisual() {
 			Coordinate::TempData::t_SetVisual = false;
 			Coordinate::TempData::t_SetVisualBind = nullptr;
 		}
-		//ç›¸æœºè®¾ç½®(Xåæ ‡,Yåæ ‡,Zåæ ‡,æŒç»­æ—¶é—´0=é•¿æœŸ)
+		//Ïà»úÉèÖÃ(X×ø±ê,Y×ø±ê,Z×ø±ê,³ÖĞøÊ±¼ä0=³¤ÆÚ)
 		static void SetVisual(float X, float Y, float Z, float Duration = 0) {
 			Coordinate::TempData::t_SetVisualCoordinate.x = X;
 			Coordinate::TempData::t_SetVisualCoordinate.y = Y;
 			Coordinate::TempData::t_SetVisualCoordinate.z = Z;
 			Coordinate::TempData::t_SetVisual = true;
 		}
-                //æœå‘è§’åº¦X
-		float XAngle = 0;
-                //æœå‘è§’åº¦Z
-		float ZAngle = 0;
-		//æœå‘è§’åº¦
+		//³¯Ïò½Ç¶È
 		float Angle = 0;
-		//æœå‘å¼§åº¦
+		//³¯Ïò»¡¶È
 		float Radian = 0;
-		//æ¬§æ‹‰è§’
+		//Å·À­½Ç
 		Vector3 EulerAngle = Vector3();
-		//é‡åŠ›åŠ é€Ÿåº¦
+		//ÖØÁ¦¼ÓËÙ¶È
 		float gravity = 0;
-		//ä¸‹è½é€Ÿç‡
+		//ÏÂÂäËÙÂÊ
 		float Fallspeedrate = 0;
-		//ç›¸æœºè·ç¦»
+		//Ïà»ú¾àÀë
 		float VisualDistance = 0;
-		//æ˜¯å¦å¤„äºç„å‡†çŠ¶æ€
+		//ÊÇ·ñ´¦ÓÚÃé×¼×´Ì¬
 		bool AimingState = false;
-		//è§’è‰²çŠ¶æ€
-		Int PlayerAirState = 0;
-		//æœ€åä¸€æ¬¡å‡»ä¸­çš„æ€ªç‰©åœ°å€
+		//½ÇÉ«×´Ì¬
+		int PlayerAirState = 0;
+		//×îºóÒ»´Î»÷ÖĞµÄ¹ÖÎïµØÖ·
 		void* AttackMonsterPlot = nullptr;
-		//åŠ¨ä½œid
+		//¶¯×÷id
 		int ActionId = 0;
-		//æ´¾ç”Ÿä¿¡æ¯
+		//ÅÉÉúĞÅÏ¢
 		FsmData Fsm = FsmData();
 		FsmData NowFsm = FsmData();
-		//ç©å®¶åç§°
+		//Íæ¼ÒÃû³Æ
 		string Name = "";
-		//hrç­‰çº§
+		//hrµÈ¼¶
 		int Hr = 0;
-		//mrç­‰çº§
+		//mrµÈ¼¶
 		int Mr = 0;
-		//å½“å‰è¡€é‡
+		//µ±Ç°ÑªÁ¿
 		float CurrentHealth = 0;
-		//åŸºç¡€è¡€é‡ï¼ˆ0-150ï¼‰
+		//»ù´¡ÑªÁ¿£¨0-150£©
 		float BasicHealth = 0;
-		//è¡€é‡ä¸Šé™
+		//ÑªÁ¿ÉÏÏŞ
 		float MaxHealth = 0;
-		//å½“å‰è€åŠ›
+		//µ±Ç°ÄÍÁ¦
 		float CurrentEndurance = 0;
-		//è€åŠ›ä¸Šé™ï¼ˆ25-150ï¼‰
+		//ÄÍÁ¦ÉÏÏŞ£¨25-150£©
 		float MaxEndurance = 0;
-		//æ‰§è¡Œæ´¾ç”ŸåŠ¨ä½œ(æ‰§è¡Œå¯¹è±¡,æ‰§è¡ŒId)
+		//Ö´ĞĞÅÉÉú¶¯×÷(Ö´ĞĞ¶ÔÏó,Ö´ĞĞId)
 		static void RunDerivedAction(int type, int id) {
 			TempData::t_ManualFsmAction = FsmData(type, id);
 			TempData::t_executingFsmAction = true;
@@ -734,7 +730,7 @@ namespace Base {
 			*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6290) = id;
 			Fsm = FsmData(type, id);
 		}
-		//æ£€æŸ¥æ‰§è¡Œæ´¾ç”ŸåŠ¨ä½œæ˜¯å¦ç»“æŸ
+		//¼ì²éÖ´ĞĞÅÉÉú¶¯×÷ÊÇ·ñ½áÊø
 		static bool CheckDerivedAction() {
 			if (TempData::t_executingFsmAction) {
 				if (NowFsm.Id != TempData::t_ManualFsmAction.Id and NowFsm.Target != TempData::t_ManualFsmAction.Target) {
@@ -746,23 +742,23 @@ namespace Base {
 			}
 			return false;
 		}
-		//è·å–ç©å®¶BuffæŒç»­æ—¶é—´
+		//»ñÈ¡Íæ¼ÒBuff³ÖĞøÊ±¼ä
 		static float GetPlayerBuff(string buff) {
 			void* BuffsPlot = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x7D20);
 			int buffPtr = PlayerBuff::GetBuffPtr(buff);
 			return *offsetPtr<float>(BuffsPlot, buffPtr);
 		}
-		//è®¾ç½®ç©å®¶BuffæŒç»­æ—¶é—´
+		//ÉèÖÃÍæ¼ÒBuff³ÖĞøÊ±¼ä
 		static void SetPlayerBuff(string buff, float duration) {
 			void* BuffsPlot = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x7D20);
 			int buffPtr = PlayerBuff::GetBuffPtr(buff);
 			*offsetPtr<float>(BuffsPlot, buffPtr) = duration;
 		}
-		//é’©çˆªå˜æ›´åæ ‡
+		//¹³×¦±ä¸ü×ø±ê
 		Vector3 HookCoordinateChange = Vector3();
-		//é’©çˆªå˜æ›´åæ ‡
+		//¹³×¦±ä¸ü×ø±ê
 		bool HookChange = false;
-		//ç©å®¶æ•°æ®æ›´æ–°
+		//Íæ¼ÒÊı¾İ¸üĞÂ
 		static void Updata() {
 			Coordinate::Entity = Vector3(
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x160),
@@ -784,14 +780,14 @@ namespace Base {
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D44),
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x7D48)
 			);
-			Coordinate::Param =Vector3(
+			Coordinate::Param = Vector3(
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x14a0),
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x14a4),
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x14a8)
 			);
-				
+
 			void* WeaponEntityPlot = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x76B0);
-			if(WeaponEntityPlot != nullptr)
+			if (WeaponEntityPlot != nullptr)
 				Coordinate::Weapon = Vector3(
 					*offsetPtr<float>(WeaponEntityPlot, 0x160),
 					*offsetPtr<float>(WeaponEntityPlot, 0x164),
@@ -820,11 +816,9 @@ namespace Base {
 				AimingState = *offsetPtr<bool>(AimingStatePlot, 0xC28);
 			else
 				AimingState = false;
-			void* Xangle = *offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0x0174);
-			void* Zangle = *offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0x017C);
-			void* gravity = *offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0x14B0);
-			void* Fallspeedrate = *offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0xE178);
-			void* PlayerAirState = *offsetPtr<int>(Base::BasicGameData::PlayerPlot, 0x112C);
+			gravity = *offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0x14B0);
+			Fallspeedrate = *offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0xE178);
+			PlayerAirState = *offsetPtr<int>(Base::BasicGameData::PlayerPlot, 0x112C);
 			if (BasicGameData::PlayerDataPlot != nullptr) {
 				AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerDataPlot, 0x2C8);
 				EulerAngle = Vector3(
@@ -860,17 +854,17 @@ namespace Base {
 				ActionId = *offsetPtr<int>(ActionPlot, 0xE9C4);
 				void* HookOffset1 = *offsetPtr<undefined**>((undefined(*)())ActionPlot, 0x70);
 				void* HookOffset2 = nullptr;
-				if(HookOffset1 != nullptr)
+				if (HookOffset1 != nullptr)
 					HookOffset2 = *offsetPtr<undefined**>((undefined(*)())HookOffset1, 0x10);
 				void* HookOffset3 = nullptr;
 				if (HookOffset2 != nullptr)
 					HookOffset3 = *offsetPtr<undefined**>((undefined(*)())HookOffset2, 0x18);
 				if (HookOffset3 != nullptr)
-				Coordinate::Hook = Vector3(
-					*offsetPtr<float>(HookOffset3, 0x160),
-					*offsetPtr<float>(HookOffset3, 0x164),
-					*offsetPtr<float>(HookOffset3, 0x168)
-				);
+					Coordinate::Hook = Vector3(
+						*offsetPtr<float>(HookOffset3, 0x160),
+						*offsetPtr<float>(HookOffset3, 0x164),
+						*offsetPtr<float>(HookOffset3, 0x168)
+					);
 			}
 			else {
 				ActionId = 0;
@@ -912,14 +906,14 @@ namespace Base {
 		}
 	}
 #pragma endregion
-	//æŒ‰é”®ä¿¡æ¯
+	//°´¼üĞÅÏ¢
 #pragma region Keyboard
 	namespace Keyboard {
 		namespace TempData {
 			map<int, bool> t_KeyDown;
 			map<int, int> t_KeyCount;
 		}
-		//æ£€æŸ¥çª—å£
+		//¼ì²é´°¿Ú
 		static bool CheckWindows() {
 			string GameName = "MONSTER HUNTER: WORLD(" + ModConfig::Version + ")";
 			HWND wnd = GetForegroundWindow();;
@@ -929,21 +923,21 @@ namespace Base {
 			else
 				return false;
 		}
-		//æŒ‰é”®æ£€æŸ¥
-		static bool CheckKey(int vk, int ComboClick = 1,float Duration = 0.3) {
+		//°´¼ü¼ì²é
+		static bool CheckKey(int vk, int ComboClick = 1, float Duration = 0.3) {
 			if (!CheckWindows())
 				return false;
-			//å»ºç«‹æŒ‰é”®æ¡£æ¡ˆ
+			//½¨Á¢°´¼üµµ°¸
 			if (TempData::t_KeyDown.find(vk) == TempData::t_KeyDown.end()) {
 				TempData::t_KeyDown[vk] = false;
 			}
-			//æŒ‰é”®æ£€æŸ¥
+			//°´¼ü¼ì²é
 			if (GetKeyState(vk) < 0 and !TempData::t_KeyDown[vk]) {
 				TempData::t_KeyDown[vk] = true;
-				//è¿å‡»æ£€æŸ¥
+				//Á¬»÷¼ì²é
 				if (TempData::t_KeyCount.find(vk) != TempData::t_KeyCount.end()) {
-					//è®¡æ—¶å™¨æ£€æŸ¥
-					if(TempData::t_KeyCount[vk] == 1)
+					//¼ÆÊ±Æ÷¼ì²é
+					if (TempData::t_KeyCount[vk] == 1)
 						Chronoscope::AddChronoscope(Duration, "KEY_" + to_string(vk), true);
 					if (Chronoscope::CheckChronoscope("KEY_" + to_string(vk))) {
 						TempData::t_KeyCount[vk] = 0;
@@ -955,27 +949,27 @@ namespace Base {
 					TempData::t_KeyCount[vk] = 1;
 				}
 
-				//æ£€æŸ¥ç»“æœ
+				//¼ì²é½á¹û
 				if (TempData::t_KeyCount[vk] == ComboClick)
 					return true;
 				else
 					return false;
 			}
-			else if(GetKeyState(vk) >= 0)
+			else if (GetKeyState(vk) >= 0)
 				TempData::t_KeyDown[vk] = false;
 			return false;
 		}
 	}
 #pragma endregion
-	//æŠ•å°„ç‰©
+	//Í¶ÉäÎï
 #pragma region ProjectilesOperation
 	namespace ProjectilesOperation {
-		//æ‰§è¡ŒæŠ•å°„ç‰©ç”Ÿæˆ
+		//Ö´ĞĞÍ¶ÉäÎïÉú³É
 		static bool CallProjectilesGenerate(int Id, float* Coordinate, int From = 0) {
-			//æ­¦å™¨å‘å‡ºçš„æŠ•å°„ç‰©
+			//ÎäÆ÷·¢³öµÄÍ¶ÉäÎï
 			void* Weapon = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x76B0);
-			void* WeaponShlpPlot= *offsetPtr<void*>(Weapon, 0x1D90);
-			//æ‰‹å¼©å‘å‡ºçš„æŠ•å°„ç‰©
+			void* WeaponShlpPlot = *offsetPtr<void*>(Weapon, 0x1D90);
+			//ÊÖåó·¢³öµÄÍ¶ÉäÎï
 			void* BowgunShlpPlot = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x56E8);
 			if (WeaponShlpPlot == nullptr || BowgunShlpPlot == nullptr)
 				return false;
@@ -1000,65 +994,65 @@ namespace Base {
 			MH::Shlp::CallShlp(ShlpRoute, BasicGameData::PlayerPlot, BasicGameData::PlayerPlot, Coordinate);
 			return true;
 		}
-		//å¤„ç†æŠ•å°„ç‰©è·¯å¾„æ•°æ®
-		static void GenerateProjectilesCoordinateData(float*& CalculationCoordinates,Vector3 startPoint, Vector3 endPoint) {
-			//ç¼“å­˜æŒ‡é’ˆ
+		//´¦ÀíÍ¶ÉäÎïÂ·¾¶Êı¾İ
+		static void GenerateProjectilesCoordinateData(float*& CalculationCoordinates, Vector3 startPoint, Vector3 endPoint) {
+			//»º´æÖ¸Õë
 			float* temp_float = CalculationCoordinates;
-			//å†™å…¥èµ·å§‹åæ ‡
+			//Ğ´ÈëÆğÊ¼×ø±ê
 			*temp_float = startPoint.x;
 			temp_float++;
 			*temp_float = startPoint.y;
 			temp_float++;
 			*temp_float = startPoint.z;
 			temp_float++;
-			//èµ·å§‹åæ ‡å†™å…¥å®Œæˆï¼Œç©º4ä¸ªå­—èŠ‚
+			//ÆğÊ¼×ø±êĞ´ÈëÍê³É£¬¿Õ4¸ö×Ö½Ú
 			*temp_float = 0;
 			temp_float++;
-			//æ›´æ¢æŒ‡é’ˆä¸ºå•å­—èŠ‚å¹¶å†™å…¥1
+			//¸ü»»Ö¸ÕëÎªµ¥×Ö½Ú²¢Ğ´Èë1
 			unsigned char* temp_byte = (unsigned char*)temp_float;
 			*temp_byte = 1;
 
-			//é‡è®¾ç¼“å­˜æŒ‡é’ˆè‡³åæ ‡åœ°å€40å¤„
+			//ÖØÉè»º´æÖ¸ÕëÖÁ×ø±êµØÖ·40´¦
 			temp_float = offsetPtr<float>(CalculationCoordinates, 0x40);
-			//å†™å…¥ç»“æŸåæ ‡
+			//Ğ´Èë½áÊø×ø±ê
 			*temp_float = endPoint.x;
 			temp_float++;
 			*temp_float = endPoint.y;
 			temp_float++;
 			*temp_float = endPoint.z;
 			temp_float++;
-			//ç»“æŸåæ ‡å†™å…¥å®Œæˆï¼Œç©º4ä¸ªå­—èŠ‚
+			//½áÊø×ø±êĞ´ÈëÍê³É£¬¿Õ4¸ö×Ö½Ú
 			*temp_float = 0;
 			temp_float++;
-			//æ›´æ¢æŒ‡é’ˆä¸ºå•å­—èŠ‚å¹¶å†™å…¥1
+			//¸ü»»Ö¸ÕëÎªµ¥×Ö½Ú²¢Ğ´Èë1
 			temp_byte = (unsigned char*)temp_float;
 			*temp_byte = 1;
 
-			//é‡è®¾ç¼“å­˜æŒ‡é’ˆè‡³åæ ‡åœ°å€A0å¤„
+			//ÖØÉè»º´æÖ¸ÕëÖÁ×ø±êµØÖ·A0´¦
 			int* tempCoordinateTailData = offsetPtr<int>(CalculationCoordinates, 0xA0);
-			//å†™å…¥åæ ‡æ•°æ®å°¾éƒ¨ä¿¡æ¯
+			//Ğ´Èë×ø±êÊı¾İÎ²²¿ĞÅÏ¢
 			*tempCoordinateTailData = 0x12;
 			tempCoordinateTailData++;
 			longlong* tempCoordinateTailData_longlong = (longlong*)tempCoordinateTailData;
 			*tempCoordinateTailData_longlong = -1;
 		}
-		//ç”ŸæˆæŠ•å°„ç‰©
+		//Éú³ÉÍ¶ÉäÎï
 		static bool CreateProjectiles(int Id, Vector3 startPoint, Vector3 endPoint, int From = 0) {
-			//åˆ›å»ºæŠ•å°„ç‰©è·¯å¾„æ•°æ®ç¼“å­˜æŒ‡é’ˆ
+			//´´½¨Í¶ÉäÎïÂ·¾¶Êı¾İ»º´æÖ¸Õë
 			float* CoordinatesData = new float[73];
-			//å¡«å……ç¼“å­˜åŒºæ•°æ®
+			//Ìî³ä»º´æÇøÊı¾İ
 			memset(CoordinatesData, 0, 73 * 4);
-			//å¤„ç†æŠ•å°„ç‰©è·¯å¾„æ•°æ®
+			//´¦ÀíÍ¶ÉäÎïÂ·¾¶Êı¾İ
 			GenerateProjectilesCoordinateData(CoordinatesData, startPoint, endPoint);
-			//æ‰§è¡Œç”ŸæˆæŠ•å°„ç‰©
+			//Ö´ĞĞÉú³ÉÍ¶ÉäÎï
 			bool GenerateResults = CallProjectilesGenerate(Id, CoordinatesData, From);
-			//æ¸…ç†ç¼“å†²åŒº
+			//ÇåÀí»º³åÇø
 			delete[]CoordinatesData;
 			return GenerateResults;
 		}
 	}
 #pragma endregion
-	//Xboxæ‰‹æŸ„ä¿¡æ¯
+	//XboxÊÖ±úĞÅÏ¢
 #pragma region XboxPad
 	namespace XboxPad {
 		namespace TempData {
@@ -1146,18 +1140,18 @@ namespace Base {
 				return false;
 			}
 		}
-		//æŒ‰é”®æ£€æŸ¥
+		//°´¼ü¼ì²é
 		static bool CheckKey(int Key, int ComboClick = 1, float Duration = 0.3) {
-			//å»ºç«‹æŒ‰é”®æ¡£æ¡ˆ
+			//½¨Á¢°´¼üµµ°¸
 			if (TempData::t_KeyDown.find(Key) == TempData::t_KeyDown.end()) {
 				TempData::t_KeyDown[Key] = false;
 			}
-			//æŒ‰é”®æ£€æŸ¥
+			//°´¼ü¼ì²é
 			if (KeyIdHandle(Key) and !TempData::t_KeyDown[Key]) {
 				TempData::t_KeyDown[Key] = true;
-				//è¿å‡»æ£€æŸ¥
+				//Á¬»÷¼ì²é
 				if (TempData::t_KeyCount.find(Key) != TempData::t_KeyCount.end()) {
-					//è®¡æ—¶å™¨æ£€æŸ¥
+					//¼ÆÊ±Æ÷¼ì²é
 					if (TempData::t_KeyCount[Key] == 1)
 						Chronoscope::AddChronoscope(Duration, "XKEY_" + to_string(Key), true);
 					if (Chronoscope::CheckChronoscope("XKEY_" + to_string(Key))) {
@@ -1170,7 +1164,7 @@ namespace Base {
 					TempData::t_KeyCount[Key] = 1;
 				}
 
-				//æ£€æŸ¥ç»“æœ
+				//¼ì²é½á¹û
 				if (TempData::t_KeyCount[Key] == ComboClick)
 					return true;
 				else
@@ -1209,9 +1203,9 @@ namespace Base {
 	}
 #pragma endregion
 
-	//åˆå§‹åŒ–
+	//³õÊ¼»¯
 	static bool Init() {
-		if (ModConfig::GameDataInit) 
+		if (ModConfig::GameDataInit)
 			return true;
 		else
 		{
@@ -1246,9 +1240,9 @@ namespace Base {
 				BasicGameData::MapPlot != nullptr and
 				BasicGameData::GameTimePlot != nullptr
 				) {
-				//é’©å…¥æ•°æ®
+				//¹³ÈëÊı¾İ
 				MH_Initialize();
-				//åæ ‡æ•°æ®è·å–
+				//×ø±êÊı¾İ»ñÈ¡
 				HookLambda(MH::World::WaypointZLocal,
 					[](auto x1, auto x2) {
 						Navigation(
@@ -1258,7 +1252,7 @@ namespace Base {
 						);
 						return original(x1, x2);
 					});
-				//ç¯å¢ƒç”Ÿç‰©åœ°å€è·å–
+				//»·¾³ÉúÎïµØÖ·»ñÈ¡
 				HookLambda(MH::EnvironmentalBiological::ctor,
 					[](auto environmental, auto id, auto subId) {
 						auto ret = original(environmental, id, subId);
@@ -1267,7 +1261,7 @@ namespace Base {
 						);
 						return ret;
 					});
-				//æ€ªç‰©åœ°å€è·å–
+				//¹ÖÎïµØÖ·»ñÈ¡
 				HookLambda(MH::Monster::ctor,
 					[](auto monster, auto id, auto subId) {
 						auto ret = original(monster, id, subId);
@@ -1281,7 +1275,7 @@ namespace Base {
 						Base::Monster::Monsters.erase(monster);
 						return original(monster);
 					});
-				//è§†è§’ç›¸æœºåæ ‡ä¿®æ”¹
+				//ÊÓ½ÇÏà»ú×ø±êĞŞ¸Ä
 				HookLambda(MH::Player::Visual,
 					[]() {
 						GetRBXPtr(&Base::PlayerData::Coordinate::TempData::t_visual);
@@ -1297,7 +1291,7 @@ namespace Base {
 						}
 						return original();
 					});
-				//æ­¦å™¨è£…é¥°ç‰©ä¿®æ”¹
+				//ÎäÆ÷×°ÊÎÎïĞŞ¸Ä
 				HookLambda(MH::Weapon::WeaponOrnaments,
 					[]() {
 						GetRBXPtr(&Base::PlayerData::WeaponOrnaments::TempData::t_ornaments);
@@ -1321,7 +1315,7 @@ namespace Base {
 						}
 						return original();
 					});
-				//æ­¦å™¨åæ ‡ä¿®æ”¹
+				//ÎäÆ÷×ø±êĞŞ¸Ä
 				HookLambda(MH::Weapon::MainWeaponPtr,
 					[]() {
 						GetRBXPtr(&Base::PlayerData::Weapons::TempData::t_mainWeapon);
@@ -1376,7 +1370,7 @@ namespace Base {
 						}
 						return original();
 					});
-				//è·å–å‘½ä¸­ä¿¡æ¯
+				//»ñÈ¡ÃüÖĞĞÅÏ¢
 				HookLambda(MH::Weapon::Hit,
 					[]() {
 						GetHitPtr(&Base::PlayerData::Weapons::TempData::t_weaponHit);
@@ -1387,7 +1381,7 @@ namespace Base {
 						);
 						return original();
 					});
-				//ä¿®æ”¹é’©çˆªåæ ‡
+				//ĞŞ¸Ä¹³×¦×ø±ê
 				HookLambda(MH::Player::HookCoordinateChange,
 					[](auto ptr) {
 						if (Base::PlayerData::HookChange) {
@@ -1398,13 +1392,13 @@ namespace Base {
 						return original(ptr);
 					});
 				HookLambda(MH::Player::HookCoordinateChange2,
-					[](auto RCX, auto RDX,auto ptr) {
+					[](auto RCX, auto RDX, auto ptr) {
 						if (Base::PlayerData::HookChange) {
 							*offsetPtr<float>(ptr, 0x0) = Base::PlayerData::HookCoordinateChange.x;
 							*offsetPtr<float>(ptr, 0x4) = Base::PlayerData::HookCoordinateChange.y;
 							*offsetPtr<float>(ptr, 0x8) = Base::PlayerData::HookCoordinateChange.z;
 						}
-						return original(RCX,RDX,ptr);
+						return original(RCX, RDX, ptr);
 					});
 				HookLambda(MH::Player::HookCoordinateChange3,
 					[]() {
@@ -1426,23 +1420,23 @@ namespace Base {
 						}
 						return original();
 					});
-				
+
 				MH_ApplyQueued();
-				Draw::About["LuaScript"] = u8R"(# å…³äº
-LuaScriptæ˜¯é›†æˆäº†å¤šä¸ªæ•°æ®æ“ä½œçš„æ€ªç‰©çŒäººä¸–ç•ŒLuaæ¥å£æ’ä»¶ï¼Œå¯é€šè¿‡Luaè„šæœ¬å¯¹MHWè¿›è¡Œç›¸å…³æ•°æ®çš„æ“ä½œã€‚
+				Draw::About["LuaScript"] = u8R"(# ¹ØÓÚ
+LuaScriptÊÇ¼¯³ÉÁË¶à¸öÊı¾İ²Ù×÷µÄ¹ÖÎïÁÔÈËÊÀ½çLua½Ó¿Ú²å¼ş£¬¿ÉÍ¨¹ıLua½Å±¾¶ÔMHW½øĞĞÏà¹ØÊı¾İµÄ²Ù×÷¡£
 ***
 ___
-## è„šæœ¬
-LuaScriptå°†åŠ è½½ä½äºnativePC/LuaScript/ä¸‹çš„å…¨éƒ¨Luaè„šæœ¬ï¼Œè„šæœ¬ç¼–å†™å¯å‚è€ƒ[è¯´æ˜æ–‡æ¡£](https://docs.alcedogroup.com/)è¿›è¡Œç¼–å†™ã€‚
-## å‘å¸ƒ
-LuaScriptæ˜¯ç”±Alcedoè¿›è¡Œç¼–å†™å¹¶å‘å¸ƒäº[è¸©è˜‘è‡](https://www.caimogu.net/post/19658.html)çš„å…è´¹è„šæœ¬Mod
-Modæºç å¯ä»[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)è·å–
+## ½Å±¾
+LuaScript½«¼ÓÔØÎ»ÓÚnativePC/LuaScript/ÏÂµÄÈ«²¿Lua½Å±¾£¬½Å±¾±àĞ´¿É²Î¿¼[ËµÃ÷ÎÄµµ](https://docs.alcedogroup.com/)½øĞĞ±àĞ´¡£
+## ·¢²¼
+LuaScriptÊÇÓÉAlcedo½øĞĞ±àĞ´²¢·¢²¼ÓÚ[²ÈÄ¢¹½](https://www.caimogu.net/post/19658.html)µÄÃâ·Ñ½Å±¾Mod
+ModÔ´Âë¿É´Ó[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)»ñÈ¡
 )";
 				ModConfig::GameDataInit = true;
 				LOG(INFO) << ModConfig::ModName << " : Game data initialization complete!";
-				LOG(INFO) << " |  Modï¼š" << ModConfig::ModName;
-				LOG(INFO) << " |  Authorï¼š" << ModConfig::ModAuthor;
-				LOG(INFO) << " |  Versionï¼š" << ModConfig::ModVersion;
+				LOG(INFO) << " |  Mod£º" << ModConfig::ModName;
+				LOG(INFO) << " |  Author£º" << ModConfig::ModAuthor;
+				LOG(INFO) << " |  Version£º" << ModConfig::ModVersion;
 				//Draw::GameInit = true;
 				return true;
 			}
@@ -1468,51 +1462,51 @@ Modæºç å¯ä»[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)è·å–
 			}
 		}
 	}
-	//å®æ—¶æ›´æ–°çš„æ•°æ®
+	//ÊµÊ±¸üĞÂµÄÊı¾İ
 	static void RealTimeUpdate() {
 		if (ModConfig::GameDataInit) {
-			//å®æ—¶æ›´æ–°åœ°å›¾åœ°å€ä¿¡æ¯
+			//ÊµÊ±¸üĞÂµØÍ¼µØÖ·ĞÅÏ¢
 			BasicGameData::MapPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7D20);
-			//å†™å…¥åœ°å›¾ä¿¡æ¯å’Œæ¸…é™¤æ•°æ®
+			//Ğ´ÈëµØÍ¼ĞÅÏ¢ºÍÇå³ıÊı¾İ
 			if (Chronoscope::NowTime > *offsetPtr<float>(BasicGameData::MapPlot, 0xC24)) {
 				World::MapId = *offsetPtr<int>(BasicGameData::MapPlot, 0xB88);
-				//æ¸…é™¤è®¡æ—¶å™¨æ•°æ®
+				//Çå³ı¼ÆÊ±Æ÷Êı¾İ
 				Chronoscope::ChronoscopeList.clear();
-				//æ¸…é™¤ç¯å¢ƒç”Ÿç‰©æ•°æ®
+				//Çå³ı»·¾³ÉúÎïÊı¾İ
 				World::EnvironmentalData::Environmentals.clear();
-				//æ¸…é™¤ç›¸æœºæ•°æ®
+				//Çå³ıÏà»úÊı¾İ
 				PlayerData::Coordinate::TempData::t_SetVisualBind = nullptr;
 				PlayerData::Coordinate::TempData::t_SetVisual = false;
-				//æ¸…ç†å§”æ‰˜
+				//ÇåÀíÎ¯ÍĞ
 				Commission::CleanCommission();
-				//æ¸…ç†æ€ªç‰©ç­›é€‰å™¨
+				//ÇåÀí¹ÖÎïÉ¸Ñ¡Æ÷
 				Monster::Filter = pair<int, int>(255, 255);
-				//æ¸…ç†ç©å®¶å‡»ä¸­çš„æ€ªç‰©åœ°å€
+				//ÇåÀíÍæ¼Ò»÷ÖĞµÄ¹ÖÎïµØÖ·
 				PlayerData::AttackMonsterPlot = nullptr;
-				//æ¸…ç†ç©å®¶Fsm
+				//ÇåÀíÍæ¼ÒFsm
 				PlayerData::Fsm = PlayerData::FsmData(0, 0);
 				PlayerData::NowFsm = PlayerData::FsmData(0, 0);
 				PlayerData::TempData::t_ManualFsmAction = PlayerData::FsmData(0, 0);
 				PlayerData::TempData::t_executingFsmAction = false;
-				//æ›´æ–°åœ°å€ä¿¡æ¯
+				//¸üĞÂµØÖ·ĞÅÏ¢
 				void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 				BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
-				//æ¸…é™¤æŒ‰é”®æ•°æ®
+				//Çå³ı°´¼üÊı¾İ
 				Keyboard::TempData::t_KeyCount.clear();
 				Keyboard::TempData::t_KeyDown.clear();
-				//æ¸…é™¤Xboxæ‰‹æŸ„æ•°æ®
+				//Çå³ıXboxÊÖ±úÊı¾İ
 				XboxPad::TempData::t_KeyCount.clear();
 				XboxPad::TempData::t_KeyDown.clear();
 			}
-			//æ›´æ–°ç©å®¶æ•°æ®
+			//¸üĞÂÍæ¼ÒÊı¾İ
 			PlayerData::Updata();
-			//æ¸…é™¤æ­»äº¡çš„ç¯å¢ƒç”Ÿç‰©,æ­¤å¤„æœ€å¥½èƒ½æ‰¾åˆ°ç¯å¢ƒç”Ÿç‰©åŠé”€çš„åœ°å€ï¼Œç›®å‰å…ˆè¿™æ ·ç”¨ç€
+			//Çå³ıËÀÍöµÄ»·¾³ÉúÎï,´Ë´¦×îºÃÄÜÕÒµ½»·¾³ÉúÎïµõÏúµÄµØÖ·£¬Ä¿Ç°ÏÈÕâÑùÓÃ×Å
 			for (auto [Environmental, EData] : World::EnvironmentalData::Environmentals) {
 				if (EData.Plot == nullptr) {
 					World::EnvironmentalData::Environmentals.erase(Environmental);
 				}
 			}
-			//æ›´æ–°ç¯å¢ƒç”Ÿç‰©æ•°æ®
+			//¸üĞÂ»·¾³ÉúÎïÊı¾İ
 			for (auto [environmental, environmentalData] : Base::World::EnvironmentalData::Environmentals) {
 				if (environmental != nullptr) {
 					Base::World::EnvironmentalData::Environmentals[environmental].CoordinatesX = *offsetPtr<float>(environmental, 0x160);
@@ -1520,7 +1514,7 @@ Modæºç å¯ä»[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)è·å–
 					Base::World::EnvironmentalData::Environmentals[environmental].CoordinatesZ = *offsetPtr<float>(environmental, 0x168);
 				}
 			}
-			//æ›´æ–°æ€ªç‰©ä¿¡æ¯
+			//¸üĞÂ¹ÖÎïĞÅÏ¢
 			for (auto [monster, monsterData] : Base::Monster::Monsters) {
 				if (monster != nullptr) {
 					Base::Monster::Monsters[monster].CoordinatesX = *offsetPtr<float>(monster, 0x160);
@@ -1529,27 +1523,27 @@ Modæºç å¯ä»[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)è·å–
 				}
 			}
 
-			//æ›´æ–°è®¡æ—¶å™¨æ—¶é—´
+			//¸üĞÂ¼ÆÊ±Æ÷Ê±¼ä
 			Chronoscope::NowTime = *offsetPtr<float>(BasicGameData::MapPlot, 0xC24);
 
-			//æ¸…é™¤ç›¸æœºç»‘å®šæ•°æ®
+			//Çå³ıÏà»ú°ó¶¨Êı¾İ
 			if (!PlayerData::Coordinate::TempData::t_SetVisual) {
 				PlayerData::Coordinate::TempData::t_SetVisualBind = nullptr;
 			}
-			//è®¾ç½®ç›¸æœºç»‘å®šæ•°æ®
+			//ÉèÖÃÏà»ú°ó¶¨Êı¾İ
 			if (PlayerData::Coordinate::TempData::t_SetVisualBind != nullptr) {
 				PlayerData::Coordinate::TempData::t_SetVisualCoordinate.x = *offsetPtr<float>(PlayerData::Coordinate::TempData::t_SetVisualBind, 0x160);
 				PlayerData::Coordinate::TempData::t_SetVisualCoordinate.y = *offsetPtr<float>(PlayerData::Coordinate::TempData::t_SetVisualBind, 0x164);
 				PlayerData::Coordinate::TempData::t_SetVisualCoordinate.z = *offsetPtr<float>(PlayerData::Coordinate::TempData::t_SetVisualBind, 0x168);
 			}
-			//è¿è¡Œå§”æ‰˜
+			//ÔËĞĞÎ¯ÍĞ
 			Commission::Run();
-			//æ›´æ–°Xboxæ‰‹æŸ„ä¿¡æ¯
+			//¸üĞÂXboxÊÖ±úĞÅÏ¢
 			XboxPad::Updata();
 			//¸üĞÂÍæ¼ÒÏûÏ¢ÄÚÈİ
 			void* MassagePlot = *(undefined**)MH::World::Message;
 			void* PlayerMessageOffset = *offsetPtr<undefined**>((undefined(*)())MassagePlot, 0x38);
-			if(PlayerMessageOffset != nullptr)
+			if (PlayerMessageOffset != nullptr)
 				World::Massage = offsetPtr<char>(PlayerMessageOffset, 0x80);
 			//WebSocketÊı¾İ´¦Àí
 			NetworkServer::WSHandle();
