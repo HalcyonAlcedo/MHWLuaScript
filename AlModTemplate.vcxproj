@@ -84,6 +84,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)deps\Lua;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -181,6 +182,7 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="deps\loader.lib" />
+    <Library Include="deps\lua54.lib" />
     <Library Include="deps\minhook\libMinHook.x64.lib" />
   </ItemGroup>
   <ItemGroup>

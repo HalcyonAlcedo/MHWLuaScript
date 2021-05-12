@@ -1,7 +1,12 @@
 #pragma once
-#include <lua.hpp>
+//#include <lua.hpp>
 #include "loader.h"
 
+extern "C" {
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
+}
 lua_State* L;
 static string Nowlua;
 static string Sublua;
@@ -245,14 +250,28 @@ static int Game_Player_GetFsmData(lua_State* pL) {
     return 2;
 }
 static int Game_Player_RunFsmAction(lua_State* pL) {
-    int type = (int)lua_tonumber(pL, 1);
-    int id = (int)lua_tonumber(pL, 2);
+    int type = (int)lua_tointeger(pL, 1);
+    int id = (int)lua_tointeger(pL, 2);
     Base::PlayerData::RunDerivedAction(type, id);
     return 0;
 }
 static int Game_Player_CheckRunFsmActionOver(lua_State* pL) {
     lua_pushboolean(pL, Base::PlayerData::CheckDerivedAction());
     return 1;
+}
+static int Game_Player_RunLmtAction(lua_State* pL) {
+    int id = (int)lua_tointeger(pL, -1);
+    Base::PlayerData::RunAction(id);
+    return 0;
+}
+static int Game_Player_GetActionFrame(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::ActionFrame);
+    return 1;
+}
+static int Game_Player_SetActionFrame(lua_State* pL) {
+    float frame = (float)lua_tonumber(pL, -1);
+    Base::PlayerData::SetActionFrame(frame);
+    return 0;
 }
 static int Game_Player_GetPlayerHealth(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::BasicHealth);
@@ -1492,6 +1511,12 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Player_RunFsmAction", Game_Player_RunFsmAction);
     //检查执行的派生动作是否结束
     lua_register(L, "Game_Player_CheckRunFsmActionOver", Game_Player_CheckRunFsmActionOver);
+    //执行指定的派生动作
+    lua_register(L, "Game_Player_RunLmtAction", Game_Player_RunLmtAction);
+    //获取当前动作帧
+    lua_register(L, "Game_Player_GetActionFrame", Game_Player_GetActionFrame);
+    //设置当前动作帧
+    lua_register(L, "Game_Player_SetActionFrame", Game_Player_SetActionFrame);
     //获取玩家血量信息
     lua_register(L, "Game_Player_GetPlayerHealth", Game_Player_GetPlayerHealth);
     //设置玩家当前血量

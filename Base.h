@@ -40,7 +40,7 @@ namespace Base {
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
 		string ModVersion = "v1.2.0 Beta";
-		long long ModBuild = 120005121851;
+		long long ModBuild = 120005122302;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -701,6 +701,8 @@ namespace Base {
 		void* AttackMonsterPlot = nullptr;
 		//动作id
 		int ActionId = 0;
+		//当前动作帧
+		float ActionFrame = 0;
 		//派生信息
 		FsmData Fsm = FsmData();
 		FsmData NowFsm = FsmData();
@@ -741,6 +743,15 @@ namespace Base {
 					return false;
 			}
 			return false;
+		}
+		//执行动作(执行Id)
+		static void RunAction(int id) {
+			MH::Player::CallLmt((undefined*)BasicGameData::PlayerPlot, id, 0);
+		}
+		//设置当前动作帧
+		static void SetActionFrame(float Frame) {
+			void* ActionFramePlot = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x468);
+			*offsetPtr<float>(ActionFramePlot, 0x10c) = Frame;
 		}
 		//获取玩家Buff持续时间
 		static float GetPlayerBuff(string buff) {
@@ -883,6 +894,9 @@ namespace Base {
 				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6274),
 				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6278)
 			);
+			void* ActionFramePlot = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x468);
+			if (ActionFramePlot != nullptr)
+				ActionFrame = *offsetPtr<float>(ActionFramePlot, 0x10c);
 			BasicHealth = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7628);
 			void* StatusManagementPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7630);
 			if (StatusManagementPlot != nullptr) {

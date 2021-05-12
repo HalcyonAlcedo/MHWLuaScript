@@ -259,6 +259,7 @@ namespace ControlProgram {
 					{
 						ImGui::Text(u8"当前Fsm：%d - %d", Base::PlayerData::NowFsm.Target, Base::PlayerData::NowFsm.Id);
 						ImGui::Text(u8"上一个执行的Fsm：%d - %d", Base::PlayerData::Fsm.Target, Base::PlayerData::Fsm.Id);
+						ImGui::Text(u8"当前动作帧：%d", Base::PlayerData::ActionFrame);
 						ImGui::TreePop();
 					}
 					ImGui::Text(u8"当前耐力：%f", Base::PlayerData::CurrentEndurance);
@@ -280,6 +281,8 @@ namespace ControlProgram {
 					ImGui::Text(u8"朝向角：%f", Base::PlayerData::Angle);
 					ImGui::Text(u8"武器类型：%d", Base::PlayerData::Weapons::WeaponType);
 					ImGui::Text(u8"武器Id：%d", Base::PlayerData::Weapons::WeaponId);
+					ImGui::Text(u8"重力加速度：%d", Base::PlayerData::Gravity);
+					ImGui::Text(u8"下落速率：%d", Base::PlayerData::Fallspeedrate);
 					ImGui::TreePop();
 				}
 				if (ImGui::TreeNode(u8"怪物信息"))
