@@ -84,6 +84,18 @@ static int Game_Player_GetPlayerAngle(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Angle);
     return 1;
 }
+static int Game_Player_GetPlayerGravity(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::Gravity);
+    return 1;
+}
+static int Game_Player_GetPlayerFallSpeedRate(lua_State* pL) {
+    lua_pushnumber(pL, Base::PlayerData::Fallspeedrate);
+    return 1;
+}
+static int Game_Player_CheckPlayerAirState(lua_State* pL) {
+    lua_pushboolean(pL, Base::PlayerData::AimingState);
+    return 1;
+}
 static int Game_Player_Weapon_GetWeaponId(lua_State* pL) {
     lua_pushinteger(pL, Base::PlayerData::Weapons::WeaponId);
     return 1;
@@ -1412,6 +1424,12 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Player_GetPlayerActionId", Game_Player_GetPlayerActionId);
     //获取面向角度
     lua_register(L, "Game_Player_GetPlayerAngle", Game_Player_GetPlayerAngle);
+    //获取玩家重力加速度
+    lua_register(L, "Game_Player_GetPlayerGravity", Game_Player_GetPlayerGravity);
+    //获取玩家下落速度
+    lua_register(L, "Game_Player_GetPlayerFallSpeedRate", Game_Player_GetPlayerFallSpeedRate);
+    //获取玩家空中状态
+    lua_register(L, "Game_Player_CheckPlayerAirState", Game_Player_CheckPlayerAirState);
     //添加特效
     lua_register(L, "Game_Player_AddEffect", Game_Player_AddEffect);
 

@@ -688,15 +688,15 @@ namespace Base {
 		//欧拉角
 		Vector3 EulerAngle = Vector3();
 		//重力加速度
-		float gravity = 0;
+		float Gravity = 0;
 		//下落速率
 		float Fallspeedrate = 0;
 		//相机距离
 		float VisualDistance = 0;
 		//是否处于瞄准状态
 		bool AimingState = false;
-		//角色状态
-		int PlayerAirState = 0;
+		//空中状态
+		bool PlayerAirState = false;
 		//最后一次击中的怪物地址
 		void* AttackMonsterPlot = nullptr;
 		//动作id
@@ -816,9 +816,9 @@ namespace Base {
 				AimingState = *offsetPtr<bool>(AimingStatePlot, 0xC28);
 			else
 				AimingState = false;
-			gravity = *offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0x14B0);
+			Gravity = *offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0x14B0);
 			Fallspeedrate = *offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0xE178);
-			PlayerAirState = *offsetPtr<int>(Base::BasicGameData::PlayerPlot, 0x112C);
+			PlayerAirState = *offsetPtr<bool>(Base::BasicGameData::PlayerPlot, 0x112C);
 			if (BasicGameData::PlayerDataPlot != nullptr) {
 				AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerDataPlot, 0x2C8);
 				EulerAngle = Vector3(
