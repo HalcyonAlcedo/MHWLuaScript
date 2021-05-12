@@ -234,6 +234,15 @@ namespace ControlProgram {
 					}
 					ImGui::TreePop();
 				}
+				if (ImGui::TreeNode(u8"´íÎó¼ÇÂ¼"))
+				{
+					ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+					ImGui::BeginChild("LuaErrList", ImVec2(ImGui::GetWindowContentRegionWidth(), 260), false, window_flags);
+					for (auto iter = Base::ModConfig::LuaError.cbegin(); iter != Base::ModConfig::LuaError.cend(); iter++)
+						ImGui::Text("%s", *iter);
+					ImGui::EndChild();
+					ImGui::TreePop();
+				}
 				if (ImGui::Button(u8"¿ì½Ý¼ü±à¼­")) {
 					Base::ModConfig::HotKeyEdit = true;
 				}
