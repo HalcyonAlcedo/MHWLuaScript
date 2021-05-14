@@ -108,7 +108,7 @@ static int Game_Player_SetPlayerFallSpeedRate(lua_State* pL) {
     return 0;
 }
 static int Game_Player_CheckPlayerAirState(lua_State* pL) {
-    lua_pushboolean(pL, Base::PlayerData::AimingState);
+    lua_pushboolean(pL, Base::PlayerData::PlayerAirState);
     return 1;
 }
 static int Game_Player_Weapon_GetWeaponId(lua_State* pL) {
