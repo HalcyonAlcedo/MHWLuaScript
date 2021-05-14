@@ -39,8 +39,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.0 Beta";
-		long long ModBuild = 120005122302;
+		string ModVersion = "v1.2.0";
+		long long ModBuild = 120005150007;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -703,6 +703,7 @@ namespace Base {
 		int ActionId = 0;
 		//当前动作帧
 		float ActionFrame = 0;
+		float ActionFrameEnd = 0;
 		//派生信息
 		FsmData Fsm = FsmData();
 		FsmData NowFsm = FsmData();
@@ -764,6 +765,12 @@ namespace Base {
 			void* BuffsPlot = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x7D20);
 			int buffPtr = PlayerBuff::GetBuffPtr(buff);
 			*offsetPtr<float>(BuffsPlot, buffPtr) = duration;
+		}
+		static void SetGravity(float gravity) {
+			*offsetPtr<float>(BasicGameData::PlayerPlot, 0x14B0) = gravity;
+		}
+		static void SetFallSpeedRate(float fallSpeedRate) {
+			*offsetPtr<float>(BasicGameData::PlayerPlot, 0xE178) = fallSpeedRate;
 		}
 		//钩爪变更坐标
 		Vector3 HookCoordinateChange = Vector3();
@@ -895,8 +902,10 @@ namespace Base {
 				*offsetPtr<int>(BasicGameData::PlayerPlot, 0x6278)
 			);
 			void* ActionFramePlot = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x468);
-			if (ActionFramePlot != nullptr)
+			if (ActionFramePlot != nullptr) {
 				ActionFrame = *offsetPtr<float>(ActionFramePlot, 0x10c);
+				ActionFrameEnd = *offsetPtr<float>(ActionFramePlot, 0x114);
+			}
 			BasicHealth = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7628);
 			void* StatusManagementPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7630);
 			if (StatusManagementPlot != nullptr) {
@@ -1350,9 +1359,9 @@ namespace Base {
 								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x168) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponCoordinate.z;
 							}
 							if (Base::PlayerData::Weapons::TempData::t_setMainWeaponSize) {
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x160) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.x;
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x164) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.y;
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x168) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.z;
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x180) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.x;
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x184) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.y;
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x188) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.z;
 							}
 						}
 						return original();
@@ -1377,9 +1386,9 @@ namespace Base {
 								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x168) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponCoordinate.z;
 							}
 							if (Base::PlayerData::Weapons::TempData::t_setSecondaryWeaponSize) {
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x160) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.x;
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x164) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.y;
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x168) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.z;
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x180) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.x;
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x184) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.y;
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x188) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.z;
 							}
 						}
 						return original();

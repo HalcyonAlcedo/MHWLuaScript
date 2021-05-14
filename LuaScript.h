@@ -97,6 +97,16 @@ static int Game_Player_GetPlayerFallSpeedRate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Fallspeedrate);
     return 1;
 }
+static int Game_Player_SetPlayerGravity(lua_State* pL) {
+    float gravity = (float)lua_tonumber(pL, 1);
+    Base::PlayerData::SetGravity(gravity);
+    return 0;
+}
+static int Game_Player_SetPlayerFallSpeedRate(lua_State* pL) {
+    float fallSpeedRate = (float)lua_tonumber(pL, 1);
+    Base::PlayerData::SetFallSpeedRate(fallSpeedRate);
+    return 0;
+}
 static int Game_Player_CheckPlayerAirState(lua_State* pL) {
     lua_pushboolean(pL, Base::PlayerData::AimingState);
     return 1;
@@ -266,7 +276,8 @@ static int Game_Player_RunLmtAction(lua_State* pL) {
 }
 static int Game_Player_GetActionFrame(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::ActionFrame);
-    return 1;
+    lua_pushnumber(pL, Base::PlayerData::ActionFrameEnd);
+    return 2;
 }
 static int Game_Player_SetActionFrame(lua_State* pL) {
     float frame = (float)lua_tonumber(pL, -1);
@@ -1447,6 +1458,10 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Player_GetPlayerGravity", Game_Player_GetPlayerGravity);
     //获取玩家下落速度
     lua_register(L, "Game_Player_GetPlayerFallSpeedRate", Game_Player_GetPlayerFallSpeedRate);
+    //设置玩家重力加速度
+    lua_register(L, "Game_Player_SetPlayerGravity", Game_Player_SetPlayerGravity);
+    //设置玩家下落速度
+    lua_register(L, "Game_Player_SetPlayerFallSpeedRate", Game_Player_SetPlayerFallSpeedRate);
     //获取玩家空中状态
     lua_register(L, "Game_Player_CheckPlayerAirState", Game_Player_CheckPlayerAirState);
     //添加特效
