@@ -254,6 +254,13 @@ static int Game_Player_Weapon_GetHitCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Weapons::HitCoordinate.z);
     return 3;
 }
+static int Game_Player_Weapon_GetAttackMonster(lua_State* pL) {
+    ostringstream ptr;
+    ptr << Base::PlayerData::AttackMonsterPlot;
+    string ptrstr = ptr.str();
+    lua_pushstring(pL, ptrstr.c_str());
+    return 1;
+}
 static int Game_Player_GetFsmData(lua_State* pL) {
     lua_pushinteger(pL, Base::PlayerData::NowFsm.Target);
     lua_pushinteger(pL, Base::PlayerData::NowFsm.Id);
@@ -911,6 +918,17 @@ static int Game_Entity_GetEntityProperties(lua_State* pL) {
         lua_pushnumber(pL, entityProperties.Size.z);
         lua_settable(pL, -3);
     lua_settable(pL, -3);
+
+    lua_pushstring(pL, "ActionFrame");
+    lua_newtable(pL);
+    lua_pushstring(pL, "Now");
+    lua_pushnumber(pL, entityProperties.ActionFrame.x);
+    lua_settable(pL, -3);
+    lua_pushstring(pL, "End");
+    lua_pushnumber(pL, entityProperties.ActionFrame.y);
+    lua_settable(pL, -3);
+    lua_settable(pL, -3);
+
     return 1;
 }
 static int Game_Entity_SetEntityCoordinate(lua_State* pL) {
@@ -927,6 +945,12 @@ static int Game_Entity_SetEntitySize(lua_State* pL) {
     float y = (float)lua_tonumber(pL, 3);
     float z = (float)lua_tonumber(pL, 4);
     Component::SetEntitySize(entity, Base::Vector3(x, y, z));
+    return 0;
+}
+static int Game_Entity_SetEntityActionFrame(lua_State* pL) {
+    string entity = "0x" + (string)lua_tostring(pL, 1);
+    float nowFrame = (float)lua_tonumber(pL, 2);
+    Component::SetEntityActionFrame(entity, nowFrame);
     return 0;
 }
 #pragma endregion
@@ -1519,6 +1543,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Player_Weapon_CharacteristicByteValue", Game_Player_Weapon_CharacteristicByteValue);
     //获取玩家武器最后命中的坐标
     lua_register(L, "Game_Player_Weapon_GetHitCoordinate", Game_Player_Weapon_GetHitCoordinate);
+    //获取玩家武器最后命中的怪物地址
+    lua_register(L, "Game_Player_Weapon_GetAttackMonster", Game_Player_Weapon_GetAttackMonster);
 
     //获取玩家派生信息
     lua_register(L, "Game_Player_GetFsmData", Game_Player_GetFsmData);
@@ -1643,6 +1669,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Entity_SetEntityCoordinate", Game_Entity_SetEntityCoordinate);
     //设置实体模型大小
     lua_register(L, "Game_Entity_SetEntitySize", Game_Entity_SetEntitySize);
+    //设置实体当前动作帧
+    lua_register(L, "Game_Entity_SetEntityActionFrame", Game_Entity_SetEntityActionFrame);
     #pragma endregion
     
 #pragma endregion

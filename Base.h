@@ -39,8 +39,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.0";
-		long long ModBuild = 120005150022;
+		string ModVersion = "v1.2.1 Dev";
+		long long ModBuild = 121005151910;
 		string Version = "421470";
 	}
 #pragma endregion

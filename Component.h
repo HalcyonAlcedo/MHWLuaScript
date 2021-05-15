@@ -810,10 +810,12 @@ namespace Component {
 		struct EntityProperties {
 			Base::Vector3 Coordinate;
 			Base::Vector3 Size;
+			Base::Vector2 ActionFrame;
 			EntityProperties(
 				Base::Vector3 Coordinate = Base::Vector3(),
-				Base::Vector3 Size = Base::Vector3())
-				:Coordinate(Coordinate), Size(Size) {
+				Base::Vector3 Size = Base::Vector3(),
+				Base::Vector2 ActionFrame = Base::Vector2())
+				:Coordinate(Coordinate), Size(Size), ActionFrame(ActionFrame) {
 			};
 		};
 		static EntityProperties GetEntityProperties(string ptr) {
@@ -821,6 +823,10 @@ namespace Component {
 			sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
 			void* EntityAddress = (double*)Ptr;
 			if (EntityAddress != nullptr) {
+				void* ActionPlot = *offsetPtr<undefined**>((undefined(*)())Ptr, 0x468);
+				Base::Vector2 ActionFrame = Base::Vector2();
+				if (ActionPlot != nullptr)
+					ActionFrame = Base::Vector2(*offsetPtr<float>(ActionPlot, 0x10c), *offsetPtr<float>(ActionPlot, 0x114));
 				return EntityProperties(
 					Base::Vector3(
 						*(float*)(Ptr + 0x160),
@@ -831,7 +837,8 @@ namespace Component {
 						*(float*)(Ptr + 0x180),
 						*(float*)(Ptr + 0x184),
 						*(float*)(Ptr + 0x188)
-					)
+					),
+					ActionFrame
 				);
 			}
 			return EntityProperties();
@@ -854,6 +861,16 @@ namespace Component {
 				*(float*)(Ptr + 0x180) = Size.x;
 				*(float*)(Ptr + 0x184) = Size.y;
 				*(float*)(Ptr + 0x188) = Size.z;
+			}
+		}
+		static void SetEntityActionFrame(string ptr, float ActionFrame) {
+			long long Ptr = 0;
+			sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+			void* EntityAddress = (double*)Ptr;
+			if (EntityAddress != nullptr) {
+				void* ActionPlot = *offsetPtr<undefined**>((undefined(*)())Ptr, 0x468);
+				if (ActionPlot != nullptr)
+					*offsetPtr<float>(ActionPlot, 0x10c) = ActionFrame;
 			}
 		}
 #pragma endregion
