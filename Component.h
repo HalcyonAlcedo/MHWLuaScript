@@ -811,11 +811,13 @@ namespace Component {
 			Base::Vector3 Coordinate;
 			Base::Vector3 Size;
 			Base::Vector3 Action;
+			float Angle;
 			EntityProperties(
 				Base::Vector3 Coordinate = Base::Vector3(),
 				Base::Vector3 Size = Base::Vector3(),
-				Base::Vector3 Action = Base::Vector3())
-				:Coordinate(Coordinate), Size(Size), Action(Action) {
+				Base::Vector3 Action = Base::Vector3(),
+				float Angle = 0)
+				:Coordinate(Coordinate), Size(Size), Action(Action), Angle(Angle) {
 			};
 		};
 		static EntityProperties GetEntityProperties(string ptr) {
@@ -844,7 +846,13 @@ namespace Component {
 						*(float*)(Ptr + 0x184),
 						*(float*)(Ptr + 0x188)
 					),
-					Action
+					Action,
+					Base::Calculation::QuaternionToAngle(Base::Vector4(
+						*(float*)(Ptr + 0x174),
+						*(float*)(Ptr + 0x178),
+						*(float*)(Ptr + 0x17C),
+						*(float*)(Ptr + 0x180)
+					))
 				);
 			}
 			return EntityProperties();
@@ -877,6 +885,28 @@ namespace Component {
 				void* ActionPlot = *offsetPtr<undefined**>((undefined(*)())Ptr, 0x468);
 				if (ActionPlot != nullptr)
 					*offsetPtr<float>(ActionPlot, 0x10c) = ActionFrame;
+			}
+		}
+		static void SetEntityAngle(string ptr, float angle) {
+			long long Ptr = 0;
+			sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+			void* EntityAddress = (double*)Ptr;
+			if (EntityAddress != nullptr) {
+				Base::Vector4 quaternion = Base::Calculation::AngleToQuaternion(angle);
+				*offsetPtr<float>((undefined(*)())Ptr, 0x174) = quaternion.x;
+				*offsetPtr<float>((undefined(*)())Ptr, 0x17C) = quaternion.z;
+			}
+		}
+		static void SetEntityAimCoordinate(string ptr, Base::Vector2 aim) {
+			long long Ptr = 0;
+			sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+			void* EntityAddress = (double*)Ptr;
+			if (EntityAddress != nullptr) {
+				float direction_x = (aim.x - *(float*)(Ptr + 0x180));
+				float direction_z = (aim.y - *(float*)(Ptr + 0x188));
+				float aim_angle = std::atan(direction_x / direction_z);
+				aim_angle = aim_angle + sign(direction_x) * (1 - sign(direction_z)) * M_PI / 2;
+				SetEntityAngle(ptr,aim_angle);//…Ë÷√Ω«∂»
 			}
 		}
 #pragma endregion

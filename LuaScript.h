@@ -943,6 +943,10 @@ static int Game_Entity_GetEntityProperties(lua_State* pL) {
         lua_settable(pL, -3);
     lua_settable(pL, -3);
 
+    lua_pushstring(pL, "Angle");
+    lua_pushnumber(pL, entityProperties.Angle);
+    lua_settable(pL, -3);
+
     return 1;
 }
 static int Game_Entity_SetEntityCoordinate(lua_State* pL) {
@@ -965,6 +969,19 @@ static int Game_Entity_SetEntityActionFrame(lua_State* pL) {
     string entity = "0x" + (string)lua_tostring(pL, 1);
     float nowFrame = (float)lua_tonumber(pL, 2);
     Component::SetEntityActionFrame(entity, nowFrame);
+    return 0;
+}
+static int Game_Entity_SetEntityAngle(lua_State* pL) {
+    string entity = "0x" + (string)lua_tostring(pL, 1);
+    float angle = (float)lua_tonumber(pL, 2);
+    Component::SetEntityAngle(entity, angle);
+    return 0;
+}
+static int Game_Entity_SetEntityAimCoordinate(lua_State* pL) {
+    string entity = "0x" + (string)lua_tostring(pL, 1);
+    float x = (float)lua_tonumber(pL, 2);
+    float z = (float)lua_tonumber(pL, 3);
+    Component::SetEntityAimCoordinate(entity, Base::Vector2(x,z));
     return 0;
 }
 #pragma endregion
@@ -1689,6 +1706,10 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Entity_SetEntitySize", Game_Entity_SetEntitySize);
     //设置实体当前动作帧
     lua_register(L, "Game_Entity_SetEntityActionFrame", Game_Entity_SetEntityActionFrame);
+    //设置实体朝向角度
+    lua_register(L, "Game_Entity_SetEntityAngle", Game_Entity_SetEntityAngle);
+    //将实体朝向指定的坐标
+    lua_register(L, "Game_Entity_SetEntityAimCoordinate", Game_Entity_SetEntityAimCoordinate);
     #pragma endregion
     
 #pragma endregion
