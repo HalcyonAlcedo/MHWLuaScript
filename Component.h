@@ -893,8 +893,8 @@ namespace Component {
 			void* EntityAddress = (double*)Ptr;
 			if (EntityAddress != nullptr) {
 				Base::Vector4 quaternion = Base::Calculation::AngleToQuaternion(angle);
-				*offsetPtr<float>((undefined(*)())Ptr, 0x174) = quaternion.x;
-				*offsetPtr<float>((undefined(*)())Ptr, 0x17C) = quaternion.z;
+				*(float*)(Ptr + 0x174) = quaternion.x;
+				*(float*)(Ptr + 0x17C) = quaternion.z;
 			}
 		}
 		static void SetEntityAimCoordinate(string ptr, Base::Vector2 aim) {
@@ -907,6 +907,14 @@ namespace Component {
 				float aim_angle = std::atan(direction_x / direction_z);
 				aim_angle = aim_angle + sign(direction_x) * (1 - sign(direction_z)) * M_PI / 2;
 				SetEntityAngle(ptr,aim_angle);//…Ë÷√Ω«∂»
+			}
+		}
+		static void EntityBehaviorControl(string ptr, int fsm) {
+			long long Ptr = 0;
+			sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+			void* EntityAddress = (double*)Ptr;
+			if (EntityAddress != nullptr) {
+				Base::Monster::BehaviorControl(EntityAddress, fsm);
 			}
 		}
 #pragma endregion

@@ -984,6 +984,12 @@ static int Game_Entity_SetEntityAimCoordinate(lua_State* pL) {
     Component::SetEntityAimCoordinate(entity, Base::Vector2(x,z));
     return 0;
 }
+static int Game_Entity_BehaviorControl(lua_State* pL) {
+    string entity = "0x" + (string)lua_tostring(pL, 1);
+    int id = (int)lua_tointeger(pL, 2);
+    Component::EntityBehaviorControl(entity, id);
+    return 0;
+}
 #pragma endregion
 #pragma region SystemFun
 static int System_Keyboard_CheckKey(lua_State* pL) {    
@@ -1710,6 +1716,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Entity_SetEntityAngle", Game_Entity_SetEntityAngle);
     //将实体朝向指定的坐标
     lua_register(L, "Game_Entity_SetEntityAimCoordinate", Game_Entity_SetEntityAimCoordinate);
+    //使实体执行动作
+    lua_register(L, "Game_Entity_BehaviorControl", Game_Entity_BehaviorControl);
     #pragma endregion
     
 #pragma endregion
