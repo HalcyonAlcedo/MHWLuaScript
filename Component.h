@@ -810,12 +810,12 @@ namespace Component {
 		struct EntityProperties {
 			Base::Vector3 Coordinate;
 			Base::Vector3 Size;
-			Base::Vector2 ActionFrame;
+			Base::Vector3 Action;
 			EntityProperties(
 				Base::Vector3 Coordinate = Base::Vector3(),
 				Base::Vector3 Size = Base::Vector3(),
-				Base::Vector2 ActionFrame = Base::Vector2())
-				:Coordinate(Coordinate), Size(Size), ActionFrame(ActionFrame) {
+				Base::Vector3 Action = Base::Vector3())
+				:Coordinate(Coordinate), Size(Size), Action(Action) {
 			};
 		};
 		static EntityProperties GetEntityProperties(string ptr) {
@@ -824,9 +824,15 @@ namespace Component {
 			void* EntityAddress = (double*)Ptr;
 			if (EntityAddress != nullptr) {
 				void* ActionPlot = *offsetPtr<undefined**>((undefined(*)())Ptr, 0x468);
-				Base::Vector2 ActionFrame = Base::Vector2();
-				if (ActionPlot != nullptr)
-					ActionFrame = Base::Vector2(*offsetPtr<float>(ActionPlot, 0x10c), *offsetPtr<float>(ActionPlot, 0x114));
+				Base::Vector3 Action = Base::Vector3();
+				if (ActionPlot != nullptr) {
+					Action = Base::Vector3(
+						*offsetPtr<float>(ActionPlot, 0xE9C4),
+						*offsetPtr<float>(ActionPlot, 0x10c), 
+						*offsetPtr<float>(ActionPlot, 0x114)
+					);
+				}
+					
 				return EntityProperties(
 					Base::Vector3(
 						*(float*)(Ptr + 0x160),
@@ -838,7 +844,7 @@ namespace Component {
 						*(float*)(Ptr + 0x184),
 						*(float*)(Ptr + 0x188)
 					),
-					ActionFrame
+					Action
 				);
 			}
 			return EntityProperties();

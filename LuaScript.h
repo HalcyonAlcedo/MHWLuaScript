@@ -89,6 +89,17 @@ static int Game_Player_GetPlayerAngle(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Angle);
     return 1;
 }
+static int Game_Player_SetPlayerAngle(lua_State* pL) {
+    float angle = (float)lua_tonumber(pL, -1);
+    Base::PlayerData::SetPlayerAimAngle(angle);
+    return 0;
+}
+static int Game_Player_SetPlayerAimToCoordinate(lua_State* pL) {
+    float x = (float)lua_tonumber(pL, 1);
+    float z = (float)lua_tonumber(pL, 2);
+    Base::PlayerData::SetPlayerAimCoordinate(x,z);
+    return 0;
+}
 static int Game_Player_GetPlayerGravity(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Gravity);
     return 1;
@@ -919,14 +930,17 @@ static int Game_Entity_GetEntityProperties(lua_State* pL) {
         lua_settable(pL, -3);
     lua_settable(pL, -3);
 
-    lua_pushstring(pL, "ActionFrame");
-    lua_newtable(pL);
-    lua_pushstring(pL, "Now");
-    lua_pushnumber(pL, entityProperties.ActionFrame.x);
-    lua_settable(pL, -3);
-    lua_pushstring(pL, "End");
-    lua_pushnumber(pL, entityProperties.ActionFrame.y);
-    lua_settable(pL, -3);
+    lua_pushstring(pL, "Action");
+        lua_newtable(pL);
+        lua_pushstring(pL, "Id");
+        lua_pushnumber(pL, entityProperties.Action.x);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "NowFrame");
+        lua_pushnumber(pL, entityProperties.Action.y);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "EndFrame");
+        lua_pushnumber(pL, entityProperties.Action.z);
+        lua_settable(pL, -3);
     lua_settable(pL, -3);
 
     return 1;
@@ -1476,8 +1490,12 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Player_SetPlayerVisualHeight", Game_Player_SetPlayerVisualHeight);
     //获取玩家动作id
     lua_register(L, "Game_Player_GetPlayerActionId", Game_Player_GetPlayerActionId);
-    //获取面向角度
+    //获取朝向角度
     lua_register(L, "Game_Player_GetPlayerAngle", Game_Player_GetPlayerAngle);
+    //设置朝向角度
+    lua_register(L, "Game_Player_SetPlayerAngle", Game_Player_SetPlayerAngle);
+    //设置朝向坐标
+    lua_register(L, "Game_Player_SetPlayerAimToCoordinate", Game_Player_SetPlayerAimToCoordinate);
     //获取玩家重力加速度
     lua_register(L, "Game_Player_GetPlayerGravity", Game_Player_GetPlayerGravity);
     //获取玩家下落速度

@@ -5,6 +5,9 @@
 #include "PlayerBuff.h"
 #include "Network.h"
 #include "AobAddress.h"
+#define _USE_MATH_DEFINES
+#define sign(x) (((x) < 0) ? -1 : ((x) > 0))
+#define M_PI 3.14159265358979323846
 #define GUID_LEN 64
 
 using namespace std;
@@ -17,6 +20,10 @@ extern "C" void* _stdcall GetHitPtr(void*);
 
 namespace Base {
 	//常用结构
+	struct Vector4 {
+		float x, y, z, w;
+		Vector4(float x = 0, float y = 0, float z = 0, float w = 0) :x(x), y(y), z(z), w(w) { };
+	};
 	struct Vector3 {
 		float x, y, z;
 		Vector3(float x = 0, float y = 0, float z = 0) :x(x), y(y), z(z) { };
@@ -40,7 +47,7 @@ namespace Base {
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
 		string ModVersion = "v1.2.1 Dev";
-		long long ModBuild = 121005151910;
+		long long ModBuild = 121005181015;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -219,38 +226,96 @@ namespace Base {
 				guid.Data4[6], guid.Data4[7]);
 			return buffer;
 		}
-		static inline void QuaternionToAngleAxis(const float* quaternion,
-			float* angle_axis) {
-			const float q1 = quaternion[1];
-			const float q2 = quaternion[2];
-			const float q3 = quaternion[3];
-			const float sin_squared_theta = q1 * q1 + q2 * q2 + q3 * q3;
+		Vector3 inline ToEulerAngles(Vector4 quaternion)
+		{
+			Vector3 eulerangles;
 
-			// For quaternions representing non-zero rotation, the conversion
-			// is numerically stable.
-			if (sin_squared_theta > 0.0f) {
-				const float sin_theta = sqrt(sin_squared_theta);
-				const float cos_theta = quaternion[0];
+			// roll (x-axis rotation)
+			float sinr_cosp = 2 * (quaternion.w * quaternion.x + quaternion.y * quaternion.z);
+			float cosr_cosp = 1 - 2 * (quaternion.x * quaternion.x + quaternion.y * quaternion.y);
+			eulerangles.x = std::atan2(sinr_cosp, cosr_cosp);
 
+			// pitch (y-axis rotation)
+			float sinp = 2 * (quaternion.w * quaternion.y - quaternion.z * quaternion.x);
+			if (std::abs(sinp) >= 1)
+				eulerangles.y = std::copysign(M_PI / 2, sinp);
+			else
+				eulerangles.y = std::asin(sinp);
 
-				const float two_theta =
-					2.0 * ((cos_theta < 0.0)
-						? atan2(-sin_theta, -cos_theta)
-						: atan2(sin_theta, cos_theta));
-				const float k = two_theta / sin_theta;
-				angle_axis[0] = q1 * k;
-				angle_axis[1] = q2 * k;
-				angle_axis[2] = q3 * k;
+			// yaw (z-axis rotation)
+			float siny_cosp = 2 * (quaternion.w * quaternion.z + quaternion.x * quaternion.y);
+			float cosy_cosp = 1 - 2 * (quaternion.y * quaternion.y + quaternion.z * quaternion.z);
+			eulerangles.z = std::atan2(siny_cosp, cosy_cosp);
+
+			return eulerangles;
+		}
+		Vector4 inline ToQuaternion(Vector3 eulerangles)
+		{
+			float cr = cos(eulerangles.x * 0.5);
+			float sr = sin(eulerangles.x * 0.5);
+			float cp = cos(eulerangles.y * 0.5);
+			float sp = sin(eulerangles.y * 0.5);
+			float cy = cos(eulerangles.z * 0.5);
+			float sy = sin(eulerangles.z * 0.5);
+
+			Vector4 quaternion;
+			quaternion.w = cy * cp * cr + sy * sp * sr;
+			quaternion.x = cy * cp * sr - sy * sp * cr;
+			quaternion.y = sy * cp * sr + cy * sp * cr;
+			quaternion.z = sy * cp * cr - cy * sp * sr;
+
+			return quaternion;
+		}
+		float QuaternionToAngle(Vector4 quaternion)
+		{
+			Vector4 input;
+			input.w = 0;
+			input.x = quaternion.x;
+			input.y = 0;
+			input.z = quaternion.z;
+			float result = 0 - ToEulerAngles(input).y;
+			if (ToEulerAngles(input).x == 0)
+			{
+				if (result > 0.0)
+					return result;
+				else
+					return result;
 			}
-			else {
-				// For zero rotation, sqrt() will produce NaN in the derivative since
-				// the argument is zero. By approximating with a Taylor series,
-				// and truncating at one term, the value and first derivatives will be
-				// computed correctly when Jets are used.
-				angle_axis[0] = q1 * 2.0f;
-				angle_axis[1] = q2 * 2.0f;
-				angle_axis[2] = q3 * 2.0f;
+			else
+			{
+				if (result > 0.0)
+					return M_PI - result;
+				else
+					return -M_PI - result;
 			}
+		}
+		Vector4 AngleToQuaternion(float angle)//输入与z轴正方向夹角的弧度值，得到对应方向的四元数
+		{
+			Vector3 input;
+
+			if (angle / M_PI > 0.5)
+			{
+				input.x = M_PI;
+				input.y = angle - M_PI;
+				input.z = 0;
+			}
+			else if (angle / M_PI < -0.5)
+			{
+				input.x = M_PI;
+				input.y = angle + M_PI;
+				input.z = 0;
+			}
+			else
+			{
+				input.x = 0;
+				input.y = -angle;
+				input.z = M_PI;
+			}
+
+			Vector4 result;
+			result = ToQuaternion(input);
+
+			return result;
 		}
 		static unsigned char* Base64ToImg(string Base64Data) {
 			vector<BYTE> decodedData = base64_decode(Base64Data);
@@ -772,6 +837,24 @@ namespace Base {
 		static void SetFallSpeedRate(float fallSpeedRate) {
 			*offsetPtr<float>(BasicGameData::PlayerPlot, 0xE178) = fallSpeedRate;
 		}
+		//设置玩家朝向角度、坐标
+		static void SetPlayerAimAngle(float angle)//输入与Z轴正方向夹角
+		{
+			Vector4 quaternion = Calculation::AngleToQuaternion(angle);
+			*offsetPtr<float>(BasicGameData::PlayerPlot, 0x174) = quaternion.x;//PlotData::PlayerPlot = 145073ED0 -> 50
+			*offsetPtr<float>(BasicGameData::PlayerPlot, 0x17C) = quaternion.z;//将计算出来的四元数赋值给人物朝向的四元数，另外两个值不用动
+		}
+		static void SetPlayerAimCoordinate(float aim_x, float aim_z)//输入目标的x轴，z轴坐标
+		{
+			float direction_x = (aim_x - PlayerData::Coordinate::Entity.x);//目标x轴 减去 人物x轴
+			float direction_z = (aim_z - PlayerData::Coordinate::Entity.z);//目标z轴 减去 人物z轴
+
+			float aim_angle = std::atan(direction_x / direction_z);
+
+			aim_angle = aim_angle + sign(direction_x) * (1 - sign(direction_z)) * M_PI / 2;
+
+			SetPlayerAimAngle(aim_angle);//设置角度
+		}
 		//钩爪变更坐标
 		Vector3 HookCoordinateChange = Vector3();
 		//钩爪变更坐标
@@ -837,6 +920,12 @@ namespace Base {
 			Gravity = *offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0x14B0);
 			Fallspeedrate = *offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0xE178);
 			PlayerAirState = *offsetPtr<bool>(Base::BasicGameData::PlayerPlot, 0x112C);
+			Angle = Calculation::QuaternionToAngle(Vector4(
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x174),
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x178),
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x17C),
+				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x180)
+				));
 			if (BasicGameData::PlayerDataPlot != nullptr) {
 				AttackMonsterPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerDataPlot, 0x2C8);
 				EulerAngle = Vector3(
@@ -844,7 +933,7 @@ namespace Base {
 					*offsetPtr<float>(BasicGameData::PlayerDataPlot, 0x1F4),
 					*offsetPtr<float>(BasicGameData::PlayerDataPlot, 0x1F8)
 				);
-				Angle = EulerAngle.x * 180;
+				//Angle = EulerAngle.x * 180;
 				Radian = 4 * atan(1.0) / 180 * PlayerData::Angle;
 			}
 			else {
