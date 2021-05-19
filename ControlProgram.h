@@ -27,6 +27,7 @@ namespace ControlProgram {
 	LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	Present oPresent;
+	Present oResize;
 	HWND window = NULL;
 	WNDPROC oWndProc;
 	ID3D11Device* pDevice = NULL;
@@ -120,6 +121,18 @@ namespace ControlProgram {
 			return false;
 		LoadTexture(image_data, out_srv, out_width, out_height, image_width, image_height);
 		return true;
+	}
+	HRESULT __stdcall hkResize(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)
+	{
+		ImGui_ImplDX11_Shutdown();
+		mainRenderTargetView->Release();
+		pContext->Release();
+		pDevice->Release();
+		mainRenderTargetView = nullptr;
+		pContext = nullptr;
+		pDevice = nullptr;
+		init = false;
+		return oResize(pSwapChain, SyncInterval, Flags);
 	}
 	HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)
 	{
@@ -451,6 +464,7 @@ namespace ControlProgram {
 			if (kiero::init(kiero::RenderType::D3D11) == kiero::Status::Success)
 			{
 				kiero::bind(8, (void**)&oPresent, hkPresent);
+				kiero::bind(13, (void**)&oResize, hkResize);
 				init_hook = true;
 			}
 		} while (!init_hook);
