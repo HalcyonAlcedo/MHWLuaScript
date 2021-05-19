@@ -36,6 +36,7 @@ namespace Base {
 	namespace ModConfig {
 		//内置参数
 		bool GameDataInit = false;
+		bool DrawInit = false;
 		bool InitErrInfo = true;
 		int InitErrCount = 0;
 		vector<string> LuaFiles;
@@ -46,8 +47,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.1";
-		long long ModBuild = 121005182125;
+		string ModVersion = "v1.2.2 Dev";
+		long long ModBuild = 122005191838;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -1577,6 +1578,7 @@ Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 	//实时更新的数据
 	static void RealTimeUpdate() {
 		if (ModConfig::GameDataInit) {
+			if (!ModConfig::DrawInit) ModConfig::DrawInit = true;
 			//实时更新地图地址信息
 			BasicGameData::MapPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7D20);
 			//写入地图信息和清除数据

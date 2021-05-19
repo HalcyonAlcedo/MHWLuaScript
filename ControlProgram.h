@@ -124,14 +124,15 @@ namespace ControlProgram {
 	}
 	HRESULT __stdcall hkResize(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)
 	{
-		ImGui_ImplDX11_Shutdown();
+		//ImGui_ImplDX11_Shutdown();
 		mainRenderTargetView->Release();
-		pContext->Release();
-		pDevice->Release();
+		//pContext->Release();
+		//pDevice->Release();
 		mainRenderTargetView = nullptr;
-		pContext = nullptr;
-		pDevice = nullptr;
-		init = false;
+		//pContext = nullptr;
+		//pDevice = nullptr;
+		//init = false;
+		Base::ModConfig::DrawInit = false;
 		return oResize(pSwapChain, SyncInterval, Flags);
 	}
 	HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)
@@ -160,6 +161,15 @@ namespace ControlProgram {
 			}
 			else
 				return oPresent(pSwapChain, SyncInterval, Flags);
+		}
+
+		if (!Base::ModConfig::DrawInit)
+			return oPresent(pSwapChain, SyncInterval, Flags);
+		else if (mainRenderTargetView == nullptr) {
+			ID3D11Texture2D* pBackBuffer;
+			pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+			pDevice->CreateRenderTargetView(pBackBuffer, NULL, &mainRenderTargetView);
+			pBackBuffer->Release();
 		}
 
 		//°ґјьґ¦Ан
