@@ -124,15 +124,10 @@ namespace ControlProgram {
 	}
 	HRESULT __stdcall hkResize(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)
 	{
-		//ImGui_ImplDX11_Shutdown();
 		mainRenderTargetView->Release();
-		//pContext->Release();
-		//pDevice->Release();
 		mainRenderTargetView = nullptr;
-		//pContext = nullptr;
-		//pDevice = nullptr;
-		//init = false;
 		Base::ModConfig::DrawInit = false;
+		Base::ModConfig::GameDataInit = false;
 		return oResize(pSwapChain, SyncInterval, Flags);
 	}
 	HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)
