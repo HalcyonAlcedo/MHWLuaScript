@@ -130,7 +130,6 @@ namespace Base {
 		}
 		int MapId = 0;
 		string Massage = "";
-		bool SetAllActionFrameSpeed = false;
 	}
 #pragma endregion
 	//计时器
@@ -565,6 +564,7 @@ namespace Base {
 			void* t_HookCoordinate2 = nullptr;
 			float t_ActionFrameSpeed = 0;
 			bool t_SetActionFrameSpeed = false;
+			int t_ActionFrameSpeedTarget = 0;
 		}
 
 		//坐标
@@ -1503,11 +1503,13 @@ namespace Base {
 				//动作帧速率修改
 				HookLambda(MH::Player::ActionFrameSpeed,
 					[](auto RCX) {
-						if (
-							(RCX == Base::BasicGameData::PlayerPlot or Base::World::SetAllActionFrameSpeed )
-							and Base::PlayerData::TempData::t_SetActionFrameSpeed
-							) {
-							SetEDX(&Base::PlayerData::TempData::t_ActionFrameSpeed);
+						if (Base::PlayerData::TempData::t_SetActionFrameSpeed) {
+							if (Base::PlayerData::TempData::t_ActionFrameSpeedTarget == 0)
+								SetEDX(&Base::PlayerData::TempData::t_ActionFrameSpeed);
+							if (Base::PlayerData::TempData::t_ActionFrameSpeedTarget == 1 and RCX == Base::BasicGameData::PlayerPlot)
+								SetEDX(&Base::PlayerData::TempData::t_ActionFrameSpeed);
+							if (Base::PlayerData::TempData::t_ActionFrameSpeedTarget == 2 and RCX != Base::BasicGameData::PlayerPlot)
+								SetEDX(&Base::PlayerData::TempData::t_ActionFrameSpeed);
 						}
 						return original(RCX);
 					});
