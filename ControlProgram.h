@@ -279,6 +279,7 @@ namespace ControlProgram {
 						ImGui::Text(u8"上一个执行的Fsm：%d - %d", Base::PlayerData::Fsm.Target, Base::PlayerData::Fsm.Id);
 						ImGui::Text(u8"当前动作帧：%f", Base::PlayerData::ActionFrame);
 						ImGui::Text(u8"当前动作帧长度：%f", Base::PlayerData::ActionFrameEnd);
+						ImGui::Text(u8"当前动作帧速率：%f", Base::PlayerData::ActionFrameSpeed);
 						ImGui::TreePop();
 					}
 					ImGui::Text(u8"当前耐力：%f", Base::PlayerData::CurrentEndurance);

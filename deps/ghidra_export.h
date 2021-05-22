@@ -43,6 +43,7 @@ namespace MH {
         static void* PlayerDataPlot = (void*)0x1452253A8;
         static void* PlayerDataHandlePlot = (void*)0x14522C850;
         static void(*CallLmt)(undefined*,int,int) = (void(*)(undefined*, int, int))0x141C1CBD0;
+        static void(*ActionFrameSpeed)(undefined8*) = (void(*)(undefined8*))0x1422455D0;
         static void(*HookCoordinateChange)(undefined8*) = (void(*)(undefined8*))0x1412f7e8f;
         static void(*HookCoordinateChange2)(undefined8*, undefined8*, undefined8*) = (void(*)(undefined8*, undefined8*, undefined8*))0x1412F7E2F;
         static void(*HookCoordinateChange3)() = (void(*)())0x1412F7A3A;

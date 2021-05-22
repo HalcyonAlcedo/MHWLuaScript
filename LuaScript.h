@@ -302,6 +302,15 @@ static int Game_Player_SetActionFrame(lua_State* pL) {
     Base::PlayerData::SetActionFrame(frame);
     return 0;
 }
+static int Game_Player_SetActionFrameSpeed(lua_State* pL) {
+    float frameSpeed = (float)lua_tonumber(pL, -1);
+    if(frameSpeed < 0)
+        Base::PlayerData::TempData::t_SetActionFrameSpeed = false;
+    else
+        Base::PlayerData::TempData::t_SetActionFrameSpeed = true;
+    Base::PlayerData::TempData::t_ActionFrameSpeed = frameSpeed;
+    return 0;
+}
 static int Game_Player_GetPlayerHealth(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::BasicHealth);
     lua_pushnumber(pL, Base::PlayerData::MaxHealth);
@@ -346,6 +355,19 @@ static int Game_World_GetMapId(lua_State* pL) {
 static int Game_World_Message(lua_State* pL) {
     lua_pushstring(pL, Base::World::Massage.c_str());
     return 1;
+}
+static int Game_World_SetActionFrameSpeed(lua_State* pL) {
+    float frameSpeed = (float)lua_tonumber(pL, -1);
+    if (frameSpeed < 0) {
+        Base::World::SetAllActionFrameSpeed = false;
+        Base::PlayerData::TempData::t_SetActionFrameSpeed = false;
+    }
+    else {
+        Base::World::SetAllActionFrameSpeed = true;
+        Base::PlayerData::TempData::t_SetActionFrameSpeed = true;
+    }
+    Base::PlayerData::TempData::t_ActionFrameSpeed = frameSpeed;
+    return 0;
 }
 static int Game_Monster_SetFilter(lua_State* pL) {
     int id = (int)lua_tointeger(pL, 1);
@@ -1599,6 +1621,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Player_GetActionFrame", Game_Player_GetActionFrame);
     //设置当前动作帧
     lua_register(L, "Game_Player_SetActionFrame", Game_Player_SetActionFrame);
+    //设置当前动作帧
+    lua_register(L, "Game_Player_SetActionFrameSpeed", Game_Player_SetActionFrameSpeed);
     //获取玩家血量信息
     lua_register(L, "Game_Player_GetPlayerHealth", Game_Player_GetPlayerHealth);
     //设置玩家当前血量
@@ -1635,6 +1659,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_World_GetMapId", Game_World_GetMapId);
     //获取聊天消息
     lua_register(L, "Game_World_Message", Game_World_Message);
+    //设置全局动作帧速率
+    lua_register(L, "Game_World_SetActionFrameSpeed", Game_World_SetActionFrameSpeed);
     #pragma region Monster
     //设置怪物筛选器
     lua_register(L, "Game_Monster_SetFilter", Game_Monster_SetFilter);

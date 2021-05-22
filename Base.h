@@ -17,6 +17,7 @@ extern "C" long long _stdcall Navigation(float*, float*, float*);
 extern "C" void* _stdcall GetRBXPtr(void*);
 extern "C" void* _stdcall GetRDIPtr(void*);
 extern "C" void* _stdcall GetHitPtr(void*);
+extern "C" void* _stdcall SetEDX(float*);
 
 namespace Base {
 	//常用结构
@@ -47,8 +48,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.2 Dev";
-		long long ModBuild = 122005202128;
+		string ModVersion = "v1.2.2";
+		long long ModBuild = 122005221553;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -129,6 +130,7 @@ namespace Base {
 		}
 		int MapId = 0;
 		string Massage = "";
+		bool SetAllActionFrameSpeed = false;
 	}
 #pragma endregion
 	//计时器
@@ -561,6 +563,8 @@ namespace Base {
 			bool t_executingFsmAction = false;
 			void* t_HookCoordinate = nullptr;
 			void* t_HookCoordinate2 = nullptr;
+			float t_ActionFrameSpeed = 0;
+			bool t_SetActionFrameSpeed = false;
 		}
 
 		//坐标
@@ -770,6 +774,7 @@ namespace Base {
 		//当前动作帧
 		float ActionFrame = 0;
 		float ActionFrameEnd = 0;
+		float ActionFrameSpeed = 0;
 		//派生信息
 		FsmData Fsm = FsmData();
 		FsmData NowFsm = FsmData();
@@ -993,8 +998,9 @@ namespace Base {
 			);
 			void* ActionFramePlot = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x468);
 			if (ActionFramePlot != nullptr) {
-				ActionFrame = *offsetPtr<float>(ActionFramePlot, 0x10c);
+				ActionFrame = *offsetPtr<float>(ActionFramePlot, 0x10C);
 				ActionFrameEnd = *offsetPtr<float>(ActionFramePlot, 0x114);
+				ActionFrameSpeed = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x6c);
 			}
 			BasicHealth = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7628);
 			void* StatusManagementPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7630);
@@ -1493,6 +1499,17 @@ namespace Base {
 							*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_weaponHit, 0x68)
 						);
 						return original();
+					});
+				//动作帧速率修改
+				HookLambda(MH::Player::ActionFrameSpeed,
+					[](auto RCX) {
+						if (
+							(RCX == Base::BasicGameData::PlayerPlot or Base::World::SetAllActionFrameSpeed )
+							and Base::PlayerData::TempData::t_SetActionFrameSpeed
+							) {
+							SetEDX(&Base::PlayerData::TempData::t_ActionFrameSpeed);
+						}
+						return original(RCX);
 					});
 				//修改钩爪坐标
 				HookLambda(MH::Player::HookCoordinateChange,

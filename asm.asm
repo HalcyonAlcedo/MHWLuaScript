@@ -31,4 +31,9 @@ GetHitPtr proc
 	ret
 GetHitPtr endp
 
+SetEDX proc
+    mov edx, [rcx]
+	ret
+SetEDX endp
+
 end
