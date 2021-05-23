@@ -909,6 +909,15 @@ namespace Component {
 				SetEntityAngle(ptr,aim_angle);//…Ë÷√Ω«∂»
 			}
 		}
+		static void SetEntityFrameSpeed(string ptr, float frameSpeed) {
+			long long Ptr = 0;
+			sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+			void* EntityAddress = (double*)Ptr;
+			if (EntityAddress != nullptr) {
+				Base::World::FrameSpeed[EntityAddress] = frameSpeed;
+			}
+		}
+		
 		static void EntityBehaviorControl(string ptr, int fsm) {
 			long long Ptr = 0;
 			sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));

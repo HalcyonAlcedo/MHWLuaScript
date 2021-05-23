@@ -48,8 +48,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.2";
-		long long ModBuild = 122005221553;
+		string ModVersion = "v1.2.3 Dev";
+		long long ModBuild = 122005231334;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -104,6 +104,10 @@ namespace Base {
 	//世界信息
 #pragma region World
 	namespace World {
+		//缓存数据
+		namespace TempData {
+			float t_SetFrameSpeed = -1;
+		}
 		//环境生物
 		namespace EnvironmentalData {
 			struct EnvironmentalData {
@@ -130,6 +134,7 @@ namespace Base {
 		}
 		int MapId = 0;
 		string Massage = "";
+		map<void*, float> FrameSpeed;
 	}
 #pragma endregion
 	//计时器
@@ -1503,16 +1508,30 @@ namespace Base {
 				//动作帧速率修改
 				HookLambda(MH::Player::ActionFrameSpeed,
 					[](auto RCX) {
-						if (Base::PlayerData::TempData::t_SetActionFrameSpeed) {
-							if (Base::PlayerData::TempData::t_ActionFrameSpeedTarget == 0)
-								SetEDX(&Base::PlayerData::TempData::t_ActionFrameSpeed);
-							if (Base::PlayerData::TempData::t_ActionFrameSpeedTarget == 1 and RCX == Base::BasicGameData::PlayerPlot)
-								SetEDX(&Base::PlayerData::TempData::t_ActionFrameSpeed);
-							if (Base::PlayerData::TempData::t_ActionFrameSpeedTarget == 2 and RCX != Base::BasicGameData::PlayerPlot)
-								SetEDX(&Base::PlayerData::TempData::t_ActionFrameSpeed);
+						if (PlayerData::TempData::t_SetActionFrameSpeed) {
+							if (PlayerData::TempData::t_ActionFrameSpeedTarget == 0)
+								SetEDX(&PlayerData::TempData::t_ActionFrameSpeed);
+							if (PlayerData::TempData::t_ActionFrameSpeedTarget == 1 and RCX == Base::BasicGameData::PlayerPlot)
+								SetEDX(&PlayerData::TempData::t_ActionFrameSpeed);
+							if (PlayerData::TempData::t_ActionFrameSpeedTarget == 2 and RCX != Base::BasicGameData::PlayerPlot)
+								SetEDX(&PlayerData::TempData::t_ActionFrameSpeed);
+						}
+						if (World::TempData::t_SetFrameSpeed >= 0) {
+							SetEDX(&World::TempData::t_SetFrameSpeed);
+							World::TempData::t_SetFrameSpeed = -1;
 						}
 						return original(RCX);
 					});
+				HookLambda(MH::World::ActionFrameSpeed,
+					[](auto rcx) {
+						for (auto [ptr, frameSpeed] : Base::World::FrameSpeed) {
+							if (rcx == ptr) {
+								World::TempData::t_SetFrameSpeed = frameSpeed;
+							}
+						}
+						return original(rcx);
+					});
+				
 				//修改钩爪坐标
 				HookLambda(MH::Player::HookCoordinateChange,
 					[](auto ptr) {

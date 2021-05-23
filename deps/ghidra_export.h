@@ -58,6 +58,7 @@ namespace MH {
         static undefined(*GameClock)() = (undefined(*)())0x145073D60;
         static undefined(*GameClockControl)(float) = (undefined(*)(float))0x141B9EB37;
         static undefined(*Message)() = (undefined(*)())0x144D18278;
+        static undefined8(*ActionFrameSpeed)(undefined8*) = (undefined8(*)(undefined8*))0x142245590;
     }
     namespace Shlp {
         static void* (*GetShlp)(void*, int) = (void* (*)(void*, int))0x140F86090;

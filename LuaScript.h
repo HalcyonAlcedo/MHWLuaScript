@@ -910,6 +910,13 @@ static int Game_Player_SetPlayerVisualHeight(lua_State* pL) {
     *offsetPtr<float>(VisualOffset, 0x5E4) = height;
     return 0;
 }
+static int Game_Entity_GetPlayerPtr(lua_State* pL) {
+    ostringstream ptr;
+    ptr << Base::BasicGameData::PlayerPlot;
+    string ptrstr = ptr.str();
+    lua_pushstring(pL, ptrstr.c_str());
+    return 1;
+}
 static int Game_Entity_GetEntityProperties(lua_State* pL) {
     string entity = "0x" + (string)lua_tostring(pL, -1);
     Component::EntityProperties entityProperties = Component::GetEntityProperties(entity);
@@ -992,6 +999,16 @@ static int Game_Entity_SetEntityAimCoordinate(lua_State* pL) {
     float x = (float)lua_tonumber(pL, 2);
     float z = (float)lua_tonumber(pL, 3);
     Component::SetEntityAimCoordinate(entity, Base::Vector2(x,z));
+    return 0;
+}
+static int Game_Entity_SetEntityFrameSpeed(lua_State* pL) {
+    string entity = "0x" + (string)lua_tostring(pL, 1);
+    float frameSpeed = (float)lua_tonumber(pL, 2);
+    Component::SetEntityFrameSpeed(entity, frameSpeed);
+    return 0;
+}
+static int Game_Entity_ClearEntityFrameSpeed(lua_State* pL) {
+    Base::World::FrameSpeed.clear();
     return 0;
 }
 static int Game_Entity_BehaviorControl(lua_State* pL) {
@@ -1728,6 +1745,10 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Entity_SetEntityAngle", Game_Entity_SetEntityAngle);
     //将实体朝向指定的坐标
     lua_register(L, "Game_Entity_SetEntityAimCoordinate", Game_Entity_SetEntityAimCoordinate);
+    //将实体动作帧速率
+    lua_register(L, "Game_Entity_SetEntityFrameSpeed", Game_Entity_SetEntityFrameSpeed);
+    //解除全部实体动作帧速率设置
+    lua_register(L, "Game_Entity_ClearEntityFrameSpeed", Game_Entity_ClearEntityFrameSpeed);
     //使实体执行动作
     lua_register(L, "Game_Entity_BehaviorControl", Game_Entity_BehaviorControl);
     #pragma endregion
