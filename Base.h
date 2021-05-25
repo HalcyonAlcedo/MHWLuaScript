@@ -49,7 +49,7 @@ namespace Base {
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
 		string ModVersion = "v1.2.3 Dev";
-		long long ModBuild = 122005231334;
+		long long ModBuild = 122005252247;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -566,7 +566,6 @@ namespace Base {
 			FsmData t_ManualFsmAction;
 			bool t_executingFsmAction = false;
 			void* t_HookCoordinate = nullptr;
-			void* t_HookCoordinate2 = nullptr;
 			float t_ActionFrameSpeed = 0;
 			bool t_SetActionFrameSpeed = false;
 			int t_ActionFrameSpeedTarget = 0;
@@ -1534,42 +1533,23 @@ namespace Base {
 				
 				//ÐÞ¸Ä¹³×¦×ø±ê
 				HookLambda(MH::Player::HookCoordinateChange,
-					[](auto ptr) {
+					[]() {
+						GetRBXPtr(&Base::PlayerData::TempData::t_HookCoordinate);
 						if (Base::PlayerData::HookChange) {
-							*offsetPtr<float>(ptr, 0x60) = Base::PlayerData::HookCoordinateChange.x;
-							*offsetPtr<float>(ptr, 0x64) = Base::PlayerData::HookCoordinateChange.y;
-							*offsetPtr<float>(ptr, 0x68) = Base::PlayerData::HookCoordinateChange.z;
+							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0xE530) = Base::PlayerData::HookCoordinateChange.x;
+							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0xE534) = Base::PlayerData::HookCoordinateChange.y;
+							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0xE538) = Base::PlayerData::HookCoordinateChange.z;
 						}
-						return original(ptr);
+						return original();
 					});
 				HookLambda(MH::Player::HookCoordinateChange2,
-					[](auto RCX, auto RDX, auto ptr) {
+					[](auto RCX, auto RDX) {
 						if (Base::PlayerData::HookChange) {
-							*offsetPtr<float>(ptr, 0x0) = Base::PlayerData::HookCoordinateChange.x;
-							*offsetPtr<float>(ptr, 0x4) = Base::PlayerData::HookCoordinateChange.y;
-							*offsetPtr<float>(ptr, 0x8) = Base::PlayerData::HookCoordinateChange.z;
+							*offsetPtr<float>(RDX, 0xE530) = Base::PlayerData::HookCoordinateChange.x;
+							*offsetPtr<float>(RDX, 0xE534) = Base::PlayerData::HookCoordinateChange.y;
+							*offsetPtr<float>(RDX, 0xE538) = Base::PlayerData::HookCoordinateChange.z;
 						}
-						return original(RCX, RDX, ptr);
-					});
-				HookLambda(MH::Player::HookCoordinateChange3,
-					[]() {
-						GetRDIPtr(&Base::PlayerData::TempData::t_HookCoordinate);
-						if (Base::PlayerData::HookChange) {
-							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0x0) = Base::PlayerData::HookCoordinateChange.x;
-							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0x4) = Base::PlayerData::HookCoordinateChange.y;
-							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0x8) = Base::PlayerData::HookCoordinateChange.z;
-						}
-						return original();
-					});
-				HookLambda(MH::Player::HookCoordinateChange4,
-					[]() {
-						GetRBXPtr(&Base::PlayerData::TempData::t_HookCoordinate2);
-						if (Base::PlayerData::HookChange) {
-							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate2, 0x130) = Base::PlayerData::HookCoordinateChange.x;
-							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate2, 0x134) = Base::PlayerData::HookCoordinateChange.y;
-							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate2, 0x138) = Base::PlayerData::HookCoordinateChange.z;
-						}
-						return original();
+						return original(RCX, RDX);
 					});
 
 				MH_ApplyQueued();

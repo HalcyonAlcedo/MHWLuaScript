@@ -880,8 +880,7 @@ static int Game_Player_SetHookCoordinateChange(lua_State* pL) {
     float x = (float)lua_tonumber(pL, 1);
     float y = (float)lua_tonumber(pL, 2);
     float z = (float)lua_tonumber(pL, 3);
-    Base::PlayerData::HookCoordinateChange = Base::Vector3(x, y, z);
-    Base::PlayerData::HookChange = true;
+    Component::SetHookCoordinateChange(Base::Vector3(x, y, z));
     return 0;
 }
 static int Game_Player_CancelHookCoordinateChange(lua_State* pL) {

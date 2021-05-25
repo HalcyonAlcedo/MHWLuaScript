@@ -804,6 +804,18 @@ namespace Component {
 		}
 #pragma endregion
 /*
+	修改钩爪牵引坐标
+*/
+#pragma region SetHookCoordinateChange
+		static void SetHookCoordinateChange(Base::Vector3 Coordinates) {
+			*offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0xE530) = Coordinates.x;
+			*offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0xE534) = Coordinates.y;
+			*offsetPtr<float>(Base::BasicGameData::PlayerPlot, 0xE538) = Coordinates.z;
+			Base::PlayerData::HookCoordinateChange = Coordinates;
+			Base::PlayerData::HookChange = true;
+		}
+#pragma endregion
+/*
 	实体属性操作
 */
 #pragma region EntityProperties
