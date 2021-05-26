@@ -21,6 +21,9 @@
     <Filter Include="源代码\implot">
       <UniqueIdentifier>{a223d125-55a9-42af-8dda-056a7c432c9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源代码\sound">
+      <UniqueIdentifier>{79a55fd4-8747-4f22-9581-0476be431a94}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -79,6 +82,12 @@
     </ClCompile>
     <ClCompile Include="easywsclient.cpp">
       <Filter>源代码</Filter>
+    </ClCompile>
+    <ClCompile Include="deps\Sound\Player.cpp">
+      <Filter>源代码\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="deps\Sound\Sound.cpp">
+      <Filter>源代码\sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +187,12 @@
     </ClInclude>
     <ClInclude Include="easywsclient.hpp">
       <Filter>源代码</Filter>
+    </ClInclude>
+    <ClInclude Include="deps\Sound\Player.h">
+      <Filter>源代码\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="deps\Sound\Sound.h">
+      <Filter>源代码\sound</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

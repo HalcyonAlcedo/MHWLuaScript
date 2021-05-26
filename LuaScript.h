@@ -1272,6 +1272,11 @@ static int System_UI_RemoveText(lua_State* pL) {
     Base::Draw::Text.erase(name);
     return 0;
 }
+static int System_Sound_PlaySound(lua_State* pL) {
+    string file = (string)lua_tostring(pL, 1);
+    Base::SoundPlay::PlaySound(file);
+    return 0;
+}
 
 #pragma endregion
 #pragma region LuaFun
@@ -1810,6 +1815,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_UI_DrawText", System_UI_DrawText);
     //移除添加的文字
     lua_register(L, "System_UI_RemoveText", System_UI_RemoveText);
+    //播放音频文件
+    lua_register(L, "System_Sound_PlaySound", System_Sound_PlaySound);
 #pragma endregion
 #pragma region Lua
     //存入整数变量

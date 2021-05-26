@@ -5,6 +5,7 @@
 #include "PlayerBuff.h"
 #include "Network.h"
 #include "AobAddress.h"
+#include "sound/Player.h"
 #define _USE_MATH_DEFINES
 #define sign(x) (((x) < 0) ? -1 : ((x) > 0))
 #define M_PI 3.14159265358979323846
@@ -48,8 +49,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.3 Dev";
-		long long ModBuild = 122005252247;
+		string ModVersion = "v1.2.3 Beta";
+		long long ModBuild = 122005261056;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -374,6 +375,19 @@ namespace Base {
 		map<string, NewImage> Img;
 		map<string, NewText> Text;
 		map<string, string> About;
+	}
+#pragma endregion
+	//音频播放
+#pragma region SoundPlay
+	namespace SoundPlay {
+		static void PlaySound(string SoundFile) {
+			Sound sound;
+			Player player;
+			if (!player.Create()) return;
+			if (!sound.LoadFromFile(SoundFile)) return;
+			if (!player.SetSound(sound)) return;
+			player.Play();
+		}
 	}
 #pragma endregion
 	//委托

@@ -172,6 +172,8 @@
     <ClCompile Include="deps\implot\implot_demo.cpp" />
     <ClCompile Include="deps\implot\implot_items.cpp" />
     <ClCompile Include="deps\kiero.cpp" />
+    <ClCompile Include="deps\Sound\Player.cpp" />
+    <ClCompile Include="deps\Sound\Sound.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="easywsclient.cpp" />
     <ClCompile Include="HttpClient.cpp" />
@@ -212,6 +214,8 @@
     <ClInclude Include="deps\implot\implot.h" />
     <ClInclude Include="deps\implot\implot_internal.h" />
     <ClInclude Include="deps\kiero.h" />
+    <ClInclude Include="deps\Sound\Player.h" />
+    <ClInclude Include="deps\Sound\Sound.h" />
     <ClInclude Include="deps\stb_image.h">
       <DeploymentContent>false</DeploymentContent>
     </ClInclude>
