@@ -1274,7 +1274,7 @@ static int System_UI_RemoveText(lua_State* pL) {
 }
 static int System_Sound_PlaySound(lua_State* pL) {
     string file = (string)lua_tostring(pL, 1);
-    Base::SoundPlay::PlaySound(file);
+    Base::SoundPlay::PlaySoundFile(file);
     return 0;
 }
 

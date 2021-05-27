@@ -57,6 +57,7 @@ bool Player::SetSound(Sound& sound)
 
 bool Player::Play()
 {
+	if (AudioSVoice == nullptr) return false;
 	if (FAILED(AudioSVoice->Start())) return false;
 	std::thread t(&Player::PlayBuffer, this);
 	play_thread.swap(t);

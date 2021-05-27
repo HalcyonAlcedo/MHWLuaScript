@@ -380,13 +380,13 @@ namespace Base {
 	//ÒôÆµ²¥·Å
 #pragma region SoundPlay
 	namespace SoundPlay {
-		static void PlaySound(string SoundFile) {
-			Sound sound;
-			Player player;
-			if (!player.Create()) return;
-			if (!sound.LoadFromFile(SoundFile)) return;
-			if (!player.SetSound(sound)) return;
-			player.Play();
+		static void PlaySoundFile(string SoundFile) {
+			Player* player = new Player();
+			Sound* sound = new Sound();
+			player->Create();
+			sound->LoadFromFile(SoundFile);
+			player->SetSound(*sound);
+			player->Play();
 		}
 	}
 #pragma endregion
