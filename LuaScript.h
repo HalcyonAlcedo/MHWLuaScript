@@ -357,6 +357,10 @@ static int Game_World_Message(lua_State* pL) {
     lua_pushstring(pL, Base::World::Massage.c_str());
     return 1;
 }
+static int Game_World_SteamId(lua_State* pL) {
+    lua_pushinteger(pL, Base::World::SteamId);
+    return 1;
+}
 static int Game_Monster_SetFilter(lua_State* pL) {
     int id = (int)lua_tointeger(pL, 1);
     int subId = (int)lua_tointeger(pL, 2);
@@ -1668,6 +1672,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_World_GetMapId", Game_World_GetMapId);
     //获取聊天消息
     lua_register(L, "Game_World_Message", Game_World_Message);
+    //获取Steam好友Id
+    lua_register(L, "Game_World_SteamId", Game_World_SteamId);
     #pragma region Monster
     //设置怪物筛选器
     lua_register(L, "Game_Monster_SetFilter", Game_Monster_SetFilter);

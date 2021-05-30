@@ -49,8 +49,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.3 Beta";
-		long long ModBuild = 122005261056;
+		string ModVersion = "v1.2.3";
+		long long ModBuild = 122005301442;
 		string Version = "421470";
 	}
 #pragma endregion
@@ -136,6 +136,7 @@ namespace Base {
 		int MapId = 0;
 		string Massage = "";
 		map<void*, float> FrameSpeed;
+		longlong SteamId = 0;
 	}
 #pragma endregion
 	//计时器
@@ -1577,6 +1578,8 @@ LuaScript将加载位于nativePC/LuaScript/下的全部Lua脚本，脚本编写可参考[说明文档](
 LuaScript是由Alcedo进行编写并发布于[踩蘑菇](https://www.caimogu.net/post/19658.html)的免费脚本Mod
 Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 )";
+				
+				World::SteamId = *offsetPtr<longlong>((char*)0x145CA76C0, 0x0);
 				ModConfig::GameDataInit = true;
 				LOG(INFO) << ModConfig::ModName << " : Game data initialization complete!";
 				LOG(INFO) << " |  Mod：" << ModConfig::ModName;

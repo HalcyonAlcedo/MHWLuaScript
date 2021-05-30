@@ -190,7 +190,8 @@ namespace ControlProgram {
 			ImGui::Begin(u8"LuaScript 控制台");
 
 			ImGui::Text(u8"LuaScript版本：%s", Base::ModConfig::ModVersion);
-
+			ImGui::Text(u8"SteamId：%d", Base::World::SteamId);
+			
 			if (ImGui::TreeNode(u8"Lua脚本列表"))
 			{
 				if (ImGui::Button(u8"更新脚本代码")) {
