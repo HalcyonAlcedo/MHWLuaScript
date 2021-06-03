@@ -974,11 +974,12 @@ namespace Component {
 	void getFiles(string path, vector<string>& files)
 	{
 		//文件句柄
-		long   hFile = 0;
+		long hFile = 0;
 		//文件信息
 		struct _finddata_t fileinfo;
 		string p;
-		if ((hFile = _findfirst(p.assign(path).append("\\*.lua").c_str(), &fileinfo)) != -1)
+		hFile = _findfirst(p.assign(path).append("\\*.lua").c_str(), &fileinfo);
+		if (hFile != -1)
 		{
 			do
 			{

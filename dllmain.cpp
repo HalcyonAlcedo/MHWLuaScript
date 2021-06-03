@@ -28,16 +28,19 @@ using namespace loader;
 
 __declspec(dllexport) extern bool Load()
 {
+	
 	//游戏版本检查
 	if (std::string(GameVersion) != Base::ModConfig::Version) {
 		LOG(WARN) << Base::ModConfig::ModName << " : Wrong version";
 		return false;
 	}
+	/*
 	Component::getFiles("nativePC\\LuaScript\\", Base::LuaHandle::LuaFiles);
 	LOG(INFO) << "Lua file load:";
 	for (string file_name : Base::LuaHandle::LuaFiles) {
 		LOG(INFO) << file_name;
 	}
+	*/
 	//初始化WebSocket
 #ifdef _WIN32
 	INT rc;
@@ -49,6 +52,15 @@ __declspec(dllexport) extern bool Load()
 		return 1;
 	}
 #endif
+	//初始化steamid
+	HMODULE  module = ::GetModuleHandle("steam_api64.dll");
+	if (module != nullptr) {
+		MODULEINFO moduleInfo;
+		if (GetModuleInformation(GetCurrentProcess(), module, &moduleInfo, sizeof(moduleInfo))) {
+			void* startAddr = (void*)module;
+			Base::World::SteamId = *offsetPtr<int>(startAddr, 0x3A118);
+		}
+	}
 	//初始化钩子
 	MH_Initialize();
 	HookLambda(MH::World::MapClockLocal,

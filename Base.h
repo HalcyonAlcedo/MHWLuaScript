@@ -6,11 +6,11 @@
 #include "Network.h"
 #include "AobAddress.h"
 #include "sound/Player.h"
+#include <io.h>
 #define _USE_MATH_DEFINES
 #define sign(x) (((x) < 0) ? -1 : ((x) > 0))
 #define M_PI 3.14159265358979323846
 #define GUID_LEN 64
-
 using namespace std;
 using namespace loader;
 
@@ -49,9 +49,9 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.3";
-		long long ModBuild = 122005301442;
-		string Version = "421470";
+		string ModVersion = "v1.2.4";
+		long long ModBuild = 122006031845;
+		string Version = "421471";
 	}
 #pragma endregion
 #pragma region LuaHandle
@@ -136,7 +136,7 @@ namespace Base {
 		int MapId = 0;
 		string Massage = "";
 		map<void*, float> FrameSpeed;
-		longlong SteamId = 0;
+		int SteamId = 0;
 	}
 #pragma endregion
 	//计时器
@@ -1341,12 +1341,41 @@ namespace Base {
 	}
 #pragma endregion
 
+	static void getFiles(string path, vector<string>& files)
+	{
+		//文件句柄
+		long hFile = 0;
+		//文件信息
+		struct _finddata_t fileinfo;
+		string p;
+		hFile = _findfirst(p.assign(path).append("\\*.lua").c_str(), &fileinfo);
+		if (hFile != -1)
+		{
+			do
+			{
+				if (!(fileinfo.attrib & _A_SUBDIR))
+				{
+					Base::LuaHandle::LuaCode[fileinfo.name] = Base::LuaHandle::LuaCodeData(fileinfo.name, "", p.assign(path).append("\\").append(fileinfo.name), true);
+					Base::LuaHandle::LuaCode[fileinfo.name].Update();
+					files.push_back(fileinfo.name);
+				}
+			} while (_findnext(hFile, &fileinfo) == 0);
+			_findclose(hFile);
+		}
+	}
+
 	//初始化
 	static bool Init() {
 		if (ModConfig::GameDataInit)
 			return true;
 		else
 		{
+			getFiles("nativePC\\LuaScript\\", Base::LuaHandle::LuaFiles);
+			LOG(INFO) << "Lua file load:";
+			for (string file_name : Base::LuaHandle::LuaFiles) {
+				LOG(INFO) << file_name;
+			}
+
 			BasicGameData::XboxPadPlot = *(undefined**)MH::GamePad::XboxPadPtr;
 			void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 			void* PlayerInfoPlot = *(undefined**)MH::Player::BasePtr;
@@ -1579,7 +1608,6 @@ LuaScript是由Alcedo进行编写并发布于[踩蘑菇](https://www.caimogu.net/post/19658.h
 Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 )";
 				
-				World::SteamId = *offsetPtr<longlong>((char*)0x145CA76C0, 0x0);
 				ModConfig::GameDataInit = true;
 				LOG(INFO) << ModConfig::ModName << " : Game data initialization complete!";
 				LOG(INFO) << " |  Mod：" << ModConfig::ModName;
