@@ -1341,41 +1341,12 @@ namespace Base {
 	}
 #pragma endregion
 
-	static void getFiles(string path, vector<string>& files)
-	{
-		//文件句柄
-		long hFile = 0;
-		//文件信息
-		struct _finddata_t fileinfo;
-		string p;
-		hFile = _findfirst(p.assign(path).append("\\*.lua").c_str(), &fileinfo);
-		if (hFile != -1)
-		{
-			do
-			{
-				if (!(fileinfo.attrib & _A_SUBDIR))
-				{
-					Base::LuaHandle::LuaCode[fileinfo.name] = Base::LuaHandle::LuaCodeData(fileinfo.name, "", p.assign(path).append("\\").append(fileinfo.name), true);
-					Base::LuaHandle::LuaCode[fileinfo.name].Update();
-					files.push_back(fileinfo.name);
-				}
-			} while (_findnext(hFile, &fileinfo) == 0);
-			_findclose(hFile);
-		}
-	}
-
 	//初始化
 	static bool Init() {
 		if (ModConfig::GameDataInit)
 			return true;
 		else
 		{
-			getFiles("nativePC\\LuaScript\\", Base::LuaHandle::LuaFiles);
-			LOG(INFO) << "Lua file load:";
-			for (string file_name : Base::LuaHandle::LuaFiles) {
-				LOG(INFO) << file_name;
-			}
-
 			BasicGameData::XboxPadPlot = *(undefined**)MH::GamePad::XboxPadPtr;
 			void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 			void* PlayerInfoPlot = *(undefined**)MH::Player::BasePtr;

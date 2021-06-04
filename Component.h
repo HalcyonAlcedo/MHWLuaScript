@@ -1,5 +1,6 @@
 #pragma once
 #include <io.h>
+#include <filesystem>
 
 using namespace std;
 using namespace loader;
@@ -971,26 +972,25 @@ namespace Component {
 		}
 #pragma endregion
 	//获取目录中的文件
-	void getFiles(string path, vector<string>& files)
+	static void getFiles(string path, vector<string>& files)
 	{
-		//文件句柄
-		long hFile = 0;
-		//文件信息
-		struct _finddata_t fileinfo;
-		string p;
-		hFile = _findfirst(p.assign(path).append("\\*.lua").c_str(), &fileinfo);
-		if (hFile != -1)
+		using namespace std::filesystem;
+		if (exists(path) && is_directory(path))
 		{
-			do
+			for (auto& fe : directory_iterator(path))
 			{
-				if (!(fileinfo.attrib & _A_SUBDIR))
-				{
-					Base::LuaHandle::LuaCode[fileinfo.name] = Base::LuaHandle::LuaCodeData(fileinfo.name,"", p.assign(path).append("\\").append(fileinfo.name),true);
-					Base::LuaHandle::LuaCode[fileinfo.name].Update();
-					files.push_back(fileinfo.name);
+				auto fp = fe.path();
+				auto temp = fp.filename();
+				if (fp.extension().string() == ".lua") {
+					Base::LuaHandle::LuaCode[temp.stem().string()] = Base::LuaHandle::LuaCodeData(
+						temp.stem().string(),
+						"",
+						fp.string(),
+						true);
+					Base::LuaHandle::LuaCode[temp.stem().string()].Update();
+					files.push_back(temp.stem().string());
 				}
-			} while (_findnext(hFile, &fileinfo) == 0);
-			_findclose(hFile);
+			}
 		}
 	}
 	//utf8编码字符串

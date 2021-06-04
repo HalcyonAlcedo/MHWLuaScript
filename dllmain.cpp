@@ -34,13 +34,13 @@ __declspec(dllexport) extern bool Load()
 		LOG(WARN) << Base::ModConfig::ModName << " : Wrong version";
 		return false;
 	}
-	/*
+
 	Component::getFiles("nativePC\\LuaScript\\", Base::LuaHandle::LuaFiles);
 	LOG(INFO) << "Lua file load:";
 	for (string file_name : Base::LuaHandle::LuaFiles) {
 		LOG(INFO) << file_name;
 	}
-	*/
+
 	//初始化WebSocket
 #ifdef _WIN32
 	INT rc;
