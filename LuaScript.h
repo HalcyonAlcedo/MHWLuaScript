@@ -259,6 +259,31 @@ static int Game_Player_Weapon_CharacteristicByteValue(lua_State* pL) {
     lua_pushinteger(pL, Component::GetWeaponCharacteristicByteValue(ptr));
     return 1;
 }
+static int Game_Player_Weapon_SetCharacteristicValue(lua_State* pL) {
+    string ptr = "0x" + (string)lua_tostring(pL, 1);
+    string type = (string)lua_tostring(pL, 2);
+    long long Ptr = 0;
+    sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+    void* ptrAddress = (void*)Ptr;
+    if (ptrAddress != nullptr) {
+        void* WeaponEntityPlot = *offsetPtr<void*>(Base::BasicGameData::PlayerPlot, 0x76B0);
+        if (WeaponEntityPlot != nullptr) {
+            if (type == "int") {
+                *offsetPtr<int>(WeaponEntityPlot, Ptr) = (int)lua_tointeger(pL, 3);
+            }
+            else if (type == "float") {
+                *offsetPtr<float>(WeaponEntityPlot, Ptr) = (float)lua_tonumber(pL, 3);
+            }
+            else if (type == "bool") {
+                *offsetPtr<bool>(WeaponEntityPlot, Ptr) = (bool)lua_toboolean(pL, 3);
+            }
+            else if (type == "byte") {
+                *offsetPtr<char>(WeaponEntityPlot, Ptr) = (char)lua_tointeger(pL, 3);
+            }
+        }
+    }
+    return 1;
+}
 static int Game_Player_Weapon_GetHitCoordinate(lua_State* pL) {
     lua_pushnumber(pL, Base::PlayerData::Weapons::HitCoordinate.x);
     lua_pushnumber(pL, Base::PlayerData::Weapons::HitCoordinate.y);
@@ -344,7 +369,7 @@ static int Game_Player_SetPlayerMaxEndurance(lua_State* pL) {
     return 0;
 }
 static int Game_Player_GetPlayerRoleInfo(lua_State* pL) {
-    //lua_pushstring(pL, Base::PlayerData::Name.c_str());
+    lua_pushstring(pL, Base::PlayerData::Name.c_str());
     lua_pushinteger(pL, Base::PlayerData::Hr);
     lua_pushinteger(pL, Base::PlayerData::Mr);
     return 2;
@@ -359,6 +384,10 @@ static int Game_World_Message(lua_State* pL) {
 }
 static int Game_World_SteamId(lua_State* pL) {
     lua_pushinteger(pL, Base::World::SteamId);
+    return 1;
+}
+static int Game_World_Assembly(lua_State* pL) {
+    lua_pushstring(pL, Base::World::Assembly.c_str());
     return 1;
 }
 static int Game_Monster_SetFilter(lua_State* pL) {
@@ -1617,6 +1646,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Player_Weapon_CharacteristicFloatValue", Game_Player_Weapon_CharacteristicFloatValue);
     //获取玩家武器特殊数值(字节)
     lua_register(L, "Game_Player_Weapon_CharacteristicByteValue", Game_Player_Weapon_CharacteristicByteValue);
+    //设置玩家武器特殊数值
+    lua_register(L, "Game_Player_Weapon_SetCharacteristicValue", Game_Player_Weapon_SetCharacteristicValue);
     //获取玩家武器最后命中的坐标
     lua_register(L, "Game_Player_Weapon_GetHitCoordinate", Game_Player_Weapon_GetHitCoordinate);
     //获取玩家武器最后命中的怪物地址
@@ -1674,6 +1705,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_World_Message", Game_World_Message);
     //获取Steam好友Id
     lua_register(L, "Game_World_SteamId", Game_World_SteamId);
+    //获取集会区域代码
+    lua_register(L, "Game_World_Assembly", Game_World_Assembly);
     #pragma region Monster
     //设置怪物筛选器
     lua_register(L, "Game_Monster_SetFilter", Game_Monster_SetFilter);

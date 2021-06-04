@@ -50,7 +50,7 @@ namespace Base {
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
 		string ModVersion = "v1.2.4";
-		long long ModBuild = 122006031845;
+		long long ModBuild = 124006041930;
 		string Version = "421471";
 	}
 #pragma endregion
@@ -97,6 +97,7 @@ namespace Base {
 		void* PlayerPlot = nullptr;
 		void* PlayerInfoPlot = nullptr;
 		void* PlayerDataPlot = nullptr;
+		void* PlayerArchivePlot = nullptr;
 		void* MapPlot = nullptr;
 		void* GameTimePlot = nullptr;
 		void* XboxPadPlot = nullptr;
@@ -137,6 +138,7 @@ namespace Base {
 		string Massage = "";
 		map<void*, float> FrameSpeed;
 		int SteamId = 0;
+		string Assembly = "";
 	}
 #pragma endregion
 	//计时器
@@ -1035,10 +1037,7 @@ namespace Base {
 				CurrentEndurance = 0;
 				MaxEndurance = 0;
 			}
-			/*
-			char* PlayerName = offsetPtr<char>(BasicGameData::PlayerInfoPlot, 0x50);
-			if(strcmp(PlayerName, "\0")) Name = PlayerName;
-			*/
+			Name = offsetPtr<char>(BasicGameData::PlayerArchivePlot, 0x50);
 			Hr = *offsetPtr<int>(BasicGameData::PlayerInfoPlot, 0x90);
 			Mr = *offsetPtr<int>(BasicGameData::PlayerInfoPlot, 0xD4);
 		}
@@ -1373,6 +1372,9 @@ namespace Base {
 			BasicGameData::PlayerInfoPlot = *offsetPtr<undefined**>((undefined(*)())PlayerInfoPlot, 0xA8);
 			BasicGameData::GameTimePlot = (undefined(*)())MH::World::GameClock;
 			BasicGameData::MapPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7D20);
+			void* PlayerArchivePlot = *(undefined**)MH::Player::PlayerArchive;
+			if (PlayerArchivePlot != nullptr)
+				BasicGameData::PlayerArchivePlot = *offsetPtr<undefined**>((undefined(*)())PlayerArchivePlot, 0xA8);
 			if (
 				BasicGameData::PlayerPlot != nullptr and
 				BasicGameData::MapPlot != nullptr and
@@ -1693,6 +1695,14 @@ Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 			void* PlayerMessageOffset = *offsetPtr<undefined**>((undefined(*)())MassagePlot, 0x38);
 			if (PlayerMessageOffset != nullptr)
 				World::Massage = offsetPtr<char>(PlayerMessageOffset, 0x80);
+			//获取集会区域信息
+			void* AssemblyPlot = *(undefined**)MH::World::Assembly;
+			void* AssemblyOffset1 = *offsetPtr<undefined**>((undefined(*)())AssemblyPlot, 0x260);
+			void* AssemblyOffset2 = nullptr;
+			if (AssemblyOffset1 != nullptr)
+				AssemblyOffset2 = *offsetPtr<undefined**>((undefined(*)())AssemblyOffset1, 0x30);
+			if (AssemblyOffset2 != nullptr)
+				World::Assembly = offsetPtr<char>(AssemblyOffset2, 0x3C8);
 			//WebSocket数据处理
 			NetworkServer::WSHandle();
 		}

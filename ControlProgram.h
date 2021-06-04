@@ -271,8 +271,10 @@ namespace ControlProgram {
 			if (ImGui::TreeNode(u8"游戏数据"))
 			{
 				ImGui::Text(u8"地图Id：%d", Base::World::MapId);
+				ImGui::Text(u8"集会区域：%s", Base::World::Assembly);
 				if (ImGui::TreeNode(u8"玩家信息"))
 				{
+					ImGui::Text(u8"玩家名：%s", Base::PlayerData::Name);
 					ImGui::Text(u8"动作Id：%d", Base::PlayerData::ActionId);
 					if (ImGui::TreeNode(u8"派生信息"))
 					{

@@ -46,6 +46,7 @@ namespace MH {
         static void(*ActionFrameSpeed)(undefined8*) = (void(*)(undefined8*))0x1422455D0;
         static void(*HookCoordinateChange)() = (void(*)())0x141F80AB2;
         static void(*HookCoordinateChange2)(undefined8*, undefined8*) = (void(*)(undefined8*, undefined8*))0x140EFA699;
+        static void* PlayerArchive = (void*)0x145073E80;
     }
     namespace EnvironmentalBiological {
         static undefined * (*ctor)(undefined*, undefined4, undefined4) = (undefined * (*)(undefined*, undefined4, undefined4))0x141D442C0;
@@ -57,6 +58,7 @@ namespace MH {
         static undefined(*GameClockControl)(float) = (undefined(*)(float))0x141B9EB37;
         static undefined(*Message)() = (undefined(*)())0x144D18278;
         static undefined8(*ActionFrameSpeed)(undefined8*) = (undefined8(*)(undefined8*))0x142245590;
+        static void* Assembly = (void*)0x145224BF8;
     }
     namespace Shlp {
         static void* (*GetShlp)(void*, int) = (void* (*)(void*, int))0x140F86090;
