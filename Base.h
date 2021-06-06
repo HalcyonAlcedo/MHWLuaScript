@@ -1350,7 +1350,6 @@ namespace Base {
 			void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 			void* PlayerInfoPlot = *(undefined**)MH::Player::BasePtr;
 			BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
-			void* PlayerDataOffset1 = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
 			void* PlayerDataHandlePlot = *(undefined**)MH::Player::PlayerDataHandlePlot;
 			void* PlayerDataHandleOffset1 = nullptr;
 			if (PlayerDataHandlePlot != nullptr)
