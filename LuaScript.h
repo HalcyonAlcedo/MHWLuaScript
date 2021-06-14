@@ -1049,6 +1049,24 @@ static int Game_Entity_BehaviorControl(lua_State* pL) {
     Component::EntityBehaviorControl(entity, id);
     return 0;
 }
+static int Game_Shlp_GetShlpList(lua_State* pL)
+{
+    lua_newtable(pL);
+    for (auto [Plot, Target] : Base::ProjectilesOperation::ProjectilesList) {
+        ostringstream ptr;
+        ptr << Plot;
+        string ptrstr = ptr.str();
+
+        ostringstream Targetptr;
+        Targetptr << Target;
+        string TargetptrStr = Targetptr.str();
+
+        lua_pushstring(pL, ptrstr.c_str());
+        lua_pushstring(pL, TargetptrStr.c_str());
+        lua_settable(pL, -3);
+    }
+    return 1;
+}
 #pragma endregion
 #pragma region SystemFun
 static int System_Keyboard_CheckKey(lua_State* pL) {    
@@ -1707,6 +1725,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_World_SteamId", Game_World_SteamId);
     //获取集会区域代码
     lua_register(L, "Game_World_Assembly", Game_World_Assembly);
+    //获取投射物数据
+    lua_register(L, "Game_Shlp_GetShlpList", Game_Shlp_GetShlpList);
     #pragma region Monster
     //设置怪物筛选器
     lua_register(L, "Game_Monster_SetFilter", Game_Monster_SetFilter);

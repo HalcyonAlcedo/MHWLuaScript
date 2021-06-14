@@ -15,6 +15,7 @@ using namespace std;
 using namespace loader;
 
 extern "C" long long _stdcall Navigation(float*, float*, float*);
+extern "C" void* _stdcall GetRAXPtr(void*);
 extern "C" void* _stdcall GetRBXPtr(void*);
 extern "C" void* _stdcall GetRDIPtr(void*);
 extern "C" void* _stdcall GetHitPtr(void*);
@@ -49,8 +50,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.4";
-		long long ModBuild = 124006041930;
+		string ModVersion = "v1.2.5 Dev";
+		long long ModBuild = 125006142106;
 		string Version = "421471";
 	}
 #pragma endregion
@@ -1101,6 +1102,11 @@ namespace Base {
 	//投射物
 #pragma region ProjectilesOperation
 	namespace ProjectilesOperation {
+		namespace TempData {
+			void* t_ShlpPtr = nullptr;
+			void* t_ShlpTargetPtr = nullptr;
+		}
+		map<void*, void*> ProjectilesList;
 		//执行投射物生成
 		static bool CallProjectilesGenerate(int Id, float* Coordinate, int From = 0) {
 			//武器发出的投射物
@@ -1567,7 +1573,13 @@ namespace Base {
 						}
 						return original(RCX, RDX);
 					});
-
+				//获取发射物列表
+				HookLambda(MH::Shlp::GetShlpPtr,
+					[](auto RCX) {
+						GetRDIPtr(&Base::ProjectilesOperation::TempData::t_ShlpTargetPtr);
+						Base::ProjectilesOperation::TempData::t_ShlpPtr = RCX;
+						return original(RCX);
+					});
 				MH_ApplyQueued();
 				Draw::About["LuaScript"] = u8R"(# 关于
 LuaScript是集成了多个数据操作的怪物猎人世界Lua接口插件，可通过Lua脚本对MHW进行相关数据的操作。
@@ -1646,6 +1658,8 @@ Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 				//清除Xbox手柄数据
 				XboxPad::TempData::t_KeyCount.clear();
 				XboxPad::TempData::t_KeyDown.clear();
+				//清除投射物数据
+				ProjectilesOperation::ProjectilesList.clear();
 			}
 			//更新玩家数据
 			PlayerData::Updata();
@@ -1702,6 +1716,18 @@ Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 				AssemblyOffset2 = *offsetPtr<undefined**>((undefined(*)())AssemblyOffset1, 0x30);
 			if (AssemblyOffset2 != nullptr)
 				World::Assembly = offsetPtr<char>(AssemblyOffset2, 0x3C8);
+			//获取投射物数据
+			if (Base::ProjectilesOperation::TempData::t_ShlpPtr != nullptr and Base::ProjectilesOperation::TempData::t_ShlpTargetPtr != nullptr) {
+				ProjectilesOperation::ProjectilesList[ProjectilesOperation::TempData::t_ShlpPtr] = ProjectilesOperation::TempData::t_ShlpTargetPtr;
+				ProjectilesOperation::TempData::t_ShlpPtr = nullptr;
+				ProjectilesOperation::TempData::t_ShlpTargetPtr = nullptr;
+			}
+			//清除已经消除的投射物
+			for (auto [Projectiles, PData] : ProjectilesOperation::ProjectilesList) {
+				if (PData != *offsetPtr<void*>(Projectiles, 0x2b0)) {
+					ProjectilesOperation::ProjectilesList.erase(Projectiles);
+				}
+			}
 			//WebSocket数据处理
 			NetworkServer::WSHandle();
 		}

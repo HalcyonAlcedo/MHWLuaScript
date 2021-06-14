@@ -62,6 +62,7 @@ namespace MH {
     }
     namespace Shlp {
         static void* (*GetShlp)(void*, int) = (void* (*)(void*, int))0x140F86090;
+        static void(*GetShlpPtr)(void*) = (void(*)(void*))0x141ABAAA4;
         static void(*CallShlp)(void*, void*, void*, void*) = (void(*)(void*, void*, void*, void*))0x141ABA910;
     }
     namespace Savefile {

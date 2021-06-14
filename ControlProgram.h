@@ -367,6 +367,15 @@ namespace ControlProgram {
 					ImGui::TreePop();
 				}
 
+				if (ImGui::TreeNode(u8"投射物信息"))
+				{
+					for (auto [projectiles, projectilesData] : Base::ProjectilesOperation::ProjectilesList) {
+						if (projectiles != nullptr) {
+							ImGui::Text(u8"内存地址：%x", projectiles);
+						}
+					}
+					ImGui::TreePop();
+				}
 				ImGui::TreePop();
 				ImGui::Separator();
 			}

@@ -15,6 +15,11 @@ Navigation proc
 	ret
 Navigation endp
 
+GetRAXPtr proc
+    mov [rcx], rax
+	ret
+GetRAXPtr endp
+
 GetRBXPtr proc
     mov [rcx], rbx
 	ret
