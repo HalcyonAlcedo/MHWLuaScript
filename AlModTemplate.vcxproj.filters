@@ -97,7 +97,7 @@
     <Library Include="deps\loader.lib">
       <Filter>前置文件</Filter>
     </Library>
-    <Library Include="deps\lua54.lib">
+    <Library Include="deps\Lua.lib">
       <Filter>前置文件</Filter>
     </Library>
   </ItemGroup>

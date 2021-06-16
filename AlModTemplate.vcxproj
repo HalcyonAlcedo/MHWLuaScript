@@ -184,7 +184,7 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="deps\loader.lib" />
-    <Library Include="deps\lua54.lib" />
+    <Library Include="deps\Lua.lib" />
     <Library Include="deps\minhook\libMinHook.x64.lib" />
   </ItemGroup>
   <ItemGroup>

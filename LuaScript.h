@@ -1,5 +1,4 @@
 #pragma once
-//#include <lua.hpp>
 #include "loader.h"
 
 extern "C" {
