@@ -51,7 +51,7 @@ namespace Base {
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
 		string ModVersion = "v1.2.5 Dev";
-		long long ModBuild = 125006142106;
+		long long ModBuild = 125006161456;
 		string Version = "421471";
 	}
 #pragma endregion
@@ -1385,202 +1385,209 @@ namespace Base {
 				BasicGameData::MapPlot != nullptr and
 				BasicGameData::GameTimePlot != nullptr
 				) {
-				//钩入数据
-				MH_Initialize();
-				//坐标数据获取
-				HookLambda(MH::World::WaypointZLocal,
-					[](auto x1, auto x2) {
-						Navigation(
-							&Base::PlayerData::Coordinate::Navigation.x,
-							&Base::PlayerData::Coordinate::Navigation.y,
-							&Base::PlayerData::Coordinate::Navigation.z
-						);
-						return original(x1, x2);
-					});
-				//环境生物地址获取
-				HookLambda(MH::EnvironmentalBiological::ctor,
-					[](auto environmental, auto id, auto subId) {
-						auto ret = original(environmental, id, subId);
-						Base::World::EnvironmentalData::Environmentals[environmental] = Base::World::EnvironmentalData::EnvironmentalData(
-							environmental, 0, 0, 0, id, subId
-						);
-						return ret;
-					});
-				//怪物地址获取
-				HookLambda(MH::Monster::ctor,
-					[](auto monster, auto id, auto subId) {
-						auto ret = original(monster, id, subId);
-						Base::Monster::Monsters[monster] = Base::Monster::MonsterData(
-							monster, 0, 0, 0, id, subId
-						);
-						return ret;
-					});
-				HookLambda(MH::Monster::dtor,
-					[](auto monster) {
-						Base::Monster::Monsters.erase(monster);
-						return original(monster);
-					});
-				//视角相机坐标修改
-				HookLambda(MH::Player::Visual,
-					[]() {
-						GetRBXPtr(&Base::PlayerData::Coordinate::TempData::t_visual);
-						if (Base::PlayerData::Coordinate::TempData::t_visual != nullptr) {
-							Base::PlayerData::Coordinate::Visual.x = *offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x0);
-							Base::PlayerData::Coordinate::Visual.y = *offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x4);
-							Base::PlayerData::Coordinate::Visual.z = *offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x8);
-							if (Base::PlayerData::Coordinate::TempData::t_SetVisual) {
-								*offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x0) = Base::PlayerData::Coordinate::TempData::t_SetVisualCoordinate.x;
-								*offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x4) = Base::PlayerData::Coordinate::TempData::t_SetVisualCoordinate.y;
-								*offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x8) = Base::PlayerData::Coordinate::TempData::t_SetVisualCoordinate.z;
-							}
-						}
-						return original();
-					});
-				//武器装饰物修改
-				HookLambda(MH::Weapon::WeaponOrnaments,
-					[]() {
-						GetRBXPtr(&Base::PlayerData::WeaponOrnaments::TempData::t_ornaments);
-						if (Base::PlayerData::WeaponOrnaments::TempData::t_ornaments != nullptr) {
-							Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.x = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x160);
-							Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.y = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x164);
-							Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.z = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x168);
-							Base::PlayerData::WeaponOrnaments::OrnamentsSize.x = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x180);
-							Base::PlayerData::WeaponOrnaments::OrnamentsSize.y = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x184);
-							Base::PlayerData::WeaponOrnaments::OrnamentsSize.z = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x188);
-							if (Base::PlayerData::WeaponOrnaments::TempData::t_setOrnamentsCoordinate) {
-								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x160) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsCoordinate.x;
-								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x164) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsCoordinate.y;
-								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x168) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsCoordinate.z;
-							}
-							if (Base::PlayerData::WeaponOrnaments::TempData::t_setOrnamentsSize) {
-								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x180) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsSize.x;
-								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x184) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsSize.y;
-								*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x188) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsSize.z;
-							}
-						}
-						return original();
-					});
-				//武器坐标修改
-				HookLambda(MH::Weapon::MainWeaponPtr,
-					[]() {
-						GetRBXPtr(&Base::PlayerData::Weapons::TempData::t_mainWeapon);
-						if (Base::PlayerData::Weapons::TempData::t_mainWeapon != nullptr) {
-							Base::PlayerData::Weapons::MainWeaponCoordinate = Vector3(
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x160),
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x164),
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x168)
+				//检查!CRC是否正确安装
+				struct stat buffer;
+				if (stat("nativePC/plugins/!CRCBypass.dll", &buffer) == 0) {
+					//钩入数据
+					MH_Initialize();
+					//坐标数据获取
+					HookLambda(MH::World::WaypointZLocal,
+						[](auto x1, auto x2) {
+							Navigation(
+								&Base::PlayerData::Coordinate::Navigation.x,
+								&Base::PlayerData::Coordinate::Navigation.y,
+								&Base::PlayerData::Coordinate::Navigation.z
 							);
-							Base::PlayerData::Weapons::MainWeaponSize = Vector3(
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x180),
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x184),
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x188)
+							return original(x1, x2);
+						});
+					//环境生物地址获取
+					HookLambda(MH::EnvironmentalBiological::ctor,
+						[](auto environmental, auto id, auto subId) {
+							auto ret = original(environmental, id, subId);
+							Base::World::EnvironmentalData::Environmentals[environmental] = Base::World::EnvironmentalData::EnvironmentalData(
+								environmental, 0, 0, 0, id, subId
 							);
-							if (Base::PlayerData::Weapons::TempData::t_setMainWeaponCoordinate) {
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x160) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponCoordinate.x;
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x164) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponCoordinate.y;
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x168) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponCoordinate.z;
-							}
-							if (Base::PlayerData::Weapons::TempData::t_setMainWeaponSize) {
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x180) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.x;
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x184) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.y;
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x188) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.z;
-							}
-						}
-						return original();
-					});
-				HookLambda(MH::Weapon::SecondaryWeaponPtr,
-					[]() {
-						GetRBXPtr(&Base::PlayerData::Weapons::TempData::t_secondaryWeapon);
-						if (Base::PlayerData::Weapons::TempData::t_secondaryWeapon != nullptr) {
-							Base::PlayerData::Weapons::SecondaryWeaponCoordinate = Vector3(
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x160),
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x164),
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x168)
+							return ret;
+						});
+					//怪物地址获取
+					HookLambda(MH::Monster::ctor,
+						[](auto monster, auto id, auto subId) {
+							auto ret = original(monster, id, subId);
+							Base::Monster::Monsters[monster] = Base::Monster::MonsterData(
+								monster, 0, 0, 0, id, subId
 							);
-							Base::PlayerData::Weapons::SecondaryWeaponSize = Vector3(
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x180),
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x184),
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x188)
+							return ret;
+						});
+					HookLambda(MH::Monster::dtor,
+						[](auto monster) {
+							Base::Monster::Monsters.erase(monster);
+							return original(monster);
+						});
+					//视角相机坐标修改
+					HookLambda(MH::Player::Visual,
+						[]() {
+							GetRBXPtr(&Base::PlayerData::Coordinate::TempData::t_visual);
+							if (Base::PlayerData::Coordinate::TempData::t_visual != nullptr) {
+								Base::PlayerData::Coordinate::Visual.x = *offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x0);
+								Base::PlayerData::Coordinate::Visual.y = *offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x4);
+								Base::PlayerData::Coordinate::Visual.z = *offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x8);
+								if (Base::PlayerData::Coordinate::TempData::t_SetVisual) {
+									*offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x0) = Base::PlayerData::Coordinate::TempData::t_SetVisualCoordinate.x;
+									*offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x4) = Base::PlayerData::Coordinate::TempData::t_SetVisualCoordinate.y;
+									*offsetPtr<float>(Base::PlayerData::Coordinate::TempData::t_visual, 0x8) = Base::PlayerData::Coordinate::TempData::t_SetVisualCoordinate.z;
+								}
+							}
+							return original();
+						});
+					//武器装饰物修改
+					HookLambda(MH::Weapon::WeaponOrnaments,
+						[]() {
+							GetRBXPtr(&Base::PlayerData::WeaponOrnaments::TempData::t_ornaments);
+							if (Base::PlayerData::WeaponOrnaments::TempData::t_ornaments != nullptr) {
+								Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.x = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x160);
+								Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.y = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x164);
+								Base::PlayerData::WeaponOrnaments::OrnamentsCoordinate.z = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x168);
+								Base::PlayerData::WeaponOrnaments::OrnamentsSize.x = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x180);
+								Base::PlayerData::WeaponOrnaments::OrnamentsSize.y = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x184);
+								Base::PlayerData::WeaponOrnaments::OrnamentsSize.z = *offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x188);
+								if (Base::PlayerData::WeaponOrnaments::TempData::t_setOrnamentsCoordinate) {
+									*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x160) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsCoordinate.x;
+									*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x164) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsCoordinate.y;
+									*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x168) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsCoordinate.z;
+								}
+								if (Base::PlayerData::WeaponOrnaments::TempData::t_setOrnamentsSize) {
+									*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x180) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsSize.x;
+									*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x184) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsSize.y;
+									*offsetPtr<float>(Base::PlayerData::WeaponOrnaments::TempData::t_ornaments, 0x188) = Base::PlayerData::WeaponOrnaments::TempData::t_SetOrnamentsSize.z;
+								}
+							}
+							return original();
+						});
+					//武器坐标修改
+					HookLambda(MH::Weapon::MainWeaponPtr,
+						[]() {
+							GetRBXPtr(&Base::PlayerData::Weapons::TempData::t_mainWeapon);
+							if (Base::PlayerData::Weapons::TempData::t_mainWeapon != nullptr) {
+								Base::PlayerData::Weapons::MainWeaponCoordinate = Vector3(
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x160),
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x164),
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x168)
+								);
+								Base::PlayerData::Weapons::MainWeaponSize = Vector3(
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x180),
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x184),
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x188)
+								);
+								if (Base::PlayerData::Weapons::TempData::t_setMainWeaponCoordinate) {
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x160) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponCoordinate.x;
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x164) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponCoordinate.y;
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x168) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponCoordinate.z;
+								}
+								if (Base::PlayerData::Weapons::TempData::t_setMainWeaponSize) {
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x180) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.x;
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x184) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.y;
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_mainWeapon, 0x188) = Base::PlayerData::Weapons::TempData::t_SetMainWeaponSize.z;
+								}
+							}
+							return original();
+						});
+					HookLambda(MH::Weapon::SecondaryWeaponPtr,
+						[]() {
+							GetRBXPtr(&Base::PlayerData::Weapons::TempData::t_secondaryWeapon);
+							if (Base::PlayerData::Weapons::TempData::t_secondaryWeapon != nullptr) {
+								Base::PlayerData::Weapons::SecondaryWeaponCoordinate = Vector3(
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x160),
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x164),
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x168)
+								);
+								Base::PlayerData::Weapons::SecondaryWeaponSize = Vector3(
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x180),
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x184),
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x188)
+								);
+								if (Base::PlayerData::Weapons::TempData::t_setSecondaryWeaponCoordinate) {
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x160) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponCoordinate.x;
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x164) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponCoordinate.y;
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x168) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponCoordinate.z;
+								}
+								if (Base::PlayerData::Weapons::TempData::t_setSecondaryWeaponSize) {
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x180) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.x;
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x184) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.y;
+									*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x188) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.z;
+								}
+							}
+							return original();
+						});
+					//获取命中信息
+					HookLambda(MH::Weapon::Hit,
+						[]() {
+							GetHitPtr(&Base::PlayerData::Weapons::TempData::t_weaponHit);
+							Base::PlayerData::Weapons::HitCoordinate = Vector3(
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_weaponHit, 0x60),
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_weaponHit, 0x64),
+								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_weaponHit, 0x68)
 							);
-							if (Base::PlayerData::Weapons::TempData::t_setSecondaryWeaponCoordinate) {
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x160) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponCoordinate.x;
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x164) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponCoordinate.y;
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x168) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponCoordinate.z;
+							return original();
+						});
+					//动作帧速率修改
+					HookLambda(MH::Player::ActionFrameSpeed,
+						[](auto RCX) {
+							if (PlayerData::TempData::t_SetActionFrameSpeed) {
+								if (PlayerData::TempData::t_ActionFrameSpeedTarget == 0)
+									SetEDX(&PlayerData::TempData::t_ActionFrameSpeed);
+								if (PlayerData::TempData::t_ActionFrameSpeedTarget == 1 and RCX == Base::BasicGameData::PlayerPlot)
+									SetEDX(&PlayerData::TempData::t_ActionFrameSpeed);
+								if (PlayerData::TempData::t_ActionFrameSpeedTarget == 2 and RCX != Base::BasicGameData::PlayerPlot)
+									SetEDX(&PlayerData::TempData::t_ActionFrameSpeed);
 							}
-							if (Base::PlayerData::Weapons::TempData::t_setSecondaryWeaponSize) {
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x180) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.x;
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x184) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.y;
-								*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_secondaryWeapon, 0x188) = Base::PlayerData::Weapons::TempData::t_SetSecondaryWeaponSize.z;
+							if (World::TempData::t_SetFrameSpeed >= 0) {
+								SetEDX(&World::TempData::t_SetFrameSpeed);
+								World::TempData::t_SetFrameSpeed = -1;
 							}
-						}
-						return original();
-					});
-				//获取命中信息
-				HookLambda(MH::Weapon::Hit,
-					[]() {
-						GetHitPtr(&Base::PlayerData::Weapons::TempData::t_weaponHit);
-						Base::PlayerData::Weapons::HitCoordinate = Vector3(
-							*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_weaponHit, 0x60),
-							*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_weaponHit, 0x64),
-							*offsetPtr<float>(Base::PlayerData::Weapons::TempData::t_weaponHit, 0x68)
-						);
-						return original();
-					});
-				//动作帧速率修改
-				HookLambda(MH::Player::ActionFrameSpeed,
-					[](auto RCX) {
-						if (PlayerData::TempData::t_SetActionFrameSpeed) {
-							if (PlayerData::TempData::t_ActionFrameSpeedTarget == 0)
-								SetEDX(&PlayerData::TempData::t_ActionFrameSpeed);
-							if (PlayerData::TempData::t_ActionFrameSpeedTarget == 1 and RCX == Base::BasicGameData::PlayerPlot)
-								SetEDX(&PlayerData::TempData::t_ActionFrameSpeed);
-							if (PlayerData::TempData::t_ActionFrameSpeedTarget == 2 and RCX != Base::BasicGameData::PlayerPlot)
-								SetEDX(&PlayerData::TempData::t_ActionFrameSpeed);
-						}
-						if (World::TempData::t_SetFrameSpeed >= 0) {
-							SetEDX(&World::TempData::t_SetFrameSpeed);
-							World::TempData::t_SetFrameSpeed = -1;
-						}
-						return original(RCX);
-					});
-				HookLambda(MH::World::ActionFrameSpeed,
-					[](auto rcx) {
-						for (auto [ptr, frameSpeed] : Base::World::FrameSpeed) {
-							if (rcx == ptr) {
-								World::TempData::t_SetFrameSpeed = frameSpeed;
+							return original(RCX);
+						});
+					HookLambda(MH::World::ActionFrameSpeed,
+						[](auto rcx) {
+							for (auto [ptr, frameSpeed] : Base::World::FrameSpeed) {
+								if (rcx == ptr) {
+									World::TempData::t_SetFrameSpeed = frameSpeed;
+								}
 							}
-						}
-						return original(rcx);
-					});
-				
-				//修改钩爪坐标
-				HookLambda(MH::Player::HookCoordinateChange,
-					[]() {
-						GetRBXPtr(&Base::PlayerData::TempData::t_HookCoordinate);
-						if (Base::PlayerData::HookChange) {
-							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0xE530) = Base::PlayerData::HookCoordinateChange.x;
-							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0xE534) = Base::PlayerData::HookCoordinateChange.y;
-							*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0xE538) = Base::PlayerData::HookCoordinateChange.z;
-						}
-						return original();
-					});
-				HookLambda(MH::Player::HookCoordinateChange2,
-					[](auto RCX, auto RDX) {
-						if (Base::PlayerData::HookChange) {
-							*offsetPtr<float>(RDX, 0xE530) = Base::PlayerData::HookCoordinateChange.x;
-							*offsetPtr<float>(RDX, 0xE534) = Base::PlayerData::HookCoordinateChange.y;
-							*offsetPtr<float>(RDX, 0xE538) = Base::PlayerData::HookCoordinateChange.z;
-						}
-						return original(RCX, RDX);
-					});
-				//获取发射物列表
-				HookLambda(MH::Shlp::GetShlpPtr,
-					[](auto RCX) {
-						GetRDIPtr(&Base::ProjectilesOperation::TempData::t_ShlpTargetPtr);
-						Base::ProjectilesOperation::TempData::t_ShlpPtr = RCX;
-						return original(RCX);
-					});
-				MH_ApplyQueued();
+							return original(rcx);
+						});
+
+					//修改钩爪坐标
+					HookLambda(MH::Player::HookCoordinateChange,
+						[]() {
+							GetRBXPtr(&Base::PlayerData::TempData::t_HookCoordinate);
+							if (Base::PlayerData::HookChange) {
+								*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0xE530) = Base::PlayerData::HookCoordinateChange.x;
+								*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0xE534) = Base::PlayerData::HookCoordinateChange.y;
+								*offsetPtr<float>(Base::PlayerData::TempData::t_HookCoordinate, 0xE538) = Base::PlayerData::HookCoordinateChange.z;
+							}
+							return original();
+						});
+					HookLambda(MH::Player::HookCoordinateChange2,
+						[](auto RCX, auto RDX) {
+							if (Base::PlayerData::HookChange) {
+								*offsetPtr<float>(RDX, 0xE530) = Base::PlayerData::HookCoordinateChange.x;
+								*offsetPtr<float>(RDX, 0xE534) = Base::PlayerData::HookCoordinateChange.y;
+								*offsetPtr<float>(RDX, 0xE538) = Base::PlayerData::HookCoordinateChange.z;
+							}
+							return original(RCX, RDX);
+						});
+					//获取发射物列表
+					HookLambda(MH::Shlp::GetShlpPtr,
+						[](auto RCX) {
+							GetRDIPtr(&Base::ProjectilesOperation::TempData::t_ShlpTargetPtr);
+							Base::ProjectilesOperation::TempData::t_ShlpPtr = RCX;
+							return original(RCX);
+						});
+					MH_ApplyQueued();
+				} else {
+					LOG(WARN) << "It is detected that the performance booster and plug extender is not installed. It has entered the safe mode. To enable the full function, please install it https://www.nexusmods.com/monsterhunterworld/mods/3473 Then restart the game.";
+					Draw::Text["!CRC"] = Draw::NewText(0.8, Vector3(0.8, 0.2, 0.2), Vector2(0.9, 0.9), "!CRC", u8"警告：当前未安装!CRC,目前已启用安全模式，请下载并安装后重启游戏。", 1);
+				}
 				Draw::About["LuaScript"] = u8R"(# 关于
 LuaScript是集成了多个数据操作的怪物猎人世界Lua接口插件，可通过Lua脚本对MHW进行相关数据的操作。
 ***
