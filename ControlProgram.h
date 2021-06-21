@@ -127,7 +127,7 @@ namespace ControlProgram {
 		mainRenderTargetView->Release();
 		mainRenderTargetView = nullptr;
 		Base::ModConfig::DrawInit = false;
-		Base::ModConfig::GameDataInit = false;
+		if(!Base::ModConfig::SecurityModel) Base::ModConfig::GameDataInit = false;
 		return oResize(pSwapChain, SyncInterval, Flags);
 	}
 	HRESULT __stdcall hkPresent(IDXGISwapChain* pSwapChain, UINT SyncInterval, UINT Flags)

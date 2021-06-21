@@ -47,11 +47,12 @@ namespace Base {
 		bool ModConsole = false;
 		bool HotKeyEdit = false;
 		bool About = false;
+		bool SecurityModel = false;
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.5 Dev";
-		long long ModBuild = 125006161456;
+		string ModVersion = "v1.2.5";
+		long long ModBuild = 125006212157;
 		string Version = "421471";
 	}
 #pragma endregion
@@ -1585,8 +1586,9 @@ namespace Base {
 						});
 					MH_ApplyQueued();
 				} else {
+					Base::ModConfig::SecurityModel = true;
 					LOG(WARN) << "It is detected that the performance booster and plug extender is not installed. It has entered the safe mode. To enable the full function, please install it https://www.nexusmods.com/monsterhunterworld/mods/3473 Then restart the game.";
-					Draw::Text["!CRC"] = Draw::NewText(0.8, Vector3(0.8, 0.2, 0.2), Vector2(0.9, 0.9), "!CRC", u8"警告：当前未安装!CRC,目前已启用安全模式，请下载并安装后重启游戏。", 1);
+					Draw::Text["!CRC"] = Draw::NewText(0.8, Vector3(0.8, 0.2, 0.2), Vector2(0.85, 0.9), "!CRC", u8"警告：当前未安装!CRC,目前已启用安全模式，请下载并安装后重启游戏。", 1);
 				}
 				Draw::About["LuaScript"] = u8R"(# 关于
 LuaScript是集成了多个数据操作的怪物猎人世界Lua接口插件，可通过Lua脚本对MHW进行相关数据的操作。
