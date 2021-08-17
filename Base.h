@@ -924,23 +924,23 @@ namespace Base {
 					*offsetPtr<float>(WeaponEntityPlot, 0x168)
 				);
 			VisualDistance = *offsetPtr<float>(BasicGameData::PlayerPlot, 0x7690);
+			/*
 			Coordinate::Increment = Vector3(
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x1530),
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x1534),
 				*offsetPtr<float>(BasicGameData::PlayerPlot, 0x1538));
-			/*
+			*/
 			void* IncrementPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x468);
 			if (IncrementPlot != nullptr) {
-				Coordinate::Increment.x = *offsetPtr<float>(IncrementPlot, 0x7D30);
-				Coordinate::Increment.y = *offsetPtr<float>(IncrementPlot, 0x7D34);
-				Coordinate::Increment.z = *offsetPtr<float>(IncrementPlot, 0x7D38);
+				Coordinate::Increment.x = *offsetPtr<float>(IncrementPlot, 0xE250);
+				Coordinate::Increment.y = *offsetPtr<float>(IncrementPlot, 0xE254);
+				Coordinate::Increment.z = *offsetPtr<float>(IncrementPlot, 0xE258);
 			}
 			else {
 				Coordinate::Increment.x = 0.0;
 				Coordinate::Increment.y = 0.0;
 				Coordinate::Increment.z = 0.0;
 			}
-			*/
 			void* AimingStatePlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0xC0);
 			if (AimingStatePlot != nullptr)
 				AimingState = *offsetPtr<bool>(AimingStatePlot, 0xC28);
@@ -1108,6 +1108,7 @@ namespace Base {
 			void* t_ShlpTargetPtr = nullptr;
 		}
 		map<void*, void*> ProjectilesList;
+		vector<void*> ProjectilesList2;
 		//执行投射物生成
 		static bool CallProjectilesGenerate(int Id, float* Coordinate, int From = 0) {
 			//武器发出的投射物
@@ -1582,6 +1583,7 @@ namespace Base {
 						[](auto RCX) {
 							GetRDIPtr(&Base::ProjectilesOperation::TempData::t_ShlpTargetPtr);
 							Base::ProjectilesOperation::TempData::t_ShlpPtr = RCX;
+							//Base::ProjectilesOperation::ProjectilesList2.push_back(RCX);
 							return original(RCX);
 						});
 					MH_ApplyQueued();
