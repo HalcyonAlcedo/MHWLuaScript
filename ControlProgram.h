@@ -183,7 +183,6 @@ namespace ControlProgram {
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
-
 		if (Base::ModConfig::ModConsole)
 		{
 			ImGui::SetNextWindowBgAlpha(0.35f);
@@ -369,7 +368,7 @@ namespace ControlProgram {
 
 				if (ImGui::TreeNode(u8"投射物信息"))
 				{
-					for (auto [projectiles, projectilesData] : Base::ProjectilesOperation::ProjectilesList) {
+					for (auto [projectiles, _t] : Base::ProjectilesOperation::ProjectilesList) {
 						if (projectiles != nullptr) {
 							ImGui::Text(u8"内存地址：%x", projectiles);
 						}
@@ -423,7 +422,10 @@ namespace ControlProgram {
 				ImGui::GetMainViewport()->Pos.y + ImGui::GetMainViewport()->Size.y * Data.Pos.y
 			), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 			ImGui::Begin(("IMG_" + Data.Name).c_str(), NULL, window_flags);
-			ImGui::Image((void*)ImgTextureCache[Data.ImageFile].texture, ImVec2(ImgTextureCache[Data.ImageFile].width, ImgTextureCache[Data.ImageFile].height), ImVec2(0.0, 0.0), ImVec2(1.0, 1.0), ImVec4(Data.Channel.x, Data.Channel.y, Data.Channel.z, Data.BgAlpha));
+			ImVec2 DisplaySize = ImVec2(ImgTextureCache[Data.ImageFile].width, ImgTextureCache[Data.ImageFile].height);
+			if (Data.DisplayHeight != 0 and Data.DisplayWidth != 0)
+				DisplaySize = ImVec2(Data.DisplayWidth, Data.DisplayHeight);
+			ImGui::Image((void*)ImgTextureCache[Data.ImageFile].texture, DisplaySize, ImVec2(0.0, 0.0), ImVec2(1.0, 1.0), ImVec4(Data.Channel.x, Data.Channel.y, Data.Channel.z, Data.BgAlpha));
 			ImGui::End();
 		}
 		//文字显示

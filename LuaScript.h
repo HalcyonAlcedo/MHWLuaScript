@@ -1056,14 +1056,14 @@ static int Game_Shlp_GetShlpList(lua_State* pL)
         ptr << Plot;
         string ptrstr = ptr.str();
 
-        ostringstream Targetptr;
-        Targetptr << Target;
-        string TargetptrStr = Targetptr.str();
-
         lua_pushstring(pL, ptrstr.c_str());
-        lua_pushstring(pL, TargetptrStr.c_str());
         lua_settable(pL, -3);
     }
+    return 1;
+}
+static int Game_GetNowTime(lua_State* pL)
+{
+    lua_pushnumber(pL, Base::Chronoscope::NowTime);
     return 1;
 }
 #pragma endregion
@@ -1253,6 +1253,8 @@ static int System_UI_DrawImage(lua_State* pL) {
     float y = (float)lua_tonumber(pL, 4);
     Base::Vector3 Channel = Base::Vector3(1,1,1);
     float alpha = 1;
+    int dw = 0;
+    int dh = 0;
     if (lua_gettop(pL) > 4) {
         alpha = (float)lua_tonumber(pL, 5);
     }
@@ -1263,7 +1265,11 @@ static int System_UI_DrawImage(lua_State* pL) {
             (float)lua_tonumber(pL, 8)
         );
     }
-    Base::Draw::Img[name] = Base::Draw::NewImage(alpha, Channel, Base::Vector2(x, y), name, img);
+    if (lua_gettop(pL) > 8) {
+        dw = (int)lua_tointeger(pL, 9);
+        dh = (int)lua_tointeger(pL, 10);
+    }
+    Base::Draw::Img[name] = Base::Draw::NewImage(alpha, Channel, Base::Vector2(x, y), name, img, dw, dh);
     return 0;
 }
 static int System_UI_DrawBase64Image(lua_State* pL) {
@@ -1275,6 +1281,8 @@ static int System_UI_DrawBase64Image(lua_State* pL) {
     int height = (float)lua_tointeger(pL, 6);
     Base::Vector3 Channel = Base::Vector3(1, 1, 1);
     float alpha = 1;
+    int dw = 0;
+    int dh = 0;
     if (lua_gettop(pL) > 6) {
         alpha = (float)lua_tonumber(pL, 7);
     }
@@ -1285,7 +1293,11 @@ static int System_UI_DrawBase64Image(lua_State* pL) {
             (float)lua_tonumber(pL, 10)
         );
     }
-    Base::Draw::Img[name] = Base::Draw::NewImage(alpha, Channel, Base::Vector2(x, y), name, img, true, width, height);
+    if (lua_gettop(pL) > 10) {
+        dw = (int)lua_tointeger(pL, 11);
+        dh = (int)lua_tointeger(pL, 12);
+    }
+    Base::Draw::Img[name] = Base::Draw::NewImage(alpha, Channel, Base::Vector2(x, y), name, img, true, width, height, dw, dh);
     return 0;
 }
 static int System_UI_RemoveImage(lua_State* pL) {
@@ -1321,6 +1333,11 @@ static int System_UI_RemoveText(lua_State* pL) {
     string name = (string)lua_tostring(pL, 1);
     Base::Draw::Text.erase(name);
     return 0;
+}
+static int System_UI_GetGameWindowSize(lua_State* pL) {
+    lua_pushinteger(pL, Base::Draw::GameWindowSize.x);
+    lua_pushinteger(pL, Base::Draw::GameWindowSize.y);
+    return 2;
 }
 static int System_Sound_PlaySound(lua_State* pL) {
     string file = (string)lua_tostring(pL, 1);
@@ -1726,6 +1743,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_World_Assembly", Game_World_Assembly);
     //获取投射物数据
     lua_register(L, "Game_Shlp_GetShlpList", Game_Shlp_GetShlpList);
+    //获取当前任务时间
+    lua_register(L, "Game_GetNowTime", Game_GetNowTime);
     #pragma region Monster
     //设置怪物筛选器
     lua_register(L, "Game_Monster_SetFilter", Game_Monster_SetFilter);
@@ -1873,6 +1892,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_UI_DrawText", System_UI_DrawText);
     //移除添加的文字
     lua_register(L, "System_UI_RemoveText", System_UI_RemoveText);
+    //获取游戏窗口大小
+    lua_register(L, "System_UI_GetGameWindowSize", System_UI_GetGameWindowSize);
     //播放音频文件
     lua_register(L, "System_Sound_PlaySound", System_Sound_PlaySound);
 #pragma endregion
