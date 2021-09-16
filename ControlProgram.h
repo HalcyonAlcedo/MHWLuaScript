@@ -365,7 +365,6 @@ namespace ControlProgram {
 					}
 					ImGui::TreePop();
 				}
-
 				if (ImGui::TreeNode(u8"投射物信息"))
 				{
 					for (auto [projectiles, _t] : Base::ProjectilesOperation::ProjectilesList) {
@@ -374,6 +373,12 @@ namespace ControlProgram {
 						}
 					}
 					ImGui::TreePop();
+				}
+				if (ImGui::TreeNode(u8"任务信息"))
+				{
+					ImGui::Text(u8"任务Id：%d", Base::Quest::QuestId);
+					ImGui::Text(u8"下一个任务Id：%d", Base::Quest::NextQuest);
+					ImGui::Text(u8"任务状态：%d", Base::Quest::QuestState);
 				}
 				ImGui::TreePop();
 				ImGui::Separator();

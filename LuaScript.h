@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "loader.h"
 
 extern "C" {
@@ -371,7 +371,7 @@ static int Game_Player_GetPlayerRoleInfo(lua_State* pL) {
     lua_pushstring(pL, Base::PlayerData::Name.c_str());
     lua_pushinteger(pL, Base::PlayerData::Hr);
     lua_pushinteger(pL, Base::PlayerData::Mr);
-    return 2;
+    return 3;
 }
 static int Game_World_GetMapId(lua_State* pL) {
     lua_pushinteger(pL, Base::World::MapId);
@@ -540,32 +540,32 @@ static int Game_Player_CreateBowgunProjectiles(lua_State* pL) {
 }
 static int Game_Monster_GetAllMonsterCoordinates(lua_State* pL)
 {
-    lua_newtable(pL);//´´½¨Ò»¸ö±í¸ñ£¬·ÅÔÚÕ»¶¥
+    lua_newtable(pL);//åˆ›å»ºä¸€ä¸ªè¡¨æ ¼ï¼Œæ”¾åœ¨æ ˆé¡¶
     for (auto [id, monsterData] : Component::GetAllMonsterCoordinates()) {
-        lua_pushinteger(pL, id);//Ñ¹Èë±àºÅ
-        lua_newtable(pL);//Ñ¹Èë±àºÅĞÅÏ¢±í
-        lua_pushstring(pL, "X");//X×ø±ê
+        lua_pushinteger(pL, id);//å‹å…¥ç¼–å·
+        lua_newtable(pL);//å‹å…¥ç¼–å·ä¿¡æ¯è¡¨
+        lua_pushstring(pL, "X");//Xåæ ‡
         lua_pushnumber(pL, monsterData.CoordinatesX);//value
-        lua_settable(pL, -3);//µ¯³öX×ø±ê
-        lua_pushstring(pL, "Y");//Y×ø±ê
+        lua_settable(pL, -3);//å¼¹å‡ºXåæ ‡
+        lua_pushstring(pL, "Y");//Yåæ ‡
         lua_pushnumber(pL, monsterData.CoordinatesY);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Z");//Z×ø±ê
+        lua_pushstring(pL, "Z");//Zåæ ‡
         lua_pushnumber(pL, monsterData.CoordinatesZ);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Id");//¹ÖÎïId
+        lua_pushstring(pL, "Id");//æ€ªç‰©Id
         lua_pushinteger(pL, monsterData.Id);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "SubId");//¹ÖÎïSubId
+        lua_pushstring(pL, "SubId");//æ€ªç‰©SubId
         lua_pushinteger(pL, monsterData.SubId);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Ptr");//¹ÖÎïÖ¸Õë
+        lua_pushstring(pL, "Ptr");//æ€ªç‰©æŒ‡é’ˆ
         ostringstream ptr;
         ptr << monsterData.Plot;
         string ptrstr = ptr.str();
         lua_pushstring(pL, ptrstr.c_str());
         lua_settable(pL, -3);
-        lua_settable(pL, -3);//µ¯³öµ½¶¥²ã
+        lua_settable(pL, -3);//å¼¹å‡ºåˆ°é¡¶å±‚
     }
     return 1;
 }
@@ -587,7 +587,7 @@ static int Game_Monster_GetAllMonsterHealth(lua_State* pL)
         lua_pushstring(pL, "SubId");
         lua_pushinteger(pL, monsterData.SubId);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Ptr");//¹ÖÎïÖ¸Õë
+        lua_pushstring(pL, "Ptr");//æ€ªç‰©æŒ‡é’ˆ
         ostringstream ptr;
         ptr << monsterData.Plot;
         string ptrstr = ptr.str();
@@ -623,7 +623,7 @@ static int Game_Monster_GetAllMonsterDebuff(lua_State* pL)
         lua_pushstring(pL, "SubId");
         lua_pushinteger(pL, monsterData.SubId);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Ptr");//¹ÖÎïÖ¸Õë
+        lua_pushstring(pL, "Ptr");//æ€ªç‰©æŒ‡é’ˆ
         ostringstream ptr;
         ptr << monsterData.Plot;
         string ptrstr = ptr.str();
@@ -637,32 +637,32 @@ static int Game_Monster_GetAllMonsterCoordinatesInRange(lua_State* pL)
 {
     float min = (float)lua_tonumber(pL, 1);
     float max = (float)lua_tonumber(pL, 2);
-    lua_newtable(pL);//´´½¨Ò»¸ö±í¸ñ£¬·ÅÔÚÕ»¶¥
+    lua_newtable(pL);//åˆ›å»ºä¸€ä¸ªè¡¨æ ¼ï¼Œæ”¾åœ¨æ ˆé¡¶
     for (auto [id, monsterData] : Component::GetAllMonsterCoordinatesRelativeToPlayers(min, max)) {
-        lua_pushinteger(pL, id);//Ñ¹Èë±àºÅ
-        lua_newtable(pL);//Ñ¹Èë±àºÅĞÅÏ¢±í
-        lua_pushstring(pL, "X");//X×ø±ê
+        lua_pushinteger(pL, id);//å‹å…¥ç¼–å·
+        lua_newtable(pL);//å‹å…¥ç¼–å·ä¿¡æ¯è¡¨
+        lua_pushstring(pL, "X");//Xåæ ‡
         lua_pushnumber(pL, monsterData.CoordinatesX);//value
-        lua_settable(pL, -3);//µ¯³öX×ø±ê
-        lua_pushstring(pL, "Y");//Y×ø±ê
+        lua_settable(pL, -3);//å¼¹å‡ºXåæ ‡
+        lua_pushstring(pL, "Y");//Yåæ ‡
         lua_pushnumber(pL, monsterData.CoordinatesY);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Z");//Z×ø±ê
+        lua_pushstring(pL, "Z");//Zåæ ‡
         lua_pushnumber(pL, monsterData.CoordinatesZ);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Id");//¹ÖÎïId
+        lua_pushstring(pL, "Id");//æ€ªç‰©Id
         lua_pushinteger(pL, monsterData.Id);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "SubId");//¹ÖÎïSubId
+        lua_pushstring(pL, "SubId");//æ€ªç‰©SubId
         lua_pushinteger(pL, monsterData.SubId);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Ptr");//¹ÖÎïÖ¸Õë
+        lua_pushstring(pL, "Ptr");//æ€ªç‰©æŒ‡é’ˆ
         ostringstream ptr;
         ptr << monsterData.Plot;
         string ptrstr = ptr.str();
         lua_pushstring(pL, ptrstr.c_str());
         lua_settable(pL, -3);
-        lua_settable(pL, -3);//µ¯³öµ½¶¥²ã
+        lua_settable(pL, -3);//å¼¹å‡ºåˆ°é¡¶å±‚
     }
     return 1;
 }
@@ -686,7 +686,7 @@ static int Game_Monster_GetAllMonsterHealthInRange(lua_State* pL)
         lua_pushstring(pL, "SubId");
         lua_pushinteger(pL, monsterData.SubId);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Ptr");//¹ÖÎïÖ¸Õë
+        lua_pushstring(pL, "Ptr");//æ€ªç‰©æŒ‡é’ˆ
         ostringstream ptr;
         ptr << monsterData.Plot;
         string ptrstr = ptr.str();
@@ -724,7 +724,7 @@ static int Game_Monster_GetAllMonsterDebuffInRange(lua_State* pL)
         lua_pushstring(pL, "SubId");
         lua_pushinteger(pL, monsterData.SubId);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Ptr");//¹ÖÎïÖ¸Õë
+        lua_pushstring(pL, "Ptr");//æ€ªç‰©æŒ‡é’ˆ
         ostringstream ptr;
         ptr << monsterData.Plot;
         string ptrstr = ptr.str();
@@ -741,32 +741,32 @@ static int Game_Monster_GetAllMonsterCoordinatesInTargetPointRange(lua_State* pL
     float z = (float)lua_tonumber(pL, 3);
     float min = (float)lua_tonumber(pL, 4);
     float max = (float)lua_tonumber(pL, 5);
-    lua_newtable(pL);//´´½¨Ò»¸ö±í¸ñ£¬·ÅÔÚÕ»¶¥
+    lua_newtable(pL);//åˆ›å»ºä¸€ä¸ªè¡¨æ ¼ï¼Œæ”¾åœ¨æ ˆé¡¶
     for (auto [id, monsterData] : Component::GetAllMonsterCoordinatesRelativeToTarget(Base::Vector3(x,y,z),min, max)) {
-        lua_pushinteger(pL, id);//Ñ¹Èë±àºÅ
-        lua_newtable(pL);//Ñ¹Èë±àºÅĞÅÏ¢±í
-        lua_pushstring(pL, "X");//X×ø±ê
+        lua_pushinteger(pL, id);//å‹å…¥ç¼–å·
+        lua_newtable(pL);//å‹å…¥ç¼–å·ä¿¡æ¯è¡¨
+        lua_pushstring(pL, "X");//Xåæ ‡
         lua_pushnumber(pL, monsterData.CoordinatesX);//value
-        lua_settable(pL, -3);//µ¯³öX×ø±ê
-        lua_pushstring(pL, "Y");//Y×ø±ê
+        lua_settable(pL, -3);//å¼¹å‡ºXåæ ‡
+        lua_pushstring(pL, "Y");//Yåæ ‡
         lua_pushnumber(pL, monsterData.CoordinatesY);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Z");//Z×ø±ê
+        lua_pushstring(pL, "Z");//Zåæ ‡
         lua_pushnumber(pL, monsterData.CoordinatesZ);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Id");//¹ÖÎïId
+        lua_pushstring(pL, "Id");//æ€ªç‰©Id
         lua_pushinteger(pL, monsterData.Id);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "SubId");//¹ÖÎïSubId
+        lua_pushstring(pL, "SubId");//æ€ªç‰©SubId
         lua_pushinteger(pL, monsterData.SubId);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Ptr");//¹ÖÎïÖ¸Õë
+        lua_pushstring(pL, "Ptr");//æ€ªç‰©æŒ‡é’ˆ
         ostringstream ptr;
         ptr << monsterData.Plot;
         string ptrstr = ptr.str();
         lua_pushstring(pL, ptrstr.c_str());
         lua_settable(pL, -3);
-        lua_settable(pL, -3);//µ¯³öµ½¶¥²ã
+        lua_settable(pL, -3);//å¼¹å‡ºåˆ°é¡¶å±‚
     }
     return 1;
 }
@@ -793,7 +793,7 @@ static int Game_Monster_GetAllMonsterHealthInTargetPointRange(lua_State* pL)
         lua_pushstring(pL, "SubId");
         lua_pushinteger(pL, monsterData.SubId);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Ptr");//¹ÖÎïÖ¸Õë
+        lua_pushstring(pL, "Ptr");//æ€ªç‰©æŒ‡é’ˆ
         ostringstream ptr;
         ptr << monsterData.Plot;
         string ptrstr = ptr.str();
@@ -834,7 +834,7 @@ static int Game_Monster_GetAllMonsterDebuffInTargetPointRange(lua_State* pL)
         lua_pushstring(pL, "SubId");
         lua_pushinteger(pL, monsterData.SubId);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Ptr");//¹ÖÎïÖ¸Õë
+        lua_pushstring(pL, "Ptr");//æ€ªç‰©æŒ‡é’ˆ
         ostringstream ptr;
         ptr << monsterData.Plot;
         string ptrstr = ptr.str();
@@ -848,32 +848,32 @@ static int Game_Environmental_GetAllEnvironmentalCoordinatesInRange(lua_State* p
 {
     float min = (float)lua_tonumber(pL, 1);
     float max = (float)lua_tonumber(pL, 2);
-    lua_newtable(pL);//´´½¨Ò»¸ö±í¸ñ£¬·ÅÔÚÕ»¶¥
+    lua_newtable(pL);//åˆ›å»ºä¸€ä¸ªè¡¨æ ¼ï¼Œæ”¾åœ¨æ ˆé¡¶
     for (auto [id, environmentalData] : Component::GetAllEnvironmentalCoordinates(min, max)) {
-        lua_pushinteger(pL, id);//Ñ¹Èë±àºÅ
-        lua_newtable(pL);//Ñ¹Èë±àºÅĞÅÏ¢±í
-        lua_pushstring(pL, "X");//X×ø±ê
+        lua_pushinteger(pL, id);//å‹å…¥ç¼–å·
+        lua_newtable(pL);//å‹å…¥ç¼–å·ä¿¡æ¯è¡¨
+        lua_pushstring(pL, "X");//Xåæ ‡
         lua_pushnumber(pL, environmentalData.CoordinatesX);//value
-        lua_settable(pL, -3);//µ¯³öX×ø±ê
-        lua_pushstring(pL, "Y");//Y×ø±ê
+        lua_settable(pL, -3);//å¼¹å‡ºXåæ ‡
+        lua_pushstring(pL, "Y");//Yåæ ‡
         lua_pushnumber(pL, environmentalData.CoordinatesY);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Z");//Z×ø±ê
+        lua_pushstring(pL, "Z");//Zåæ ‡
         lua_pushnumber(pL, environmentalData.CoordinatesZ);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Id");//¹ÖÎïId
+        lua_pushstring(pL, "Id");//æ€ªç‰©Id
         lua_pushinteger(pL, environmentalData.Id);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "SubId");//¹ÖÎïSubId
+        lua_pushstring(pL, "SubId");//æ€ªç‰©SubId
         lua_pushinteger(pL, environmentalData.SubId);
         lua_settable(pL, -3);
-        lua_pushstring(pL, "Ptr");//¹ÖÎïÖ¸Õë
+        lua_pushstring(pL, "Ptr");//æ€ªç‰©æŒ‡é’ˆ
         ostringstream ptr;
         ptr << environmentalData.Plot;
         string ptrstr = ptr.str();
         lua_pushstring(pL, ptrstr.c_str());
         lua_settable(pL, -3);
-        lua_settable(pL, -3);//µ¯³öµ½¶¥²ã
+        lua_settable(pL, -3);//å¼¹å‡ºåˆ°é¡¶å±‚
     }
     return 1;
 }
@@ -1061,10 +1061,24 @@ static int Game_Shlp_GetShlpList(lua_State* pL)
     }
     return 1;
 }
-static int Game_GetNowTime(lua_State* pL)
+static int Game_Quest_GetQuestNowTime(lua_State* pL)
 {
     lua_pushnumber(pL, Base::Chronoscope::NowTime);
     return 1;
+}
+static int Game_Quest_GetQuestId(lua_State* pL)
+{
+    lua_pushnumber(pL, Base::Quest::QuestId);
+    return 1;
+}
+static int Game_Quest_GetQuestState(lua_State* pL)
+{
+    lua_pushnumber(pL, Base::Quest::QuestState);
+    return 1;
+}
+static int Game_Quest_SetNextQuest(lua_State* pL) {
+    Base::Quest::NextQuest = (int)lua_tointeger(pL, -1);
+    return 0;
 }
 #pragma endregion
 #pragma region SystemFun
@@ -1177,11 +1191,11 @@ static int System_DeBug_CloseDeBugConsole(lua_State* pL) {
 static int System_Memory_GetOffsetAddress(lua_State* pL) {
     string ptr = "0x" + (string)lua_tostring(pL, 1);
     string offset = "0x" + (string)lua_tostring(pL, 2);
-    //ptr´¦Àí
+    //ptrå¤„ç†
     long long Ptr = 0;
     sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
     void* ptrAddress = (void*)Ptr;
-    //offset´¦Àí
+    //offsetå¤„ç†
     long long Offset = 0;
     sscanf_s(offset.c_str(), "%p", &Offset, sizeof(long long));
 
@@ -1344,52 +1358,63 @@ static int System_Sound_PlaySound(lua_State* pL) {
     Base::SoundPlay::PlaySoundFile(file);
     return 0;
 }
-
+static int System_GetProcessList(lua_State* pL)
+{
+    Base::World::ProcessList = Component::GetProcessList();
+    lua_newtable(pL);
+    for (auto iter = Base::World::ProcessList.cbegin(); iter != Base::World::ProcessList.cend(); iter++) {
+        string process = *iter;
+        lua_pushstring(pL, process.c_str());
+        lua_pushstring(pL, process.c_str());
+        lua_settable(pL, -3);
+    }
+    return 1;
+}
 #pragma endregion
 #pragma region LuaFun
-//´æÈëÕûÊı±äÁ¿
+//å­˜å…¥æ•´æ•°å˜é‡
 static int Lua_Variable_SaveIntVariable(lua_State* pL) {
     string variableName = Sublua + Nowlua + (string)lua_tostring(pL, 1);
     int variableValue = (int)lua_tointeger(pL, 2);
     LuaData::IntVariable[variableName] = variableValue;
     return 0;
 }
-//´æÈëÈ«¾ÖÕûÊı±äÁ¿
+//å­˜å…¥å…¨å±€æ•´æ•°å˜é‡
 static int Lua_Variable_SaveGlobalIntVariable(lua_State* pL) {
     string variableName = "G_" + (string)lua_tostring(pL, 1);
     int variableValue = (int)lua_tointeger(pL, 2);
     LuaData::IntVariable[variableName] = variableValue;
     return 0;
 }
-//´æÈë¸¡µãÊı±äÁ¿
+//å­˜å…¥æµ®ç‚¹æ•°å˜é‡
 static int Lua_Variable_SaveFloatVariable(lua_State* pL) {
     string variableName = Sublua + Nowlua + (string)lua_tostring(pL, 1);
     float variableValue = (float)lua_tonumber(pL, 2);
     LuaData::FloatVariable[variableName] = variableValue;
     return 0;
 }
-//´æÈëÈ«¾Ö¸¡µãÊı±äÁ¿
+//å­˜å…¥å…¨å±€æµ®ç‚¹æ•°å˜é‡
 static int Lua_Variable_SaveGlobalFloatVariable(lua_State* pL) {
     string variableName = "G_" + (string)lua_tostring(pL, 1);
     float variableValue = (float)lua_tonumber(pL, 2);
     LuaData::FloatVariable[variableName] = variableValue;
     return 0;
 }
-//´æÈë×Ö·û´®±äÁ¿
+//å­˜å…¥å­—ç¬¦ä¸²å˜é‡
 static int Lua_Variable_SaveStringVariable(lua_State* pL) {
     string variableName = Sublua + Nowlua + (string)lua_tostring(pL, 1);
     string variableValue = (string)lua_tostring(pL, 2);
     LuaData::StringVariable[variableName] = variableValue;
     return 0;
 }
-//´æÈëÈ«¾Ö×Ö·û´®±äÁ¿
+//å­˜å…¥å…¨å±€å­—ç¬¦ä¸²å˜é‡
 static int Lua_Variable_SaveGlobalStringVariable(lua_State* pL) {
     string variableName = "G_" + (string)lua_tostring(pL, 1);
     string variableValue = (string)lua_tostring(pL, 2);
     LuaData::StringVariable[variableName] = variableValue;
     return 0;
 }
-//¶ÁÈ¡ÕûÊı±äÁ¿
+//è¯»å–æ•´æ•°å˜é‡
 static int Lua_Variable_ReadIntVariable(lua_State* pL) {
     string variableName = Sublua + Nowlua + (string)lua_tostring(pL, -1);
     int ret;
@@ -1400,7 +1425,7 @@ static int Lua_Variable_ReadIntVariable(lua_State* pL) {
     lua_pushinteger(pL, ret);
     return 1;
 }
-//¶ÁÈ¡È«¾ÖÕûÊı±äÁ¿
+//è¯»å–å…¨å±€æ•´æ•°å˜é‡
 static int Lua_Variable_ReadGlobalIntVariable(lua_State* pL) {
     string variableName = "G_" + (string)lua_tostring(pL, -1);
     int ret;
@@ -1411,7 +1436,7 @@ static int Lua_Variable_ReadGlobalIntVariable(lua_State* pL) {
     lua_pushinteger(pL, ret);
     return 1;
 }
-//¶ÁÈ¡¸¡µãÊı±äÁ¿
+//è¯»å–æµ®ç‚¹æ•°å˜é‡
 static int Lua_Variable_ReadFloatVariable(lua_State* pL) {
     string variableName = Sublua + Nowlua + (string)lua_tostring(pL, -1);
     float ret;
@@ -1422,7 +1447,7 @@ static int Lua_Variable_ReadFloatVariable(lua_State* pL) {
     lua_pushnumber(pL, ret);
     return 1;
 }
-//¶ÁÈ¡È«¾Ö¸¡µãÊı±äÁ¿
+//è¯»å–å…¨å±€æµ®ç‚¹æ•°å˜é‡
 static int Lua_Variable_ReadGlobalFloatVariable(lua_State* pL) {
     string variableName = "G_" + (string)lua_tostring(pL, -1);
     float ret;
@@ -1433,7 +1458,7 @@ static int Lua_Variable_ReadGlobalFloatVariable(lua_State* pL) {
     lua_pushnumber(pL, ret);
     return 1;
 }
-//¶ÁÈ¡×Ö·û´®±äÁ¿
+//è¯»å–å­—ç¬¦ä¸²å˜é‡
 static int Lua_Variable_ReadStringVariable(lua_State* pL) {
     string variableName = Sublua + Nowlua + (string)lua_tostring(pL, -1);
     string ret;
@@ -1444,7 +1469,7 @@ static int Lua_Variable_ReadStringVariable(lua_State* pL) {
     lua_pushstring(pL, ret.c_str());
     return 1;
 }
-//¶ÁÈ¡È«¾Ö×Ö·û´®±äÁ¿
+//è¯»å–å…¨å±€å­—ç¬¦ä¸²å˜é‡
 static int Lua_Variable_ReadGlobalStringVariable(lua_State* pL) {
     string variableName = "G_" + (string)lua_tostring(pL, -1);
     string ret;
@@ -1455,7 +1480,7 @@ static int Lua_Variable_ReadGlobalStringVariable(lua_State* pL) {
     lua_pushstring(pL, ret.c_str());
     return 1;
 }
-//Ïú»Ù±äÁ¿
+//é”€æ¯å˜é‡
 static int Lua_Variable_DestroyVariable(lua_State* pL) {
     string variableTpye = (string)lua_tostring(pL, 1);
     string variableName = Sublua + Nowlua + (string)lua_tostring(pL, 2);
@@ -1467,7 +1492,7 @@ static int Lua_Variable_DestroyVariable(lua_State* pL) {
         LuaData::StringVariable.erase(variableName);
     return 0;
 }
-//Ïú»ÙÈ«¾Ö±äÁ¿
+//é”€æ¯å…¨å±€å˜é‡
 static int Lua_Variable_DestroyGlobalVariable(lua_State* pL) {
     string variableTpye = "G_" + (string)lua_tostring(pL, 1);
     string variableName = (string)lua_tostring(pL, 2);
@@ -1479,38 +1504,38 @@ static int Lua_Variable_DestroyGlobalVariable(lua_State* pL) {
         LuaData::StringVariable.erase(variableName);
     return 0;
 }
-//ÉèÖÃ×Ó½Å±¾±äÁ¿Ç°×º
+//è®¾ç½®å­è„šæœ¬å˜é‡å‰ç¼€
 static int Lua_Variable_SetSubScriptVariablePrefix(lua_State* pL) {
     string variablePrefix = (string)lua_tostring(pL, -1);
     Sublua = variablePrefix;
     return 0;
 }
-//»ñÈ¡Ëæ»úÊı
+//è·å–éšæœºæ•°
 static int Lua_Math_Rander(lua_State* pL) {
     float min = (float)lua_tonumber(pL, 1);
     float max = (float)lua_tonumber(pL, 2);
     lua_pushnumber(pL, Base::Calculation::myRander(min, max));
     return 1;
 }
-//»ñÈ¡ÍøÂçÊı¾İ
+//è·å–ç½‘ç»œæ•°æ®
 static int Lua_Http_GetHttpData(lua_State* pL) {
     string httpUrl = (string)lua_tostring(pL, -1);
     lua_pushstring(pL, NetworkServer::GetHttpData(httpUrl).c_str());
     return 1;
 }
-//Á¬½Óµ½WS·şÎñÆ÷
+//è¿æ¥åˆ°WSæœåŠ¡å™¨
 static int Lua_WS_LinkWSServer(lua_State* pL) {
     string WSSLink = (string)lua_tostring(pL, -1);
     NetworkServer::LinkWS(WSSLink);
     return 0;
 }
-//·¢ËÍÏûÏ¢µ½WS·şÎñÆ÷
+//å‘é€æ¶ˆæ¯åˆ°WSæœåŠ¡å™¨
 static int Lua_WS_SendMessage(lua_State* pL) {
     string Message = (string)lua_tostring(pL, -1);
     NetworkServer::WSSendMessage(Message);
     return 0;
 }
-//´Ó·şÎñÆ÷ÏûÏ¢¶ÑÕ»ÖĞ½ÓÊÕÒ»ÌõÏûÏ¢²¢µ¯³ö
+//ä»æœåŠ¡å™¨æ¶ˆæ¯å †æ ˆä¸­æ¥æ”¶ä¸€æ¡æ¶ˆæ¯å¹¶å¼¹å‡º
 static int Lua_WS_GetMessage(lua_State* pL) {
     if (!NetworkServer::MessageCache.empty()) {
         lua_pushstring(pL, NetworkServer::MessageCache.front().c_str());
@@ -1520,12 +1545,12 @@ static int Lua_WS_GetMessage(lua_State* pL) {
         lua_pushstring(pL, "");
     return 1;
 }
-//´Ó·şÎñÆ÷ÏûÏ¢¶ÑÕ»ÖĞ½ÓÊÕÒ»ÌõÏûÏ¢²¢µ¯³ö
+//ä»æœåŠ¡å™¨æ¶ˆæ¯å †æ ˆä¸­æ¥æ”¶ä¸€æ¡æ¶ˆæ¯å¹¶å¼¹å‡º
 static int Lua_WS_GetLinkState(lua_State* pL) {
     lua_pushboolean(pL, NetworkServer::WSState());
     return 1;
 }
-//Â¼Èë½Å±¾¹ØÓÚĞÅÏ¢
+//å½•å…¥è„šæœ¬å…³äºä¿¡æ¯
 static int Lua_About(lua_State* pL) {
     string About = (string)lua_tostring(pL, -1);
     Base::Draw::About[Nowlua] = About;
@@ -1535,17 +1560,17 @@ static int Lua_About(lua_State* pL) {
 //==============================================
 // Handling error
 //==============================================
-//´íÎó»Øµ÷
+//é”™è¯¯å›è°ƒ
 int LuaErrorCallBack(lua_State *L)
 {
     lua_Debug debug = {};
-    //´íÎóËù´¦µÄµÄµ÷ÓÃ²ã¼¶
+    //é”™è¯¯æ‰€å¤„çš„çš„è°ƒç”¨å±‚çº§
     int rank = 0;
-    //Öğ²ã»ñÈ¡luaÅ×³öµÄ´íÎó£¬Ö±µ½»ñÈ¡µ½
+    //é€å±‚è·å–luaæŠ›å‡ºçš„é”™è¯¯ï¼Œç›´åˆ°è·å–åˆ°
     while (lua_getstack(L, rank, &debug)) {
         rank++;
     }
-    //ÅĞ¶ÏÕ»¶¥ÊÇ·ñÎª×Ö·û´®ÀàĞÍ
+    //åˆ¤æ–­æ ˆé¡¶æ˜¯å¦ä¸ºå­—ç¬¦ä¸²ç±»å‹
     int type = lua_type(L, -1);
     if (type != 4)
         return 0;
@@ -1554,7 +1579,7 @@ int LuaErrorCallBack(lua_State *L)
     int errorLine = debug.currentline;
     std::string errorMsg = "error:" + error + ",errorShort:" + errorShort
         + ",line:" + std::to_string(errorLine);
-    //½«´íÎóĞÅÏ¢Ñ¹ÈËÕ»
+    //å°†é”™è¯¯ä¿¡æ¯å‹äººæ ˆ
     lua_pushstring(L, errorMsg.c_str());
     return 1;
 }
@@ -1579,369 +1604,379 @@ int Lua_Main(string LuaFile)
 
 #pragma region Game
     #pragma region Player
-    //»ñÈ¡Íæ¼Ò×ø±ê
+    //è·å–ç©å®¶åæ ‡
     lua_register(L, "Game_Player_GetPlayerCoordinate", Game_Player_GetPlayerCoordinate);
-    //ÉèÖÃÍæ¼Ò×ø±ê
+    //è®¾ç½®ç©å®¶åæ ‡
     lua_register(L, "Game_Player_SetPlayerCoordinate", Game_Player_SetPlayerCoordinate);
-    //»ñÈ¡×¼ĞÇ×ø±ê
+    //è·å–å‡†æ˜Ÿåæ ‡
     lua_register(L, "Game_Player_GetPlayerCollimatorCoordinate", Game_Player_GetPlayerCollimatorCoordinate);
-    //»ñÈ¡Å×ÎïÏß×¼ĞÇ×ø±ê
+    //è·å–æŠ›ç‰©çº¿å‡†æ˜Ÿåæ ‡
     lua_register(L, "Game_Player_GetPlayerParabolaCollimatorCoordinate", Game_Player_GetPlayerParabolaCollimatorCoordinate);
-    //»ñÈ¡ÎäÆ÷×ø±ê
+    //è·å–æ­¦å™¨åæ ‡
     lua_register(L, "Game_Player_GetPlayerWeaponCoordinate", Game_Player_GetPlayerWeaponCoordinate);
-    //¼ì²éÃé×¼×´Ì¬
+    //æ£€æŸ¥ç„å‡†çŠ¶æ€
     lua_register(L, "Game_Player_CheckAimingStatus", Game_Player_CheckAimingStatus);
-    //»ñÈ¡ÔöÁ¿×ø±ê
+    //è·å–å¢é‡åæ ‡
     lua_register(L, "Game_Player_GetPlayerIncrementCoordinate", Game_Player_GetPlayerIncrementCoordinate);
-    //»ñÈ¡µ¼º½×ø±ê
+    //è·å–å¯¼èˆªåæ ‡
     lua_register(L, "Game_Player_GetPlayerNavigationCoordinate", Game_Player_GetPlayerNavigationCoordinate);
-    //»ñÈ¡Ïà»ú×ø±ê
+    //è·å–ç›¸æœºåæ ‡
     lua_register(L, "Game_Player_GetPlayerVisualCoordinate", Game_Player_GetPlayerVisualCoordinate);
-    //ÉèÖÃÏà»ú×ø±ê£¨xyzºÍ³ÖĞøÊ±¼ä4¸ö²ÎÊı£©
+    //è®¾ç½®ç›¸æœºåæ ‡ï¼ˆxyzå’ŒæŒç»­æ—¶é—´4ä¸ªå‚æ•°ï¼‰
     lua_register(L, "Game_Player_SetPlayerVisualCoordinate", Game_Player_SetPlayerVisualCoordinate);
-    //½â³ıÏà»ú×ø±ê°ó¶¨
+    //è§£é™¤ç›¸æœºåæ ‡ç»‘å®š
     lua_register(L, "Game_Player_UnbindPlayerVisualCoordinate", Game_Player_UnbindPlayerVisualCoordinate);
-    //»ñÈ¡Ïà»ú¾àÀë
+    //è·å–ç›¸æœºè·ç¦»
     lua_register(L, "Game_Player_GetPlayerVisualDistance", Game_Player_GetPlayerVisualDistance);
-    //»ñÈ¡Ïà»ú¸ß¶È
+    //è·å–ç›¸æœºé«˜åº¦
     lua_register(L, "Game_Player_GetPlayerVisualHeight", Game_Player_GetPlayerVisualHeight);
-    //ÉèÖÃÏà»ú¾àÀë
+    //è®¾ç½®ç›¸æœºè·ç¦»
     lua_register(L, "Game_Player_SetPlayerVisualDistance", Game_Player_SetPlayerVisualDistance);
-    //ÉèÖÃÏà»ú¸ß¶È
+    //è®¾ç½®ç›¸æœºé«˜åº¦
     lua_register(L, "Game_Player_SetPlayerVisualHeight", Game_Player_SetPlayerVisualHeight);
-    //»ñÈ¡Íæ¼Ò¶¯×÷id
+    //è·å–ç©å®¶åŠ¨ä½œid
     lua_register(L, "Game_Player_GetPlayerActionId", Game_Player_GetPlayerActionId);
-    //»ñÈ¡³¯Ïò½Ç¶È
+    //è·å–æœå‘è§’åº¦
     lua_register(L, "Game_Player_GetPlayerAngle", Game_Player_GetPlayerAngle);
-    //ÉèÖÃ³¯Ïò½Ç¶È
+    //è®¾ç½®æœå‘è§’åº¦
     lua_register(L, "Game_Player_SetPlayerAngle", Game_Player_SetPlayerAngle);
-    //ÉèÖÃ³¯Ïò×ø±ê
+    //è®¾ç½®æœå‘åæ ‡
     lua_register(L, "Game_Player_SetPlayerAimToCoordinate", Game_Player_SetPlayerAimToCoordinate);
-    //»ñÈ¡Íæ¼ÒÖØÁ¦¼ÓËÙ¶È
+    //è·å–ç©å®¶é‡åŠ›åŠ é€Ÿåº¦
     lua_register(L, "Game_Player_GetPlayerGravity", Game_Player_GetPlayerGravity);
-    //»ñÈ¡Íæ¼ÒÏÂÂäËÙ¶È
+    //è·å–ç©å®¶ä¸‹è½é€Ÿåº¦
     lua_register(L, "Game_Player_GetPlayerFallSpeedRate", Game_Player_GetPlayerFallSpeedRate);
-    //ÉèÖÃÍæ¼ÒÖØÁ¦¼ÓËÙ¶È
+    //è®¾ç½®ç©å®¶é‡åŠ›åŠ é€Ÿåº¦
     lua_register(L, "Game_Player_SetPlayerGravity", Game_Player_SetPlayerGravity);
-    //ÉèÖÃÍæ¼ÒÏÂÂäËÙ¶È
+    //è®¾ç½®ç©å®¶ä¸‹è½é€Ÿåº¦
     lua_register(L, "Game_Player_SetPlayerFallSpeedRate", Game_Player_SetPlayerFallSpeedRate);
-    //»ñÈ¡Íæ¼Ò¿ÕÖĞ×´Ì¬
+    //è·å–ç©å®¶ç©ºä¸­çŠ¶æ€
     lua_register(L, "Game_Player_CheckPlayerAirState", Game_Player_CheckPlayerAirState);
-    //Ìí¼ÓÌØĞ§
+    //æ·»åŠ ç‰¹æ•ˆ
     lua_register(L, "Game_Player_AddEffect", Game_Player_AddEffect);
 
-    //»ñÈ¡Íæ¼ÒÎäÆ÷Id
+    //è·å–ç©å®¶æ­¦å™¨Id
     lua_register(L, "Game_Player_Weapon_GetWeaponId", Game_Player_Weapon_GetWeaponId);
-    //»ñÈ¡Íæ¼ÒÎäÆ÷ÀàĞÍ
+    //è·å–ç©å®¶æ­¦å™¨ç±»å‹
     lua_register(L, "Game_Player_Weapon_GetWeaponType", Game_Player_Weapon_GetWeaponType);
-    //¸ü»»Íæ¼ÒµÄÎäÆ÷
+    //æ›´æ¢ç©å®¶çš„æ­¦å™¨
     lua_register(L, "Game_Player_Weapon_ChangeWeapons", Game_Player_Weapon_ChangeWeapons);
-    //ÍêÈ«¸ü»»Íæ¼ÒµÄÎäÆ÷
+    //å®Œå…¨æ›´æ¢ç©å®¶çš„æ­¦å™¨
     lua_register(L, "Game_Player_Weapon_CompleteChangeWeapons", Game_Player_Weapon_CompleteChangeWeapons);
-    //»ñÈ¡Íæ¼ÒÎäÆ÷×°ÊÎÎï×ø±ê
+    //è·å–ç©å®¶æ­¦å™¨è£…é¥°ç‰©åæ ‡
     lua_register(L, "Game_Player_Weapon_GetOrnamentsCoordinate", Game_Player_Weapon_GetOrnamentsCoordinate);
-    //»ñÈ¡Íæ¼ÒÎäÆ÷×°ÊÎÎïÄ£ĞÍ´óĞ¡
+    //è·å–ç©å®¶æ­¦å™¨è£…é¥°ç‰©æ¨¡å‹å¤§å°
     lua_register(L, "Game_Player_Weapon_GetOrnamentsSize", Game_Player_Weapon_GetOrnamentsSize);
-    //ÉèÖÃÍæ¼ÒÎäÆ÷×°ÊÎÎï×ø±ê
+    //è®¾ç½®ç©å®¶æ­¦å™¨è£…é¥°ç‰©åæ ‡
     lua_register(L, "Game_Player_Weapon_SetOrnamentsCoordinate", Game_Player_Weapon_SetOrnamentsCoordinate);
-    //ÉèÖÃÍæ¼ÒÎäÆ÷×°ÊÎÎïÄ£ĞÍ´óĞ¡
+    //è®¾ç½®ç©å®¶æ­¦å™¨è£…é¥°ç‰©æ¨¡å‹å¤§å°
     lua_register(L, "Game_Player_Weapon_SetOrnamentsSize", Game_Player_Weapon_SetOrnamentsSize);
-    //½â³ıÍæ¼ÒÎäÆ÷×°ÊÎÎï×ø±êÉèÖÃ
+    //è§£é™¤ç©å®¶æ­¦å™¨è£…é¥°ç‰©åæ ‡è®¾ç½®
     lua_register(L, "Game_Player_Weapon_DecontrolOrnamentsCoordinate", Game_Player_Weapon_DecontrolOrnamentsCoordinate);
-    //½â³ıÍæ¼ÒÎäÆ÷×°ÊÎÎïÄ£ĞÍ´óĞ¡ÉèÖÃ
+    //è§£é™¤ç©å®¶æ­¦å™¨è£…é¥°ç‰©æ¨¡å‹å¤§å°è®¾ç½®
     lua_register(L, "Game_Player_Weapon_DecontrolOrnamentsSize", Game_Player_Weapon_DecontrolOrnamentsSize);
-    //»ñÈ¡Íæ¼ÒÖ÷ÎäÆ÷×ø±ê
+    //è·å–ç©å®¶ä¸»æ­¦å™¨åæ ‡
     lua_register(L, "Game_Player_Weapon_GetMainWeaponCoordinate", Game_Player_Weapon_GetMainWeaponCoordinate);
-    //»ñÈ¡Íæ¼ÒÖ÷ÎäÆ÷Ä£ĞÍ´óĞ¡
+    //è·å–ç©å®¶ä¸»æ­¦å™¨æ¨¡å‹å¤§å°
     lua_register(L, "Game_Player_Weapon_GetMainWeaponSize", Game_Player_Weapon_GetMainWeaponSize);
-    //ÉèÖÃÍæ¼ÒÖ÷ÎäÆ÷×ø±ê
+    //è®¾ç½®ç©å®¶ä¸»æ­¦å™¨åæ ‡
     lua_register(L, "Game_Player_Weapon_SetMainWeaponCoordinate", Game_Player_Weapon_SetMainWeaponCoordinate);
-    //ÉèÖÃÍæ¼ÒÖ÷ÎäÆ÷Ä£ĞÍ´óĞ¡
+    //è®¾ç½®ç©å®¶ä¸»æ­¦å™¨æ¨¡å‹å¤§å°
     lua_register(L, "Game_Player_Weapon_SetMainWeaponSize", Game_Player_Weapon_SetMainWeaponSize);
-    //½â³ıÍæ¼ÒÖ÷ÎäÆ÷×ø±êÉèÖÃ
+    //è§£é™¤ç©å®¶ä¸»æ­¦å™¨åæ ‡è®¾ç½®
     lua_register(L, "Game_Player_Weapon_DecontrolMainWeaponCoordinate", Game_Player_Weapon_DecontrolMainWeaponCoordinate);
-    //½â³ıÍæ¼ÒÖ÷ÎäÆ÷Ä£ĞÍ´óĞ¡ÉèÖÃ
+    //è§£é™¤ç©å®¶ä¸»æ­¦å™¨æ¨¡å‹å¤§å°è®¾ç½®
     lua_register(L, "Game_Player_Weapon_DecontrolMainWeaponSize", Game_Player_Weapon_DecontrolMainWeaponSize);
-    //»ñÈ¡Íæ¼Ò¸±ÎäÆ÷×ø±ê
+    //è·å–ç©å®¶å‰¯æ­¦å™¨åæ ‡
     lua_register(L, "Game_Player_Weapon_GetSecondaryWeaponCoordinate", Game_Player_Weapon_GetSecondaryWeaponCoordinate);
-    //»ñÈ¡Íæ¼Ò¸±ÎäÆ÷Ä£ĞÍ´óĞ¡
+    //è·å–ç©å®¶å‰¯æ­¦å™¨æ¨¡å‹å¤§å°
     lua_register(L, "Game_Player_Weapon_GetSecondaryWeaponSize", Game_Player_Weapon_GetSecondaryWeaponSize);
-    //ÉèÖÃÍæ¼Ò¸±ÎäÆ÷×ø±ê
+    //è®¾ç½®ç©å®¶å‰¯æ­¦å™¨åæ ‡
     lua_register(L, "Game_Player_Weapon_SetSecondaryWeaponCoordinate", Game_Player_Weapon_SetSecondaryWeaponCoordinate);
-    //ÉèÖÃÍæ¼Ò¸±ÎäÆ÷Ä£ĞÍ´óĞ¡
+    //è®¾ç½®ç©å®¶å‰¯æ­¦å™¨æ¨¡å‹å¤§å°
     lua_register(L, "Game_Player_Weapon_SetSecondaryWeaponSize", Game_Player_Weapon_SetSecondaryWeaponSize);
-    //½â³ıÍæ¼Ò¸±ÎäÆ÷×ø±êÉèÖÃ
+    //è§£é™¤ç©å®¶å‰¯æ­¦å™¨åæ ‡è®¾ç½®
     lua_register(L, "Game_Player_Weapon_DecontrolSecondaryWeaponCoordinate", Game_Player_Weapon_DecontrolSecondaryWeaponCoordinate);
-    //½â³ıÍæ¼Ò¸±ÎäÆ÷Ä£ĞÍ´óĞ¡ÉèÖÃ
+    //è§£é™¤ç©å®¶å‰¯æ­¦å™¨æ¨¡å‹å¤§å°è®¾ç½®
     lua_register(L, "Game_Player_Weapon_DecontrolSecondaryWeaponSize", Game_Player_Weapon_DecontrolSecondaryWeaponSize);
-    //»ñÈ¡Íæ¼ÒÎäÆ÷ÌØÊâÊıÖµ(ÕûÊıĞÍ)
+    //è·å–ç©å®¶æ­¦å™¨ç‰¹æ®Šæ•°å€¼(æ•´æ•°å‹)
     lua_register(L, "Game_Player_Weapon_CharacteristicIntValue", Game_Player_Weapon_CharacteristicIntValue);
-    //»ñÈ¡Íæ¼ÒÎäÆ÷ÌØÊâÊıÖµ(¸¡µãĞÍ)
+    //è·å–ç©å®¶æ­¦å™¨ç‰¹æ®Šæ•°å€¼(æµ®ç‚¹å‹)
     lua_register(L, "Game_Player_Weapon_CharacteristicFloatValue", Game_Player_Weapon_CharacteristicFloatValue);
-    //»ñÈ¡Íæ¼ÒÎäÆ÷ÌØÊâÊıÖµ(×Ö½Ú)
+    //è·å–ç©å®¶æ­¦å™¨ç‰¹æ®Šæ•°å€¼(å­—èŠ‚)
     lua_register(L, "Game_Player_Weapon_CharacteristicByteValue", Game_Player_Weapon_CharacteristicByteValue);
-    //ÉèÖÃÍæ¼ÒÎäÆ÷ÌØÊâÊıÖµ
+    //è®¾ç½®ç©å®¶æ­¦å™¨ç‰¹æ®Šæ•°å€¼
     lua_register(L, "Game_Player_Weapon_SetCharacteristicValue", Game_Player_Weapon_SetCharacteristicValue);
-    //»ñÈ¡Íæ¼ÒÎäÆ÷×îºóÃüÖĞµÄ×ø±ê
+    //è·å–ç©å®¶æ­¦å™¨æœ€åå‘½ä¸­çš„åæ ‡
     lua_register(L, "Game_Player_Weapon_GetHitCoordinate", Game_Player_Weapon_GetHitCoordinate);
-    //»ñÈ¡Íæ¼ÒÎäÆ÷×îºóÃüÖĞµÄ¹ÖÎïµØÖ·
+    //è·å–ç©å®¶æ­¦å™¨æœ€åå‘½ä¸­çš„æ€ªç‰©åœ°å€
     lua_register(L, "Game_Player_Weapon_GetAttackMonster", Game_Player_Weapon_GetAttackMonster);
 
-    //»ñÈ¡Íæ¼ÒÅÉÉúĞÅÏ¢
+    //è·å–ç©å®¶æ´¾ç”Ÿä¿¡æ¯
     lua_register(L, "Game_Player_GetFsmData", Game_Player_GetFsmData);
-    //Ö´ĞĞÖ¸¶¨µÄÅÉÉú¶¯×÷
+    //æ‰§è¡ŒæŒ‡å®šçš„æ´¾ç”ŸåŠ¨ä½œ
     lua_register(L, "Game_Player_RunFsmAction", Game_Player_RunFsmAction);
-    //¼ì²éÖ´ĞĞµÄÅÉÉú¶¯×÷ÊÇ·ñ½áÊø
+    //æ£€æŸ¥æ‰§è¡Œçš„æ´¾ç”ŸåŠ¨ä½œæ˜¯å¦ç»“æŸ
     lua_register(L, "Game_Player_CheckRunFsmActionOver", Game_Player_CheckRunFsmActionOver);
-    //Ö´ĞĞÖ¸¶¨µÄÅÉÉú¶¯×÷
+    //æ‰§è¡ŒæŒ‡å®šçš„æ´¾ç”ŸåŠ¨ä½œ
     lua_register(L, "Game_Player_RunLmtAction", Game_Player_RunLmtAction);
-    //»ñÈ¡µ±Ç°¶¯×÷Ö¡
+    //è·å–å½“å‰åŠ¨ä½œå¸§
     lua_register(L, "Game_Player_GetActionFrame", Game_Player_GetActionFrame);
-    //ÉèÖÃµ±Ç°¶¯×÷Ö¡
+    //è®¾ç½®å½“å‰åŠ¨ä½œå¸§
     lua_register(L, "Game_Player_SetActionFrame", Game_Player_SetActionFrame);
-    //ÉèÖÃµ±Ç°¶¯×÷Ö¡ËÙÂÊ
+    //è®¾ç½®å½“å‰åŠ¨ä½œå¸§é€Ÿç‡
     lua_register(L, "Game_Player_SetActionFrameSpeed", Game_Player_SetActionFrameSpeed);
-    //»ñÈ¡Íæ¼ÒÑªÁ¿ĞÅÏ¢
+    //è·å–ç©å®¶è¡€é‡ä¿¡æ¯
     lua_register(L, "Game_Player_GetPlayerHealth", Game_Player_GetPlayerHealth);
-    //ÉèÖÃÍæ¼Òµ±Ç°ÑªÁ¿
+    //è®¾ç½®ç©å®¶å½“å‰è¡€é‡
     lua_register(L, "Game_Player_SetPlayerCurrentHealth", Game_Player_SetPlayerCurrentHealth);
-    //ÉèÖÃÍæ¼Ò»ù´¡ÑªÁ¿
+    //è®¾ç½®ç©å®¶åŸºç¡€è¡€é‡
     lua_register(L, "Game_Player_SetPlayerBasicHealth", Game_Player_SetPlayerBasicHealth);
-    //»ñÈ¡Íæ¼ÒÄÍÁ¦ĞÅÏ¢
+    //è·å–ç©å®¶è€åŠ›ä¿¡æ¯
     lua_register(L, "Game_Player_GetPlayerEndurance", Game_Player_GetPlayerEndurance);
-    //ÉèÖÃÍæ¼Òµ±Ç°ÄÍÁ¦
+    //è®¾ç½®ç©å®¶å½“å‰è€åŠ›
     lua_register(L, "Game_Player_SetPlayerCurrentEndurance", Game_Player_SetPlayerCurrentEndurance);
-    //ÉèÖÃÍæ¼Ò×î´óÄÍÁ¦
+    //è®¾ç½®ç©å®¶æœ€å¤§è€åŠ›
     lua_register(L, "Game_Player_SetPlayerMaxEndurance", Game_Player_SetPlayerMaxEndurance);
-    //»ñÈ¡Íæ¼Ò½ÇÉ«ĞÅÏ¢
+    //è·å–ç©å®¶è§’è‰²ä¿¡æ¯
     lua_register(L, "Game_Player_GetPlayerRoleInfo", Game_Player_GetPlayerRoleInfo);
-    //Éú³ÉÍæ¼ÒÎäÆ÷Í¶ÉäÎï
+    //ç”Ÿæˆç©å®¶æ­¦å™¨æŠ•å°„ç‰©
     lua_register(L, "Game_Player_CreateWeaponProjectiles", Game_Player_CreateWeaponProjectiles);
-    //Éú³ÉÍæ¼ÒÊÖåóÍ¶ÉäÎï
+    //ç”Ÿæˆç©å®¶æ‰‹å¼©æŠ•å°„ç‰©
     lua_register(L, "Game_Player_CreateBowgunProjectiles", Game_Player_CreateBowgunProjectiles);
-    //»ñÈ¡Íæ¼ÒBuffÊ£ÓàÊ±¼ä
+    //è·å–ç©å®¶Buffå‰©ä½™æ—¶é—´
     lua_register(L, "Game_Player_GetPlayerBuffDuration", Game_Player_GetPlayerBuffDuration);
-    //ÉèÖÃÍæ¼ÒBuffÊ£ÓàÊ±¼ä
+    //è®¾ç½®ç©å®¶Buffå‰©ä½™æ—¶é—´
     lua_register(L, "Game_Player_SetPlayerBuffDuration", Game_Player_SetPlayerBuffDuration);
-    //»ñÈ¡Íæ¼Ò¹³×¦×ø±ê
+    //è·å–ç©å®¶é’©çˆªåæ ‡
     lua_register(L, "Game_Player_GetPlayerHookCoordinate", Game_Player_GetPlayerHookCoordinate);
-    //»ñÈ¡¶ÔÍæ¼Ò³ğºŞµÄ¹ÖÎï
+    //è·å–å¯¹ç©å®¶ä»‡æ¨çš„æ€ªç‰©
     lua_register(L, "Game_Player_GetMonstersHateToPlayers", Game_Player_GetMonstersHateToPlayers);
-    //ÉèÖÃ¹³×¦¹³ÏòµÄ×ø±ê
+    //è®¾ç½®é’©çˆªé’©å‘çš„åæ ‡
     lua_register(L, "Game_Player_SetHookCoordinateChange", Game_Player_SetHookCoordinateChange);
-    //È¡Ïû¹³×¦¹³Ïò×ø±êµÄÉèÖÃ
+    //å–æ¶ˆé’©çˆªé’©å‘åæ ‡çš„è®¾ç½®
     lua_register(L, "Game_Player_CancelHookCoordinateChange", Game_Player_CancelHookCoordinateChange);
     
     #pragma endregion
-    //»ñÈ¡µ±Ç°µØÍ¼Id
+    //è·å–å½“å‰åœ°å›¾Id
     lua_register(L, "Game_World_GetMapId", Game_World_GetMapId);
-    //»ñÈ¡ÁÄÌìÏûÏ¢
+    //è·å–èŠå¤©æ¶ˆæ¯
     lua_register(L, "Game_World_Message", Game_World_Message);
-    //»ñÈ¡SteamºÃÓÑId
+    //è·å–Steamå¥½å‹Id
     lua_register(L, "Game_World_SteamId", Game_World_SteamId);
-    //»ñÈ¡¼¯»áÇøÓò´úÂë
+    //è·å–é›†ä¼šåŒºåŸŸä»£ç 
     lua_register(L, "Game_World_Assembly", Game_World_Assembly);
-    //»ñÈ¡Í¶ÉäÎïÊı¾İ
+    //è·å–æŠ•å°„ç‰©æ•°æ®
     lua_register(L, "Game_Shlp_GetShlpList", Game_Shlp_GetShlpList);
-    //»ñÈ¡µ±Ç°ÈÎÎñÊ±¼ä
-    lua_register(L, "Game_GetNowTime", Game_GetNowTime);
+#pragma region Quest
+    //è·å–å½“å‰ä»»åŠ¡æ—¶é—´
+    lua_register(L, "Game_Quest_GetQuestNowTime", Game_Quest_GetQuestNowTime);
+    //è·å–å½“å‰ä»»åŠ¡ID
+    lua_register(L, "Game_Quest_GetQuestId", Game_Quest_GetQuestId);
+    //è·å–å½“å‰ä»»åŠ¡çŠ¶æ€
+    lua_register(L, "Game_Quest_GetQuestState", Game_Quest_GetQuestState);
+    //è®¾ç½®ä¸‹ä¸€ä¸ªä»»åŠ¡
+    lua_register(L, "Game_Quest_SetNextQuest", Game_Quest_SetNextQuest);
+#pragma endregion
     #pragma region Monster
-    //ÉèÖÃ¹ÖÎïÉ¸Ñ¡Æ÷
+    //è®¾ç½®æ€ªç‰©ç­›é€‰å™¨
     lua_register(L, "Game_Monster_SetFilter", Game_Monster_SetFilter);
-    //Çå³ı¹ÖÎïÉ¸Ñ¡Æ÷
+    //æ¸…é™¤æ€ªç‰©ç­›é€‰å™¨
     lua_register(L, "Game_Monster_DisableFilter", Game_Monster_DisableFilter);
-    //¿ØÖÆµ¼º½¹ÖÎïµÄĞĞÎª
+    //æ§åˆ¶å¯¼èˆªæ€ªç‰©çš„è¡Œä¸º
     lua_register(L, "Game_Monster_SetBehaviorOfNavigationMonsters", Game_Monster_SetBehaviorOfNavigationMonsters);
-    //É±ËÀµ¼º½±ê¼ÇµÄ¹ÖÎï
+    //æ€æ­»å¯¼èˆªæ ‡è®°çš„æ€ªç‰©
     lua_register(L, "Game_Monster_KillNavigationMarkMonster", Game_Monster_KillNavigationMarkMonster);
-    //¸øµ¼º½±ê¼ÇµÄ¹ÖÎïÉèÖÃÒì³£×´Ì¬
+    //ç»™å¯¼èˆªæ ‡è®°çš„æ€ªç‰©è®¾ç½®å¼‚å¸¸çŠ¶æ€
     lua_register(L, "Game_Monster_AddDebuffToNavigationMarkMonster", Game_Monster_AddDebuffToNavigationMarkMonster);
-    //¿ØÖÆ¾àÀë×î½üµÄ¹ÖÎïµÄĞĞÎª
+    //æ§åˆ¶è·ç¦»æœ€è¿‘çš„æ€ªç‰©çš„è¡Œä¸º
     lua_register(L, "Game_Monster_SetBehaviorOfNearestMonsters", Game_Monster_SetBehaviorOfNearestMonsters);
-    //É±ËÀ¾àÀë×î½üµÄ¹ÖÎï
+    //æ€æ­»è·ç¦»æœ€è¿‘çš„æ€ªç‰©
     lua_register(L, "Game_Monster_KillNearestMonster", Game_Monster_KillNearestMonster);
-    //É±ËÀ·¶Î§ÄÚ¾àÀë×î½üµÄ¹ÖÎï
+    //æ€æ­»èŒƒå›´å†…è·ç¦»æœ€è¿‘çš„æ€ªç‰©
     lua_register(L, "Game_Monster_KillNearestMonsterInRange", Game_Monster_KillNearestMonsterInRange);
-    //¸ø¾àÀë×î½üµÄ¹ÖÎïÉèÖÃÒì³£×´Ì¬
+    //ç»™è·ç¦»æœ€è¿‘çš„æ€ªç‰©è®¾ç½®å¼‚å¸¸çŠ¶æ€
     lua_register(L, "Game_Monster_AddDebuffNearestMonster", Game_Monster_AddDebuffNearestMonster);
-    //¸ø·¶Î§ÄÚ¾àÀë×î½üµÄ¹ÖÎïÉèÖÃÒì³£×´Ì¬
+    //ç»™èŒƒå›´å†…è·ç¦»æœ€è¿‘çš„æ€ªç‰©è®¾ç½®å¼‚å¸¸çŠ¶æ€
     lua_register(L, "Game_Monster_AddDebuffNearestMonsterInRange", Game_Monster_AddDebuffNearestMonsterInRange);
-    //¿ØÖÆ×îºóÒ»´Î»÷ÖĞµÄ¹ÖÎïµÄĞĞÎª
+    //æ§åˆ¶æœ€åä¸€æ¬¡å‡»ä¸­çš„æ€ªç‰©çš„è¡Œä¸º
     lua_register(L, "Game_Monster_SetBehaviorOfLastHitMonsters", Game_Monster_SetBehaviorOfLastHitMonsters);
-    //É±ËÀ×îºóÒ»´Î»÷ÖĞµÄ¹ÖÎï
+    //æ€æ­»æœ€åä¸€æ¬¡å‡»ä¸­çš„æ€ªç‰©
     lua_register(L, "Game_Monster_KillLastHitMonster", Game_Monster_KillLastHitMonster);
-    //¸ø×îºóÒ»´Î»÷ÖĞµÄ¹ÖÎïÉèÖÃÒì³£×´Ì¬
+    //ç»™æœ€åä¸€æ¬¡å‡»ä¸­çš„æ€ªç‰©è®¾ç½®å¼‚å¸¸çŠ¶æ€
     lua_register(L, "Game_Monster_AddDebuffLastHitMonster", Game_Monster_AddDebuffLastHitMonster);
-    //É±ËÀ·¶Î§ÄÚËùÓĞ¹ÖÎï
+    //æ€æ­»èŒƒå›´å†…æ‰€æœ‰æ€ªç‰©
     lua_register(L, "Game_Monster_KillAllMonsterInRange", Game_Monster_KillAllMonsterInRange);
-    //¸ø·¶Î§ÄÚËùÓĞ¹ÖÎïÉèÖÃÒì³£×´Ì¬
+    //ç»™èŒƒå›´å†…æ‰€æœ‰æ€ªç‰©è®¾ç½®å¼‚å¸¸çŠ¶æ€
     lua_register(L, "Game_Monster_AddDebuffToAllMonsterInRange", Game_Monster_AddDebuffToAllMonsterInRange);
-    //»ñÈ¡µ¼º½µÄ¹ÖÎïµÄ×ø±ê
+    //è·å–å¯¼èˆªçš„æ€ªç‰©çš„åæ ‡
     lua_register(L, "Game_Monster_GetNavigationMonsterCoordinates", Game_Monster_GetNavigationMonsterCoordinates);
-    //»ñÈ¡¾àÀë×î½üµÄ¹ÖÎïµÄ×ø±ê
+    //è·å–è·ç¦»æœ€è¿‘çš„æ€ªç‰©çš„åæ ‡
     lua_register(L, "Game_Monster_GetNearestMonsterCoordinates", Game_Monster_GetNearestMonsterCoordinates);
-    //»ñÈ¡×îºóÒ»´Î»÷ÖĞµÄ¹ÖÎïµÄ×ø±ê
+    //è·å–æœ€åä¸€æ¬¡å‡»ä¸­çš„æ€ªç‰©çš„åæ ‡
     lua_register(L, "Game_Monster_GetLastHitMonsterCoordinates", Game_Monster_GetLastHitMonsterCoordinates);
-    //»ñÈ¡ËùÓĞ¹ÖÎïµÄ×ø±ê
+    //è·å–æ‰€æœ‰æ€ªç‰©çš„åæ ‡
     lua_register(L, "Game_Monster_GetAllMonsterCoordinates", Game_Monster_GetAllMonsterCoordinates);
-    //»ñÈ¡ËùÓĞ¹ÖÎïµÄÉúÃü
+    //è·å–æ‰€æœ‰æ€ªç‰©çš„ç”Ÿå‘½
     lua_register(L, "Game_Monster_GetAllMonsterHealth", Game_Monster_GetAllMonsterHealth);
-    //»ñÈ¡ËùÓĞ¹ÖÎïµÄÒì³£×´Ì¬
+    //è·å–æ‰€æœ‰æ€ªç‰©çš„å¼‚å¸¸çŠ¶æ€
     lua_register(L, "Game_Monster_GetAllMonsterDebuff", Game_Monster_GetAllMonsterDebuff);
-    //»ñÈ¡·¶Î§ÄÚËùÓĞ¹ÖÎïµÄ×ø±ê
+    //è·å–èŒƒå›´å†…æ‰€æœ‰æ€ªç‰©çš„åæ ‡
     lua_register(L, "Game_Monster_GetAllMonsterCoordinatesInRange", Game_Monster_GetAllMonsterCoordinatesInRange);
-    //»ñÈ¡·¶Î§ÄÚËùÓĞ¹ÖÎïµÄÉúÃü
+    //è·å–èŒƒå›´å†…æ‰€æœ‰æ€ªç‰©çš„ç”Ÿå‘½
     lua_register(L, "Game_Monster_GetAllMonsterHealthInRange", Game_Monster_GetAllMonsterHealthInRange);
-    //»ñÈ¡·¶Î§ÄÚËùÓĞ¹ÖÎïµÄÒì³£×´Ì¬(¼Æ»®ÖĞ)
+    //è·å–èŒƒå›´å†…æ‰€æœ‰æ€ªç‰©çš„å¼‚å¸¸çŠ¶æ€(è®¡åˆ’ä¸­)
     lua_register(L, "Game_Monster_GetAllMonsterDebuffInRange", Game_Monster_GetAllMonsterDebuffInRange);
-    //»ñÈ¡Ä¿±êµã·¶Î§ÄÚËùÓĞ¹ÖÎïµÄ×ø±ê
+    //è·å–ç›®æ ‡ç‚¹èŒƒå›´å†…æ‰€æœ‰æ€ªç‰©çš„åæ ‡
     lua_register(L, "Game_Monster_GetAllMonsterCoordinatesInTargetPointRange", Game_Monster_GetAllMonsterCoordinatesInTargetPointRange);
-    //»ñÈ¡Ä¿±êµã·¶Î§ÄÚËùÓĞ¹ÖÎïµÄÉúÃü
+    //è·å–ç›®æ ‡ç‚¹èŒƒå›´å†…æ‰€æœ‰æ€ªç‰©çš„ç”Ÿå‘½
     lua_register(L, "Game_Monster_GetAllMonsterHealthInTargetPointRange", Game_Monster_GetAllMonsterHealthInTargetPointRange);
-    //»ñÈ¡Ä¿±êµã·¶Î§ÄÚËùÓĞ¹ÖÎïµÄÒì³£×´Ì¬(¼Æ»®ÖĞ)
+    //è·å–ç›®æ ‡ç‚¹èŒƒå›´å†…æ‰€æœ‰æ€ªç‰©çš„å¼‚å¸¸çŠ¶æ€(è®¡åˆ’ä¸­)
     lua_register(L, "Game_Monster_GetAllMonsterDebuffInTargetPointRange", Game_Monster_GetAllMonsterDebuffInTargetPointRange);
-    //»ñÈ¡Ö¸¶¨id¹ÖÎïµÄÖĞÎÄÃû
+    //è·å–æŒ‡å®šidæ€ªç‰©çš„ä¸­æ–‡å
     lua_register(L, "Game_Monster_GetMonsterCNName", Game_Monster_GetMonsterCNName);
     #pragma endregion
     #pragma region Environmental
-    //ÉèÖÃ»·¾³ÉúÎïÉ¸Ñ¡Æ÷
+    //è®¾ç½®ç¯å¢ƒç”Ÿç‰©ç­›é€‰å™¨
     lua_register(L, "Game_Environmental_SetFilter", Game_Environmental_SetFilter);
-    //Çå³ı»·¾³ÉúÎïÉ¸Ñ¡Æ÷
+    //æ¸…é™¤ç¯å¢ƒç”Ÿç‰©ç­›é€‰å™¨
     lua_register(L, "Game_Environmental_DisableFilter", Game_Environmental_DisableFilter);
-    //ÉèÖÃ·¶Î§ÄÚËùÓĞ»·¾³ÉúÎïµÄ×ø±ê
+    //è®¾ç½®èŒƒå›´å†…æ‰€æœ‰ç¯å¢ƒç”Ÿç‰©çš„åæ ‡
     lua_register(L, "Game_Environmental_SetAllEnvironmentalCoordinatesInRange", Game_Environmental_SetAllEnvironmentalCoordinatesInRange);
-    //»ñÈ¡·¶Î§ÄÚËùÓĞ»·¾³ÉúÎïµÄ×ø±ê
+    //è·å–èŒƒå›´å†…æ‰€æœ‰ç¯å¢ƒç”Ÿç‰©çš„åæ ‡
     lua_register(L, "Game_Environmental_GetAllEnvironmentalCoordinatesInRange", Game_Environmental_GetAllEnvironmentalCoordinatesInRange);
     #pragma endregion
     #pragma region Entity
-    //»ñÈ¡ÊµÌåÊôĞÔ
+    //è·å–å®ä½“å±æ€§
     lua_register(L, "Game_Entity_GetEntityProperties", Game_Entity_GetEntityProperties);
-    //ÉèÖÃÊµÌå×ø±ê
+    //è®¾ç½®å®ä½“åæ ‡
     lua_register(L, "Game_Entity_SetEntityCoordinate", Game_Entity_SetEntityCoordinate);
-    //ÉèÖÃÊµÌåÄ£ĞÍ´óĞ¡
+    //è®¾ç½®å®ä½“æ¨¡å‹å¤§å°
     lua_register(L, "Game_Entity_SetEntitySize", Game_Entity_SetEntitySize);
-    //ÉèÖÃÊµÌåµ±Ç°¶¯×÷Ö¡
+    //è®¾ç½®å®ä½“å½“å‰åŠ¨ä½œå¸§
     lua_register(L, "Game_Entity_SetEntityActionFrame", Game_Entity_SetEntityActionFrame);
-    //ÉèÖÃÊµÌå³¯Ïò½Ç¶È
+    //è®¾ç½®å®ä½“æœå‘è§’åº¦
     lua_register(L, "Game_Entity_SetEntityAngle", Game_Entity_SetEntityAngle);
-    //½«ÊµÌå³¯ÏòÖ¸¶¨µÄ×ø±ê
+    //å°†å®ä½“æœå‘æŒ‡å®šçš„åæ ‡
     lua_register(L, "Game_Entity_SetEntityAimCoordinate", Game_Entity_SetEntityAimCoordinate);
-    //½«ÊµÌå¶¯×÷Ö¡ËÙÂÊ
+    //å°†å®ä½“åŠ¨ä½œå¸§é€Ÿç‡
     lua_register(L, "Game_Entity_SetEntityFrameSpeed", Game_Entity_SetEntityFrameSpeed);
-    //½â³ıÈ«²¿ÊµÌå¶¯×÷Ö¡ËÙÂÊÉèÖÃ
+    //è§£é™¤å…¨éƒ¨å®ä½“åŠ¨ä½œå¸§é€Ÿç‡è®¾ç½®
     lua_register(L, "Game_Entity_ClearEntityFrameSpeed", Game_Entity_ClearEntityFrameSpeed);
-    //Ê¹ÊµÌåÖ´ĞĞ¶¯×÷
+    //ä½¿å®ä½“æ‰§è¡ŒåŠ¨ä½œ
     lua_register(L, "Game_Entity_BehaviorControl", Game_Entity_BehaviorControl);
     #pragma endregion
     
 #pragma endregion
 #pragma region System
-    //¼ì²é°´¼ü
+    //æ£€æŸ¥æŒ‰é”®
     lua_register(L, "System_Keyboard_CheckKey", System_Keyboard_CheckKey);
-    //¼ì²é°´¼üË«»÷
+    //æ£€æŸ¥æŒ‰é”®åŒå‡»
     lua_register(L, "System_Keyboard_CheckDoubleKey", System_Keyboard_CheckDoubleKey);
-    //¼ì²é°´¼üÊÇ·ñ´¦ÓÚ°´ÏÂ×´Ì¬
+    //æ£€æŸ¥æŒ‰é”®æ˜¯å¦å¤„äºæŒ‰ä¸‹çŠ¶æ€
     lua_register(L, "System_Keyboard_CheckKeyIsPressed", System_Keyboard_CheckKeyIsPressed);
-    //×¢²á¿ì½İ¼ü
+    //æ³¨å†Œå¿«æ·é”®
     lua_register(L, "System_HotKey_AddHotKey", System_HotKey_AddHotKey);
-    //¼ì²é¿ì½İ¼ü
+    //æ£€æŸ¥å¿«æ·é”®
     lua_register(L, "System_HotKey_CheckKey", System_HotKey_CheckKey);
-    //¼ì²éXbox°´¼ü
+    //æ£€æŸ¥XboxæŒ‰é”®
     lua_register(L, "System_XboxPad_CheckKey", System_XboxPad_CheckKey);
-    //¼ì²éXbox°´¼üË«»÷
+    //æ£€æŸ¥XboxæŒ‰é”®åŒå‡»
     lua_register(L, "System_XboxPad_CheckDoubleKey", System_XboxPad_CheckDoubleKey);
-    //¼ì²éXbox°´¼üÊÇ·ñ´¦ÓÚ°´ÏÂ×´Ì¬
+    //æ£€æŸ¥XboxæŒ‰é”®æ˜¯å¦å¤„äºæŒ‰ä¸‹çŠ¶æ€
     lua_register(L, "System_XboxPad_CheckKeyIsPressed", System_XboxPad_CheckKeyIsPressed);
-    //Ìí¼Ó¼ÆÊ±Æ÷
+    //æ·»åŠ è®¡æ—¶å™¨
     lua_register(L, "System_Chronoscope_AddChronoscope", System_Chronoscope_AddChronoscope);
-    //¼ì²é¼ÆÊ±Æ÷
+    //æ£€æŸ¥è®¡æ—¶å™¨
     lua_register(L, "System_Chronoscope_CheckChronoscope", System_Chronoscope_CheckChronoscope);
-    //¼ì²é¼ÆÊ±Æ÷ÊÇ·ñ´æÔÚ
+    //æ£€æŸ¥è®¡æ—¶å™¨æ˜¯å¦å­˜åœ¨
     lua_register(L, "System_Chronoscope_CheckPresenceChronoscope", System_Chronoscope_CheckPresenceChronoscope);
-    //É¾³ı¼ÆÊ±Æ÷
+    //åˆ é™¤è®¡æ—¶å™¨
     lua_register(L, "System_Chronoscope_DelChronoscope", System_Chronoscope_DelChronoscope);
-    //ÏòÓÎÏ·ÄÚ·¢ËÍÏûÏ¢
+    //å‘æ¸¸æˆå†…å‘é€æ¶ˆæ¯
     lua_register(L, "System_Message_ShowMessage", System_Message_ShowMessage);
-    //Ïò¿ØÖÆÌ¨·¢ËÍÏûÏ¢
+    //å‘æ§åˆ¶å°å‘é€æ¶ˆæ¯
     lua_register(L, "System_Console_Info", System_Console_Info);
-    //Ïò¿ØÖÆÌ¨·¢ËÍ´íÎóÏûÏ¢
+    //å‘æ§åˆ¶å°å‘é€é”™è¯¯æ¶ˆæ¯
     lua_register(L, "System_Console_Error", System_Console_Error);
-    //»ñÈ¡LuaScript²å¼ş¹¹½¨°æ±¾
+    //è·å–LuaScriptæ’ä»¶æ„å»ºç‰ˆæœ¬
     lua_register(L, "System_LuaScript_Build", System_LuaScript_Build);
-    //»ñÈ¡LuaScript²å¼ş¹¹½¨°æ±¾
+    //è·å–LuaScriptæ’ä»¶æ„å»ºç‰ˆæœ¬
     lua_register(L, "System_LuaScript_Version", System_LuaScript_Version);
-    //»ñÈ¡UUID
+    //è·å–UUID
     lua_register(L, "System_GetUUID", System_GetUUID);
-    //´ò¿ªµ÷ÊÔ¿ØÖÆÌ¨
+    //æ‰“å¼€è°ƒè¯•æ§åˆ¶å°
     lua_register(L, "System_DeBug_OpenDeBugConsole", System_DeBug_OpenDeBugConsole);
-    //¹Ø±Õµ÷ÊÔ¿ØÖÆÌ¨
+    //å…³é—­è°ƒè¯•æ§åˆ¶å°
     lua_register(L, "System_DeBug_CloseDeBugConsole", System_DeBug_CloseDeBugConsole);
-    //»ñÈ¡Æ«ÒÆÄÚ´æµØÖ·
+    //è·å–åç§»å†…å­˜åœ°å€
     lua_register(L, "System_Memory_GetOffsetAddress", System_Memory_GetOffsetAddress);
-    //»ñÈ¡ÄÚ´æµØÖ·Êı¾İ
+    //è·å–å†…å­˜åœ°å€æ•°æ®
     lua_register(L, "System_Memory_GetAddressData", System_Memory_GetAddressData);
-    //»ñÈ¡ÄÚ´æµØÖ·Êı¾İ
+    //è·å–å†…å­˜åœ°å€æ•°æ®
     lua_register(L, "System_Memory_SetAddressData", System_Memory_SetAddressData);
-    //ÏòÆÁÄ»Ìí¼ÓÍ¼Æ¬
+    //å‘å±å¹•æ·»åŠ å›¾ç‰‡
     lua_register(L, "System_UI_DrawImage", System_UI_DrawImage);
-    //ÏòÆÁÄ»Ìí¼ÓBase64Í¼Æ¬
+    //å‘å±å¹•æ·»åŠ Base64å›¾ç‰‡
     lua_register(L, "System_UI_DrawBase64Image", System_UI_DrawBase64Image);
-    //ÒÆ³ıÌí¼ÓµÄÍ¼Æ¬
+    //ç§»é™¤æ·»åŠ çš„å›¾ç‰‡
     lua_register(L, "System_UI_RemoveImage", System_UI_RemoveImage);
-    //ÏòÆÁÄ»Ìí¼ÓÎÄ×Ö
+    //å‘å±å¹•æ·»åŠ æ–‡å­—
     lua_register(L, "System_UI_DrawText", System_UI_DrawText);
-    //ÒÆ³ıÌí¼ÓµÄÎÄ×Ö
+    //ç§»é™¤æ·»åŠ çš„æ–‡å­—
     lua_register(L, "System_UI_RemoveText", System_UI_RemoveText);
-    //»ñÈ¡ÓÎÏ·´°¿Ú´óĞ¡
+    //è·å–æ¸¸æˆçª—å£å¤§å°
     lua_register(L, "System_UI_GetGameWindowSize", System_UI_GetGameWindowSize);
-    //²¥·ÅÒôÆµÎÄ¼ş
+    //æ’­æ”¾éŸ³é¢‘æ–‡ä»¶
     lua_register(L, "System_Sound_PlaySound", System_Sound_PlaySound);
+    //è·å–ç³»ç»Ÿè¿›ç¨‹åˆ—è¡¨
+    lua_register(L, "System_GetProcessList", System_GetProcessList);
 #pragma endregion
 #pragma region Lua
-    //´æÈëÕûÊı±äÁ¿
+    //å­˜å…¥æ•´æ•°å˜é‡
     lua_register(L, "Lua_Variable_SaveIntVariable", Lua_Variable_SaveIntVariable);
-    //´æÈë¸¡µãÊı±äÁ¿
+    //å­˜å…¥æµ®ç‚¹æ•°å˜é‡
     lua_register(L, "Lua_Variable_SaveFloatVariable", Lua_Variable_SaveFloatVariable);
-    //´æÈë×Ö·û´®±äÁ¿
+    //å­˜å…¥å­—ç¬¦ä¸²å˜é‡
     lua_register(L, "Lua_Variable_SaveStringVariable", Lua_Variable_SaveStringVariable);
-    //¶ÁÈ¡ÕûÊı±äÁ¿
+    //è¯»å–æ•´æ•°å˜é‡
     lua_register(L, "Lua_Variable_ReadIntVariable", Lua_Variable_ReadIntVariable);
-    //¶ÁÈ¡¸¡µãÊı±äÁ¿
+    //è¯»å–æµ®ç‚¹æ•°å˜é‡
     lua_register(L, "Lua_Variable_ReadFloatVariable", Lua_Variable_ReadFloatVariable);
-    //¶ÁÈ¡×Ö·û´®±äÁ¿
+    //è¯»å–å­—ç¬¦ä¸²å˜é‡
     lua_register(L, "Lua_Variable_ReadStringVariable", Lua_Variable_ReadStringVariable);
-    //Ïú»Ù±äÁ¿
+    //é”€æ¯å˜é‡
     lua_register(L, "Lua_Variable_DestroyVariable", Lua_Variable_DestroyVariable);
-    //ÉèÖÃ×Ó½Å±¾±äÁ¿Ãû
+    //è®¾ç½®å­è„šæœ¬å˜é‡å
     lua_register(L, "Lua_Variable_SetSubScriptVariablePrefix", Lua_Variable_SetSubScriptVariablePrefix);
-    //»ñÈ¡Ëæ»úÊı
+    //è·å–éšæœºæ•°
     lua_register(L, "Lua_Math_Rander", Lua_Math_Rander);
-    //´æÈëÈ«¾ÖÕûÊı±äÁ¿
+    //å­˜å…¥å…¨å±€æ•´æ•°å˜é‡
     lua_register(L, "Lua_Variable_SaveGlobalIntVariable", Lua_Variable_SaveGlobalIntVariable);
-    //´æÈëÈ«¾Ö¸¡µãÊı±äÁ¿
+    //å­˜å…¥å…¨å±€æµ®ç‚¹æ•°å˜é‡
     lua_register(L, "Lua_Variable_SaveGlobalFloatVariable", Lua_Variable_SaveGlobalFloatVariable);
-    //´æÈëÈ«¾Ö×Ö·û´®±äÁ¿
+    //å­˜å…¥å…¨å±€å­—ç¬¦ä¸²å˜é‡
     lua_register(L, "Lua_Variable_SaveGlobalStringVariable", Lua_Variable_SaveGlobalStringVariable);
-    //¶ÁÈ¡È«¾ÖÕûÊı±äÁ¿
+    //è¯»å–å…¨å±€æ•´æ•°å˜é‡
     lua_register(L, "Lua_Variable_ReadGlobalIntVariable", Lua_Variable_ReadGlobalIntVariable);
-    //¶ÁÈ¡È«¾Ö¸¡µãÊı±äÁ¿
+    //è¯»å–å…¨å±€æµ®ç‚¹æ•°å˜é‡
     lua_register(L, "Lua_Variable_ReadGlobalFloatVariable", Lua_Variable_ReadGlobalFloatVariable);
-    //¶ÁÈ¡È«¾Ö×Ö·û´®±äÁ¿
+    //è¯»å–å…¨å±€å­—ç¬¦ä¸²å˜é‡
     lua_register(L, "Lua_Variable_ReadGlobalStringVariable", Lua_Variable_ReadGlobalStringVariable);
-    //Ïú»ÙÈ«¾Ö±äÁ¿
+    //é”€æ¯å…¨å±€å˜é‡
     lua_register(L, "Lua_Variable_DestroyGlobalVariable", Lua_Variable_DestroyGlobalVariable);
-    //»ñÈ¡ÍøÂçÊı¾İ
+    //è·å–ç½‘ç»œæ•°æ®
     lua_register(L, "Lua_Http_GetHttpData", Lua_Http_GetHttpData);
-    //Á¬½Óµ½websocket·şÎñÆ÷
+    //è¿æ¥åˆ°websocketæœåŠ¡å™¨
     lua_register(L, "Lua_WS_LinkWSServer", Lua_WS_LinkWSServer);
-    //·¢ËÍĞÅÏ¢ÖÁWS·şÎñÆ÷
+    //å‘é€ä¿¡æ¯è‡³WSæœåŠ¡å™¨
     lua_register(L, "Lua_WS_SendMessage", Lua_WS_SendMessage);
-    //»ñÈ¡·şÎñÆ÷ÏûÏ¢¶ÑÕ»ÖĞµÄÒ»ÌõÊı¾İ²¢µ¯³ö¸ÃÊı¾İ
+    //è·å–æœåŠ¡å™¨æ¶ˆæ¯å †æ ˆä¸­çš„ä¸€æ¡æ•°æ®å¹¶å¼¹å‡ºè¯¥æ•°æ®
     lua_register(L, "Lua_WS_GetMessage", Lua_WS_GetMessage);
-    //»ñÈ¡·şÎñÆ÷Á¬½Ó×´Ì¬
+    //è·å–æœåŠ¡å™¨è¿æ¥çŠ¶æ€
     lua_register(L, "Lua_WS_GetLinkState", Lua_WS_GetLinkState);
     
-    //Â¼Èë½Å±¾¹ØÓÚĞÅÏ¢
+    //å½•å…¥è„šæœ¬å…³äºä¿¡æ¯
     lua_register(L, "Lua_About", Lua_About);
 #pragma endregion
     int err = 0;
@@ -1963,9 +1998,9 @@ int Lua_Main(string LuaFile)
         return -1;
     }
     Nowlua = LuaFile;
-    //ÉèÖÃ´íÎó»Øµ÷º¯Êı
+    //è®¾ç½®é”™è¯¯å›è°ƒå‡½æ•°
     lua_pushcfunction(L, LuaErrorCallBack);
-    //»ñÈ¡Õ»¶¥µÄÎ»ÖÃ¼´´íÎó»Øµ÷º¯ÊıµÄÎ»ÖÃ
+    //è·å–æ ˆé¡¶çš„ä½ç½®å³é”™è¯¯å›è°ƒå‡½æ•°çš„ä½ç½®
     int callBack = lua_gettop(L);
     lua_getglobal(L, "run");
     err = lua_pcall(L, 0, 0, callBack);

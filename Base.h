@@ -20,6 +20,7 @@ extern "C" void* _stdcall GetRBXPtr(void*);
 extern "C" void* _stdcall GetRDIPtr(void*);
 extern "C" void* _stdcall GetHitPtr(void*);
 extern "C" void* _stdcall SetEDX(float*);
+extern "C" void* _stdcall SetR14D(int*);
 
 namespace Base {
 	//常用结构
@@ -51,8 +52,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.5";
-		long long ModBuild = 125009031115;
+		string ModVersion = "v1.2.6";
+		long long ModBuild = 126009162027;
 		string Version = "421471";
 	}
 #pragma endregion
@@ -103,6 +104,7 @@ namespace Base {
 		void* MapPlot = nullptr;
 		void* GameTimePlot = nullptr;
 		void* XboxPadPlot = nullptr;
+		void* Quest = nullptr;
 	}
 #pragma endregion
 	//世界信息
@@ -141,6 +143,15 @@ namespace Base {
 		map<void*, float> FrameSpeed;
 		int SteamId = 0;
 		string Assembly = "";
+		vector<string> ProcessList;
+	}
+#pragma endregion
+	//任务信息
+#pragma region Quest
+	namespace Quest {
+		int NextQuest = -1;
+		int QuestId = 0;
+		int QuestState = 0;//0不在任务、1准备中、2任务中、3任务成功、4任务结算、5任务失败
 	}
 #pragma endregion
 	//计时器
@@ -1385,6 +1396,7 @@ namespace Base {
 			BasicGameData::PlayerInfoPlot = *offsetPtr<undefined**>((undefined(*)())PlayerInfoPlot, 0xA8);
 			BasicGameData::GameTimePlot = (undefined(*)())MH::World::GameClock;
 			BasicGameData::MapPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::PlayerPlot, 0x7D20);
+			BasicGameData::Quest = *(undefined**)MH::Quest::QuestBase;
 			void* PlayerArchivePlot = *(undefined**)MH::Player::PlayerArchive;
 			if (PlayerArchivePlot != nullptr)
 				BasicGameData::PlayerArchivePlot = *offsetPtr<undefined**>((undefined(*)())PlayerArchivePlot, 0xA8);
@@ -1627,6 +1639,14 @@ namespace Base {
 							}
 							return original(RCX);
 						});
+					//修改下一次任务
+					HookLambda(MH::Quest::NextQuest,
+						[]() {
+							if (Base::Quest::NextQuest > 0)
+								SetR14D(&Base::Quest::NextQuest);
+							auto ret = original();
+							return ret;
+						});
 					MH_ApplyQueued();
 				} else {
 					Base::ModConfig::SecurityModel = true;
@@ -1666,6 +1686,8 @@ Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 						LOG(ERR) << " |  GameTimePlot";
 					if (BasicGameData::XboxPadPlot == nullptr)
 						LOG(ERR) << " |  XboxPadPlot";
+					if (BasicGameData::Quest == nullptr)
+						LOG(ERR) << " |  QuestPlot";
 					ModConfig::InitErrCount++;
 					if (ModConfig::InitErrCount > 10)
 						ModConfig::InitErrInfo = false;
@@ -1792,6 +1814,9 @@ Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 			*/
 			//WebSocket数据处理
 			NetworkServer::WSHandle();
+			//任务数据
+			Quest::QuestId = *offsetPtr<int>(BasicGameData::Quest, 0x4C);
+			Quest::QuestState = *offsetPtr<int>(BasicGameData::Quest, 0x54);
 		}
 	}
 }

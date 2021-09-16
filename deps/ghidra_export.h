@@ -32,6 +32,8 @@ namespace MH {
             static undefined8(*ResourceFunc)() = (undefined8(*)())0x140479500;
             static void* ResourcePtr = (void*)0x144d17e20;
         }
+        static undefined8(*QuestBase)() = (undefined8(*)())0x14506F240;
+        static undefined* (*NextQuest)() = (undefined * (*)())0x14114C656;
     }
     namespace Player {
         static void* BasePtr = (void*)0x145073e80;

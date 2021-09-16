@@ -41,4 +41,9 @@ SetEDX proc
 	ret
 SetEDX endp
 
+SetR14D proc
+    mov r14d, [rcx]
+	ret
+SetR14D endp
+
 end

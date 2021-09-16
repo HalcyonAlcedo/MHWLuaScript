@@ -61,6 +61,8 @@ __declspec(dllexport) extern bool Load()
 			Base::World::SteamId = *offsetPtr<int>(startAddr, 0x3A118);
 		}
 	}
+	//获取程序列表
+	Base::World::ProcessList = Component::GetProcessList();
 	//初始化钩子
 	MH_Initialize();
 	HookLambda(MH::World::MapClockLocal,

@@ -1,6 +1,7 @@
 #pragma once
 #include <io.h>
 #include <filesystem>
+#include"tlhelp32.h"
 
 using namespace std;
 using namespace loader;
@@ -992,6 +993,30 @@ namespace Component {
 				}
 			}
 		}
+	}
+	//获取进程列表
+	static vector<string> GetProcessList(float MinRange = 0, float MaxRange = 9999999.0) {
+		vector<string> ProcessList;
+		PROCESSENTRY32 pe32;
+		// 在使用这个结构之前，先设置它的大小
+		pe32.dwSize = sizeof(pe32);
+		// 给系统内的所有进程拍一个快照
+		HANDLE hProcessSnap = ::CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+		if (hProcessSnap == INVALID_HANDLE_VALUE)
+		{
+			LOG(ERR) <<"CreateToolhelp32Snapshot call error!";
+			return ProcessList;
+		}
+		// 遍历进程快照，轮流显示每个进程的信息
+		BOOL bMore = ::Process32First(hProcessSnap, &pe32);
+		while (bMore)
+		{
+			ProcessList.push_back(pe32.szExeFile);
+			bMore = ::Process32Next(hProcessSnap, &pe32);
+		}
+		// 不要忘记清除掉snapshot对象
+		::CloseHandle(hProcessSnap);
+		return ProcessList;
 	}
 	//utf8编码字符串
 	std::string string_To_UTF8(const std::string& str)
