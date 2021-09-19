@@ -1080,6 +1080,11 @@ static int Game_Quest_SetNextQuest(lua_State* pL) {
     Base::Quest::NextQuest = (int)lua_tointeger(pL, -1);
     return 0;
 }
+static int Game_Quest_SetQuestState(lua_State* pL) {
+    int state = (int)lua_tointeger(pL, -1);
+    *offsetPtr<int>(Base::BasicGameData::Quest, 0x38) = state;
+    return 0;
+}
 #pragma endregion
 #pragma region SystemFun
 static int System_Keyboard_CheckKey(lua_State* pL) {    
@@ -1777,6 +1782,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Quest_GetQuestState", Game_Quest_GetQuestState);
     //设置下一个任务
     lua_register(L, "Game_Quest_SetNextQuest", Game_Quest_SetNextQuest);
+    //设置任务状态
+    lua_register(L, "Game_Quest_SetQuestState", Game_Quest_SetQuestState);
 #pragma endregion
     #pragma region Monster
     //设置怪物筛选器

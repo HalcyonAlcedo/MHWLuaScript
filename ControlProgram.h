@@ -324,10 +324,53 @@ namespace ControlProgram {
 								ImGui::Text(u8"怪物变种：%d", monsterData.SubId);
 								ImGui::Text(u8"当前血量：%f", health);
 								ImGui::Text(u8"最大血量：%f", maxHealth);
-								ImGui::Text(u8"当前坐标");
-								ImGui::Text(u8"X：%f", monsterData.CoordinatesX);
-								ImGui::Text(u8"Y：%f", monsterData.CoordinatesY);
-								ImGui::Text(u8"Z：%f", monsterData.CoordinatesZ);
+								if (ImGui::TreeNode(u8"当前坐标"))
+								{
+									ImGui::Text(u8"X：%f", monsterData.CoordinatesX);
+									ImGui::Text(u8"Y：%f", monsterData.CoordinatesY);
+									ImGui::Text(u8"Z：%f", monsterData.CoordinatesZ);
+									ImGui::TreePop();
+								}
+								float MonsterGravity = *offsetPtr<float>(monsterData.Plot, 0x14B0);
+								ImGui::Text(u8"重力加速度：%f", MonsterGravity);
+								float MonsterAngle = Base::Calculation::QuaternionToAngle(Base::Vector4(
+									*offsetPtr<float>(monsterData.Plot, 0x174),
+									*offsetPtr<float>(monsterData.Plot, 0x178),
+									*offsetPtr<float>(monsterData.Plot, 0x17C),
+									*offsetPtr<float>(monsterData.Plot, 0x180)
+								));
+								ImGui::Text(u8"朝向角：%f", MonsterAngle);
+								float MonsterActionId = 0;
+								float MonsterActionFrame = 0;
+								float MonsterActionFrameEnd = 0;
+								float MonsterActionFrameSpeed = 0;
+								void* MonsterActionPlot = *offsetPtr<undefined**>((undefined(*)())monsterData.Plot, 0x468);
+								if (MonsterActionPlot != nullptr) {
+									MonsterActionId = *offsetPtr<int>(MonsterActionPlot, 0xE9C4);
+									MonsterActionFrame = *offsetPtr<float>(MonsterActionPlot, 0x10C);
+									MonsterActionFrameEnd = *offsetPtr<float>(MonsterActionPlot, 0x114);
+								}
+								MonsterActionFrameSpeed = *offsetPtr<float>(monsterData.Plot, 0x6c);
+								Base::PlayerData::FsmData MonsterFsm = Base::PlayerData::FsmData();
+								Base::PlayerData::FsmData MonsterNowFsm = Base::PlayerData::FsmData();
+								MonsterFsm = Base::PlayerData::FsmData(
+									*offsetPtr<int>(monsterData.Plot, 0x628C),
+									*offsetPtr<int>(monsterData.Plot, 0x6290)
+								);
+								MonsterNowFsm = Base::PlayerData::FsmData(
+									*offsetPtr<int>(monsterData.Plot, 0x6274),
+									*offsetPtr<int>(monsterData.Plot, 0x6278)
+								);
+								ImGui::Text(u8"动作Id：%d", MonsterActionId);
+								if (ImGui::TreeNode(u8"派生信息"))
+								{
+									ImGui::Text(u8"当前Fsm：%d - %d", MonsterNowFsm.Target, MonsterNowFsm.Id);
+									ImGui::Text(u8"上一个执行的Fsm：%d - %d", MonsterFsm.Target, MonsterFsm.Id);
+									ImGui::Text(u8"当前动作帧：%f", MonsterActionFrame);
+									ImGui::Text(u8"当前动作帧长度：%f", MonsterActionFrameEnd);
+									ImGui::Text(u8"当前动作帧速率：%f", MonsterActionFrameSpeed);
+									ImGui::TreePop();
+								}
 								void* MonstersHate = Base::Monster::GetHateTarget(monster);
 								ImGui::Text(u8"仇恨目标：%s", MonstersHate != nullptr ?
 									MonstersHate == Base::BasicGameData::PlayerPlot ? u8"玩家" : u8"其他"
