@@ -51,6 +51,15 @@ namespace ControlProgram {
 	};
 	map<string, TextureCache> ImgTextureCache;
 
+	static void PlaySoundFile(string SoundFile) {
+		Player* player = new Player();
+		Sound* sound = new Sound();
+		player->Create();
+		sound->LoadFromFile(SoundFile);
+		player->SetSound(*sound);
+		player->Play();
+	}
+
 	void InitImGui()
 	{
 		ImGui::CreateContext();
@@ -180,6 +189,12 @@ namespace ControlProgram {
 			Checkhotkey[(string)ImHotKey::hotkeys.at(hotkey).functionName] = true;
 		}
 
+		//…˘“Ù¥¶¿Ì
+		if (!Base::SoundPlay::SoundList.empty()) {
+			PlaySoundFile(Base::SoundPlay::SoundList.back());
+			Base::SoundPlay::SoundList.pop_back();
+		}
+		
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
@@ -554,4 +569,5 @@ namespace ControlProgram {
 			initConsole = true;
 		CreateThread(nullptr, 0, MainThread, hMod, 0, nullptr);
 	}
+
 }

@@ -1360,7 +1360,7 @@ static int System_UI_GetGameWindowSize(lua_State* pL) {
 }
 static int System_Sound_PlaySound(lua_State* pL) {
     string file = (string)lua_tostring(pL, 1);
-    Base::SoundPlay::PlaySoundFile(file);
+    Base::SoundPlay::SoundList.push_back(file);
     return 0;
 }
 static int System_GetProcessList(lua_State* pL)

@@ -401,14 +401,7 @@ namespace Base {
 	//ÒôÆµ²¥·Å
 #pragma region SoundPlay
 	namespace SoundPlay {
-		static void PlaySoundFile(string SoundFile) {
-			Player* player = new Player();
-			Sound* sound = new Sound();
-			player->Create();
-			sound->LoadFromFile(SoundFile);
-			player->SetSound(*sound);
-			player->Play();
-		}
+		vector<string> SoundList;
 	}
 #pragma endregion
 	//Î¯ÍÐ
