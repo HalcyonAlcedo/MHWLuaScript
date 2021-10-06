@@ -55,4 +55,9 @@ namespace NetworkServer {
 		}
 		return retString;
     }
+
+	bool DownloadFile(string url, string file) {
+		HttpClient session;
+		return session.dl_curl_get_req(url, file);
+	}
 }

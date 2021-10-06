@@ -36,6 +36,8 @@ public:
         m_headers.clear();
     }
 
+    CURLcode dl_curl_get_req(const std::string& url, std::string filename);
+
 protected:
     int curl(const HttpRequest& req, HttpResponse* res);
 
