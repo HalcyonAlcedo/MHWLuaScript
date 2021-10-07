@@ -1375,6 +1375,12 @@ static int System_GetProcessList(lua_State* pL)
     }
     return 1;
 }
+static int System_GetFileMD5(lua_State* pL) {
+    string file = (string)lua_tostring(pL, 1);
+    lua_pushstring(pL, Component::getFileMD5(file).c_str());
+    return 1;
+}
+
 #pragma endregion
 #pragma region LuaFun
 //存入整数变量
@@ -1945,6 +1951,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_Sound_PlaySound", System_Sound_PlaySound);
     //获取系统进程列表
     lua_register(L, "System_GetProcessList", System_GetProcessList);
+    //获取文件Md5
+    lua_register(L, "System_GetFileMD5", System_GetFileMD5);
 #pragma endregion
 #pragma region Lua
     //存入整数变量

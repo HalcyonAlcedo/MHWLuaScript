@@ -20,7 +20,7 @@
 #include <thread>
 
 #include "Base.h"
-#include "Execution.h"
+#include "Component.h"
 #include "LuaData.h"
 #include "ControlProgram.h"
 #include "LuaScript.h"
@@ -71,7 +71,6 @@ __declspec(dllexport) extern bool Load()
 			ControlProgram::InitConsole();
 			if (Base::Init()) {
 				Base::RealTimeUpdate();
-				//Execution::Main();
 				if (Base::ModConfig::GameDataInit) {
 					for (string file_name : Base::LuaHandle::LuaFiles) {
 						if(Base::LuaHandle::LuaCode[file_name].start)
