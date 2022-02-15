@@ -52,8 +52,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.7";
-		long long ModBuild = 127010062307;
+		string ModVersion = "v1.2.8";
+		long long ModBuild = 128002151927;
 		string Version = "421471";
 	}
 #pragma endregion
@@ -395,7 +395,7 @@ namespace Base {
 		map<string, NewImage> Img;
 		map<string, NewText> Text;
 		map<string, string> About;
-		Vector2 GameWindowSize = Vector2(GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN));
+		Vector2 MouseDelta = Vector2(0, 0);
 	}
 #pragma endregion
 	//音频播放
@@ -1112,15 +1112,24 @@ namespace Base {
 	//投射物
 #pragma region ProjectilesOperation
 	namespace ProjectilesOperation {
-		namespace TempData {
-			void* t_ShlpPtr = nullptr;
-			void* t_ShlpTargetPtr = nullptr;
-		}
-		map<void*, int> ProjectilesList;
-		void* ProjectilesListTemp[50];
-		void* ProjectilesListDelTemp[50];
+		struct ProjectilesData {
+			void* Plot;
+			void* From;
+			float CoordinatesX;
+			float CoordinatesY;
+			float CoordinatesZ;
+			ProjectilesData(
+				void* Plot = nullptr,
+				void* From = nullptr,
+				float CoordinatesX = 0,
+				float CoordinatesY = 0,
+				float CoordinatesZ = 0)
+				:Plot(Plot), From(From), CoordinatesX(CoordinatesX), CoordinatesY(CoordinatesY), CoordinatesZ(CoordinatesZ) {
+			};
+		};
+		map<void*, ProjectilesData> ProjectilesList;
 		//执行投射物生成
-		static bool CallProjectilesGenerate(int Id, float* Coordinate, int From = 0) {
+		static bool CallProjectilesGenerate(int Id, float* Coordinate, int From = 0, void* FromPtr = nullptr) {
 			//武器发出的投射物
 			void* Weapon = *offsetPtr<void*>(BasicGameData::PlayerPlot, 0x76B0);
 			void* WeaponShlpPlot = *offsetPtr<void*>(Weapon, 0x1D90);
@@ -1141,7 +1150,9 @@ namespace Base {
 			default:
 				return false;
 			}
-
+			if (FromPtr != nullptr) {
+				ShlpPlot = FromPtr;
+			}
 			void* ShlpRoute = MH::Shlp::GetShlp(ShlpPlot, Id);
 			if (ShlpRoute == nullptr)
 				return false;
@@ -1192,7 +1203,7 @@ namespace Base {
 			*tempCoordinateTailData_longlong = -1;
 		}
 		//生成投射物
-		static bool CreateProjectiles(int Id, Vector3 startPoint, Vector3 endPoint, int From = 0) {
+		static bool CreateProjectiles(int Id, Vector3 startPoint, Vector3 endPoint, int From = 0, void* FromPtr = nullptr) {
 			//创建投射物路径数据缓存指针
 			float* CoordinatesData = new float[73];
 			//填充缓存区数据
@@ -1200,7 +1211,7 @@ namespace Base {
 			//处理投射物路径数据
 			GenerateProjectilesCoordinateData(CoordinatesData, startPoint, endPoint);
 			//执行生成投射物
-			bool GenerateResults = CallProjectilesGenerate(Id, CoordinatesData, From);
+			bool GenerateResults = CallProjectilesGenerate(Id, CoordinatesData, From, FromPtr);
 			//清理缓冲区
 			delete[]CoordinatesData;
 			return GenerateResults;
@@ -1590,46 +1601,15 @@ namespace Base {
 							return original(RCX, RDX);
 						});
 					//获取发射物列表
-					/*
-					HookLambda(MH::Shlp::GetShlpPtr,
-						[](auto RCX) {
-							GetRDIPtr(&Base::ProjectilesOperation::TempData::t_ShlpTargetPtr);
-							Base::ProjectilesOperation::TempData::t_ShlpPtr = RCX;
-							return original(RCX);
+					HookLambda(MH::Shlp::dtor,
+						[](auto monster) {
+							Base::ProjectilesOperation::ProjectilesList.erase(monster);
+							return original(monster);
 						});
-					//从移动参数获取地址
-					HookLambda(MH::Shlp::ShlpCoordinateChangePtr,
+					HookLambda(MH::Shlp::ctor,
 						[](auto RCX) {
-							for (int i = 0; i < 50; i++)
-							{
-								if (ProjectilesOperation::ProjectilesListTemp[i] == nullptr) {
-									ProjectilesOperation::ProjectilesListTemp[i] = RCX;
-									break;
-								}
-							}
-							return original(RCX);
-						});
-					*/
-					HookLambda(MH::Shlp::GetShlpPtr,
-						[](auto RCX) {
-							for (int i = 0; i < 50; i++)
-							{
-								if (ProjectilesOperation::ProjectilesListTemp[i] == nullptr) {
-									ProjectilesOperation::ProjectilesListTemp[i] = RCX;
-									break;
-								}
-							}
-							return original(RCX);
-						});
-					HookLambda(MH::Shlp::DelShlpPtr,
-						[](auto RCX) {
-							for (int i = 0; i < 50; i++)
-							{
-								if (ProjectilesOperation::ProjectilesListDelTemp[i] == nullptr) {
-									ProjectilesOperation::ProjectilesListDelTemp[i] = RCX;
-									break;
-								}
-							}
+							Base::ProjectilesOperation::ProjectilesList[RCX] = Base::ProjectilesOperation::ProjectilesData(RCX, *offsetPtr<void*>(RCX, 0x2B0),0,0,0);
+
 							return original(RCX);
 						});
 					//修改下一次任务
@@ -1752,7 +1732,14 @@ Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 					Base::Monster::Monsters[monster].CoordinatesZ = *offsetPtr<float>(monster, 0x168);
 				}
 			}
-
+			//更新投射物信息
+			for (auto [projectiles, projectilesData] : Base::ProjectilesOperation::ProjectilesList) {
+				if (projectiles != nullptr) {
+					Base::ProjectilesOperation::ProjectilesList[projectiles].CoordinatesX = *offsetPtr<float>(projectiles, 0x160);
+					Base::ProjectilesOperation::ProjectilesList[projectiles].CoordinatesY = *offsetPtr<float>(projectiles, 0x164);
+					Base::ProjectilesOperation::ProjectilesList[projectiles].CoordinatesZ = *offsetPtr<float>(projectiles, 0x168);
+				}
+			}
 			//更新计时器时间
 			Chronoscope::NowTime = *offsetPtr<float>(BasicGameData::MapPlot, 0xC24);
 
@@ -1783,28 +1770,6 @@ Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 				AssemblyOffset2 = *offsetPtr<undefined**>((undefined(*)())AssemblyOffset1, 0x30);
 			if (AssemblyOffset2 != nullptr)
 				World::Assembly = offsetPtr<char>(AssemblyOffset2, 0x3C8);
-			for (int i = 0; i < 50; i++)
-			{
-				if (ProjectilesOperation::ProjectilesListTemp[i] != nullptr) {
-					ProjectilesOperation::ProjectilesList[ProjectilesOperation::ProjectilesListTemp[i]] = 1;
-					ProjectilesOperation::ProjectilesListTemp[i] = nullptr;
-				}
-			}
-			for (int i = 0; i < 50; i++)
-			{
-				if (ProjectilesOperation::ProjectilesListDelTemp[i] != nullptr) {
-					ProjectilesOperation::ProjectilesList.erase(ProjectilesOperation::ProjectilesListDelTemp[i]);
-					ProjectilesOperation::ProjectilesListDelTemp[i] = nullptr;
-				}
-			}
-			//清除已经消除的投射物
-			/*
-			for (auto [Projectiles, PData] : ProjectilesOperation::ProjectilesList) {
-				if (PData != *offsetPtr<void*>(Projectiles, 0x2b0)) {
-					ProjectilesOperation::ProjectilesList.erase(Projectiles);
-				}
-			}
-			*/
 			//WebSocket数据处理
 			NetworkServer::WSHandle();
 			//任务数据

@@ -94,13 +94,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="deps\minhook\libMinHook.x64.lib">
-      <Filter>前置文件</Filter>
-    </Library>
     <Library Include="deps\loader.lib">
-      <Filter>前置文件</Filter>
-    </Library>
-    <Library Include="deps\Lua.lib">
       <Filter>前置文件</Filter>
     </Library>
   </ItemGroup>

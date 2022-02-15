@@ -425,9 +425,27 @@ namespace ControlProgram {
 				}
 				if (ImGui::TreeNode(u8"投射物信息"))
 				{
-					for (auto [projectiles, _t] : Base::ProjectilesOperation::ProjectilesList) {
+					for (auto [projectiles, projectilesData] : Base::ProjectilesOperation::ProjectilesList) {
 						if (projectiles != nullptr) {
-							ImGui::Text(u8"内存地址：%x", projectiles);
+							ostringstream ptr;
+							ptr << projectilesData.Plot;
+							string ptrstr = ptr.str();
+							if (ImGui::TreeNode(ptrstr.c_str()))
+							{
+								ImGui::Text(u8"内存地址：%x", projectilesData.Plot);
+								ImGui::Text(u8"当前坐标X：%f", projectilesData.CoordinatesX);
+								ImGui::Text(u8"当前坐标Y：%f", projectilesData.CoordinatesY);
+								ImGui::Text(u8"当前坐标Z：%f", projectilesData.CoordinatesZ);
+								float MonsterAngle = Base::Calculation::QuaternionToAngle(Base::Vector4(
+									*offsetPtr<float>(projectilesData.Plot, 0x174),
+									*offsetPtr<float>(projectilesData.Plot, 0x178),
+									*offsetPtr<float>(projectilesData.Plot, 0x17C),
+									*offsetPtr<float>(projectilesData.Plot, 0x180)
+								));
+								ImGui::Text(u8"朝向角：%f", MonsterAngle);
+								ImGui::TreePop();
+								ImGui::Separator();
+							}
 						}
 					}
 					ImGui::TreePop();
@@ -533,6 +551,10 @@ namespace ControlProgram {
 			}
 			ImGui::End();
 		}
+		//设备属性刷新
+		ImGuiIO& io = ImGui::GetIO();
+		Base::Draw::MouseDelta = Base::Vector2(io.MouseDelta.x, io.MouseDelta.y);
+
 		ImGui::Render();
 		pContext->OMSetRenderTargets(1, &mainRenderTargetView, NULL);
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

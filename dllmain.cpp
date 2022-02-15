@@ -12,7 +12,7 @@
 
 #include <windows.h>
 
-#include "minhook/MinHook.h"
+#include "MinHook.h"
 #include "json/json.hpp"
 #include "loader.h"
 #include "ghidra_export.h"
@@ -26,6 +26,20 @@
 #include "LuaScript.h"
 using namespace loader;
 
+void Lua_System()
+{
+	while (true)
+	{
+		if (Base::ModConfig::GameDataInit) {
+			for (string file_name : Base::LuaHandle::LuaFiles) {
+				if (Base::LuaHandle::LuaCode[file_name].start) {
+					Lua_Main(file_name);
+				}
+			}
+		}
+	}
+}
+
 __declspec(dllexport) extern bool Load()
 {
 	
@@ -34,7 +48,6 @@ __declspec(dllexport) extern bool Load()
 		LOG(WARN) << Base::ModConfig::ModName << " : Wrong version";
 		return false;
 	}
-
 	Component::getFiles("nativePC\\LuaScript\\", Base::LuaHandle::LuaFiles);
 	LOG(INFO) << "Lua file load:";
 	for (string file_name : Base::LuaHandle::LuaFiles) {
@@ -71,12 +84,6 @@ __declspec(dllexport) extern bool Load()
 			ControlProgram::InitConsole();
 			if (Base::Init()) {
 				Base::RealTimeUpdate();
-				if (Base::ModConfig::GameDataInit) {
-					for (string file_name : Base::LuaHandle::LuaFiles) {
-						if(Base::LuaHandle::LuaCode[file_name].start)
-							Lua_Main(file_name);
-					}
-				}
 			}
 			return ret;
 		});
@@ -93,6 +100,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
 		DisableThreadLibraryCalls(hModule);
 		ControlProgram::hMod = hModule;
+		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)Lua_System, 0, 0, 0);
 		return Load();
 	}
 	return TRUE;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "minhook/MinHook.h"
+#include "MinHook.h"
 
 template<typename T>
 inline T* offsetPtr(void* ptr, int offset) { return (T*)(((char*)ptr) + offset); }

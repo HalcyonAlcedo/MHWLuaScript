@@ -64,10 +64,9 @@ namespace MH {
     }
     namespace Shlp {
         static void* (*GetShlp)(void*, int) = (void* (*)(void*, int))0x140F86090;
-        static void(*GetShlpPtr)(void*) = (void(*)(void*))0x14210e080;
-        static void(*DelShlpPtr)(void*) = (void(*)(void*))0x1412ec394;
-        static void(*ShlpCoordinateChangePtr)(void*) = (void(*)(void*))0x1420A09E0;
         static void(*CallShlp)(void*, void*, void*, void*) = (void(*)(void*, void*, void*, void*))0x141ABA910;
+        static void(*ctor)(void*) = (void(*)(void*))0x14210e080;
+        static void(*dtor)(void*) = (void(*)(void*))0x1422448E0;
     }
     namespace Savefile {
         static bool(*CheckFlag)(longlong, uint) = (bool(*)(longlong, uint))0x14136bdf0;

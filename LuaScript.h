@@ -538,6 +538,25 @@ static int Game_Player_CreateBowgunProjectiles(lua_State* pL) {
     ));
     return 1;
 }
+static int Game_Player_CreateProjectiles(lua_State* pL) {
+    int id = (int)lua_tointeger(pL, 1);
+    float startx = (float)lua_tonumber(pL, 2);
+    float starty = (float)lua_tonumber(pL, 3);
+    float startz = (float)lua_tonumber(pL, 4);
+    float endx = (float)lua_tonumber(pL, 5);
+    float endy = (float)lua_tonumber(pL, 6);
+    float endz = (float)lua_tonumber(pL, 7);
+    string entity = "0x" + (string)lua_tostring(pL, 8);
+    long long Ptr = 0;
+    sscanf_s(entity.c_str(), "%p", &Ptr, sizeof(long long));
+    void* EntityAddress = (double*)Ptr;
+    if (EntityAddress != nullptr) {
+        lua_pushboolean(pL, Base::ProjectilesOperation::CreateProjectiles(
+            id, Base::Vector3(startx, starty, startz), Base::Vector3(endx, endy, endz), 0, EntityAddress
+        ));
+    }
+    return 1;
+}
 static int Game_Monster_GetAllMonsterCoordinates(lua_State* pL)
 {
     lua_newtable(pL);//创建一个表格，放在栈顶
@@ -1050,14 +1069,33 @@ static int Game_Entity_BehaviorControl(lua_State* pL) {
 }
 static int Game_Shlp_GetShlpList(lua_State* pL)
 {
-    lua_newtable(pL);
-    for (auto [Plot, Target] : Base::ProjectilesOperation::ProjectilesList) {
+    lua_newtable(pL);//创建一个表格，放在栈顶
+    for (auto [Plot, shlpData] : Base::ProjectilesOperation::ProjectilesList) {
         ostringstream ptr;
-        ptr << Plot;
+        ptr << shlpData.Plot;
         string ptrstr = ptr.str();
-
+        lua_pushstring(pL, ptrstr.c_str());//压入编号
+        lua_newtable(pL);//压入编号信息表
+        lua_pushstring(pL, "X");//X坐标
+        lua_pushnumber(pL, shlpData.CoordinatesX);//value
+        lua_settable(pL, -3);//弹出X坐标
+        lua_pushstring(pL, "Y");//Y坐标
+        lua_pushnumber(pL, shlpData.CoordinatesY);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Z");//Z坐标
+        lua_pushnumber(pL, shlpData.CoordinatesZ);
+        lua_settable(pL, -3);
+        lua_pushstring(pL, "Ptr");//投射物指针
         lua_pushstring(pL, ptrstr.c_str());
         lua_settable(pL, -3);
+        lua_pushstring(pL, "From");//来源指针
+        ostringstream fromptr;
+        fromptr << shlpData.From;
+        string fromptrptrstr = fromptr.str();
+        lua_pushstring(pL, fromptrptrstr.c_str());
+        lua_settable(pL, -3);
+
+        lua_settable(pL, -3);//弹出到顶层
     }
     return 1;
 }
@@ -1353,9 +1391,19 @@ static int System_UI_RemoveText(lua_State* pL) {
     Base::Draw::Text.erase(name);
     return 0;
 }
+static int System_UI_GetSystemWindowSize(lua_State* pL) {
+    int nWidth = GetSystemMetrics(SM_CXSCREEN);  //屏幕宽度    
+    int nHeight = GetSystemMetrics(SM_CYSCREEN); //屏幕高度
+    lua_pushinteger(pL, nWidth);
+    lua_pushinteger(pL, nHeight);
+    return 2;
+}
 static int System_UI_GetGameWindowSize(lua_State* pL) {
-    lua_pushinteger(pL, Base::Draw::GameWindowSize.x);
-    lua_pushinteger(pL, Base::Draw::GameWindowSize.y);
+    HWND gameh = FindWindow("MT FRAMEWORK", NULL);
+    RECT r1;
+    ::GetWindowRect(gameh, &r1);
+    lua_pushinteger(pL, r1.right - r1.left);
+    lua_pushinteger(pL, r1.bottom - r1.top);
     return 2;
 }
 static int System_Sound_PlaySound(lua_State* pL) {
@@ -1380,7 +1428,11 @@ static int System_GetFileMD5(lua_State* pL) {
     lua_pushstring(pL, Component::getFileMD5(file).c_str());
     return 1;
 }
-
+static int System_GetMouseDelta(lua_State* pL) {
+    lua_pushnumber(pL, Base::Draw::MouseDelta.x);
+    lua_pushnumber(pL, Base::Draw::MouseDelta.y);
+    return 2;
+}
 #pragma endregion
 #pragma region LuaFun
 //存入整数变量
@@ -1522,7 +1574,7 @@ static int Lua_Variable_SetSubScriptVariablePrefix(lua_State* pL) {
     return 0;
 }
 //获取随机数
-static int Lua_Math_Rander(lua_State* pL) {
+static int Lua_Math_Random(lua_State* pL) {
     float min = (float)lua_tonumber(pL, 1);
     float max = (float)lua_tonumber(pL, 2);
     lua_pushnumber(pL, Base::Calculation::myRander(min, max));
@@ -1611,13 +1663,38 @@ int LuaErrorRecord(string error) {
 
     return 1;
 }
+int pcall_callback_err_fun(lua_State* L)
+{
+    lua_Debug debug = {};
+    int ret = lua_getstack(L, 2, &debug); // 0是pcall_callback_err_fun自己, 1是error函数, 2是真正出错的函数
+    lua_getinfo(L, "Sln", &debug);
+
+
+    std::string err = lua_tostring(L, -1);
+    lua_pop(L, 1);
+    std::stringstream msg;
+    msg << debug.short_src << ":line " << debug.currentline;
+    if (debug.name != 0) {
+        msg << "(" << debug.namewhat << " " << debug.name << ")";
+    }
+
+
+    msg << " [" << err << "]";
+    lua_pushstring(L, msg.str().c_str());
+    return 1;
+}
+
 //==============================================
 // Main Functions
 //==============================================
 int Lua_Main(string LuaFile)
 {
     lua_State* L = luaL_newstate();
-    //luaopen_base(L);
+    luaopen_base(L);
+    luaopen_table(L);
+    luaopen_string(L);
+    luaopen_math(L);
+    luaopen_debug(L);
     luaL_openlibs(L);
 
 #pragma region Game
@@ -1652,6 +1729,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Player_SetPlayerVisualDistance", Game_Player_SetPlayerVisualDistance);
     //设置相机高度
     lua_register(L, "Game_Player_SetPlayerVisualHeight", Game_Player_SetPlayerVisualHeight);
+    //获取玩家地址
+    lua_register(L, "Game_Entity_GetPlayerPtr", Game_Entity_GetPlayerPtr);
     //获取玩家动作id
     lua_register(L, "Game_Player_GetPlayerActionId", Game_Player_GetPlayerActionId);
     //获取朝向角度
@@ -1762,6 +1841,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Player_CreateWeaponProjectiles", Game_Player_CreateWeaponProjectiles);
     //生成玩家手弩投射物
     lua_register(L, "Game_Player_CreateBowgunProjectiles", Game_Player_CreateBowgunProjectiles);
+    //生成自定义投射物
+    lua_register(L, "Game_Player_CreateProjectiles", Game_Player_CreateProjectiles);
     //获取玩家Buff剩余时间
     lua_register(L, "Game_Player_GetPlayerBuffDuration", Game_Player_GetPlayerBuffDuration);
     //设置玩家Buff剩余时间
@@ -1945,6 +2026,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_UI_DrawText", System_UI_DrawText);
     //移除添加的文字
     lua_register(L, "System_UI_RemoveText", System_UI_RemoveText);
+    //获取屏幕大小
+    lua_register(L, "System_UI_GetSystemWindowSize", System_UI_GetSystemWindowSize);
     //获取游戏窗口大小
     lua_register(L, "System_UI_GetGameWindowSize", System_UI_GetGameWindowSize);
     //播放音频文件
@@ -1953,6 +2036,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "System_GetProcessList", System_GetProcessList);
     //获取文件Md5
     lua_register(L, "System_GetFileMD5", System_GetFileMD5);
+    //获取鼠标移动信息
+    lua_register(L, "System_GetMouseDelta", System_GetMouseDelta);
 #pragma endregion
 #pragma region Lua
     //存入整数变量
@@ -1972,7 +2057,8 @@ int Lua_Main(string LuaFile)
     //设置子脚本变量名
     lua_register(L, "Lua_Variable_SetSubScriptVariablePrefix", Lua_Variable_SetSubScriptVariablePrefix);
     //获取随机数
-    lua_register(L, "Lua_Math_Rander", Lua_Math_Rander);
+    lua_register(L, "Lua_Math_Random", Lua_Math_Random);
+    lua_register(L, "Lua_Math_Rander", Lua_Math_Random);
     //存入全局整数变量
     lua_register(L, "Lua_Variable_SaveGlobalIntVariable", Lua_Variable_SaveGlobalIntVariable);
     //存入全局浮点数变量
@@ -2006,10 +2092,10 @@ int Lua_Main(string LuaFile)
     int err = 0;
     
     if (Base::LuaHandle::LuaCode[LuaFile].hotReload) {
-        err = luaL_dofile(L, Base::LuaHandle::LuaCode[LuaFile].file.c_str());
+        err = luaL_loadfile(L, Base::LuaHandle::LuaCode[LuaFile].file.c_str());
     }
     else {
-        err = luaL_dostring(L, Base::LuaHandle::LuaCode[LuaFile].code.c_str());
+        err = luaL_loadstring(L, Base::LuaHandle::LuaCode[LuaFile].code.c_str());
     }
 
     if (err != 0)
@@ -2019,19 +2105,48 @@ int Lua_Main(string LuaFile)
             string error = lua_tostring(L, -1);
             LuaErrorRecord(error);
         }
+        lua_close(L);
         return -1;
     }
     Nowlua = LuaFile;
+    if (Base::LuaHandle::LuaCode[LuaFile].hotReload) {
+        err = lua_pcall(L, 0, 0, 0);
+    }
+    else {
+        err = lua_pcall(L, 0, LUA_MULTRET, 0);
+    }
+    /*
+    lua_pushcfunction(L, pcall_callback_err_fun);
+    int pos_err = lua_gettop(L);
+    lua_getglobal(L, "run");               //调用lua中的函数f
+    err = lua_pcall(L, 0, 1, pos_err);
+    if (err != 0)
+    {
+        int t = lua_type(L, -1);
+        const char* error = lua_tostring(L, -1);
+        LOG(ERR) << Base::ModConfig::ModName << " LUA ERR:" << error;
+        lua_pop(L, 1);
+    }
+    lua_close(L);
+    */
     //设置错误回调函数
     lua_pushcfunction(L, LuaErrorCallBack);
     //获取栈顶的位置即错误回调函数的位置
     int callBack = lua_gettop(L);
     lua_getglobal(L, "run");
+    int runerr = 0;
+    runerr = lua_pcall(L, 0, 0, 0);
     err = lua_pcall(L, 0, 0, callBack);
-    if (err != 0)
+    
+    if (runerr != 0)
     {
-        string error = lua_tostring(L, -1);
-        LuaErrorRecord(error);
+        //string error = lua_tostring(L, -1);
+        //LuaErrorRecord(error);
+        int type = lua_type(L, -1);
+        if (type == 4) {
+            const char* error = lua_tostring(L, -1);
+            LOG(ERR) << Base::ModConfig::ModName << " LUA RUN ERR:" << error;
+        }
     }
     lua_close(L);
     Sublua = "";
