@@ -373,6 +373,60 @@ static int Game_Player_GetPlayerRoleInfo(lua_State* pL) {
     lua_pushinteger(pL, Base::PlayerData::Mr);
     return 3;
 }
+
+static int Game_Otomo_GetOtomoCoordinate(lua_State* pL) {
+    lua_pushnumber(pL, Base::Otomo::Coordinate::Entity.x);
+    lua_pushnumber(pL, Base::Otomo::Coordinate::Entity.y);
+    lua_pushnumber(pL, Base::Otomo::Coordinate::Entity.z);
+    return 3;
+}
+static int Game_Otomo_GetOtomoIncrementCoordinate(lua_State* pL) {
+    lua_pushnumber(pL, Base::Otomo::Coordinate::Increment.x);
+    lua_pushnumber(pL, Base::Otomo::Coordinate::Increment.y);
+    lua_pushnumber(pL, Base::Otomo::Coordinate::Increment.z);
+    return 3;
+}
+static int Game_Otomo_GetOtomoActionId(lua_State* pL) {
+    lua_pushinteger(pL, Base::Otomo::ActionId);
+    return 1;
+}
+static int Game_Otomo_GetOtomoAngle(lua_State* pL) {
+    lua_pushnumber(pL, Base::Otomo::Angle);
+    return 1;
+}
+static int Game_Otomo_SetOtomoAngle(lua_State* pL) {
+    float angle = (float)lua_tonumber(pL, -1);
+    Base::Otomo::SetPlayerAimAngle(angle);
+    return 0;
+}
+static int Game_Otomo_SetOtomoAimToCoordinate(lua_State* pL) {
+    float x = (float)lua_tonumber(pL, 1);
+    float z = (float)lua_tonumber(pL, 2);
+    Base::Otomo::SetPlayerAimCoordinate(x, z);
+    return 0;
+}
+static int Game_Otomo_GetFsmData(lua_State* pL) {
+    lua_pushinteger(pL, Base::Otomo::NowFsm.Target);
+    lua_pushinteger(pL, Base::Otomo::NowFsm.Id);
+    return 2;
+}
+static int Game_Otomo_RunFsmAction(lua_State* pL) {
+    int type = (int)lua_tointeger(pL, 1);
+    int id = (int)lua_tointeger(pL, 2);
+    Base::Otomo::RunDerivedAction(type, id);
+    return 0;
+}
+static int Game_Otomo_GetActionFrame(lua_State* pL) {
+    lua_pushnumber(pL, Base::Otomo::ActionFrame);
+    lua_pushnumber(pL, Base::Otomo::ActionFrameEnd);
+    return 2;
+}
+static int Game_Otomo_SetActionFrame(lua_State* pL) {
+    float frame = (float)lua_tonumber(pL, -1);
+    Base::Otomo::SetActionFrame(frame);
+    return 0;
+}
+
 static int Game_World_GetMapId(lua_State* pL) {
     lua_pushinteger(pL, Base::World::MapId);
     return 1;
@@ -967,6 +1021,13 @@ static int Game_Entity_GetPlayerPtr(lua_State* pL) {
     lua_pushstring(pL, ptrstr.c_str());
     return 1;
 }
+static int Game_Entity_GetOtomoPtr(lua_State* pL) {
+    ostringstream ptr;
+    ptr << Base::BasicGameData::OtomoPlot;
+    string ptrstr = ptr.str();
+    lua_pushstring(pL, ptrstr.c_str());
+    return 1;
+}
 static int Game_Entity_GetEntityProperties(lua_State* pL) {
     string entity = "0x" + (string)lua_tostring(pL, -1);
     Component::EntityProperties entityProperties = Component::GetEntityProperties(entity);
@@ -1065,6 +1126,13 @@ static int Game_Entity_BehaviorControl(lua_State* pL) {
     string entity = "0x" + (string)lua_tostring(pL, 1);
     int id = (int)lua_tointeger(pL, 2);
     Component::EntityBehaviorControl(entity, id);
+    return 0;
+}
+static int Game_Entity_RunFsmAction(lua_State* pL) {
+    string entity = "0x" + (string)lua_tostring(pL, 1);
+    int type = (int)lua_tointeger(pL, 2);
+    int id = (int)lua_tointeger(pL, 3);
+    Component::EntityRunDerivedAction(entity, type, id);
     return 0;
 }
 static int Game_Shlp_GetShlpList(lua_State* pL)
@@ -1659,28 +1727,8 @@ int LuaErrorRecord(string error) {
     {
         if (*it == error) return 0;
     }
-    Base::LuaHandle::LuaError.push_back(error);
-
-    return 1;
-}
-int pcall_callback_err_fun(lua_State* L)
-{
-    lua_Debug debug = {};
-    int ret = lua_getstack(L, 2, &debug); // 0是pcall_callback_err_fun自己, 1是error函数, 2是真正出错的函数
-    lua_getinfo(L, "Sln", &debug);
-
-
-    std::string err = lua_tostring(L, -1);
-    lua_pop(L, 1);
-    std::stringstream msg;
-    msg << debug.short_src << ":line " << debug.currentline;
-    if (debug.name != 0) {
-        msg << "(" << debug.namewhat << " " << debug.name << ")";
-    }
-
-
-    msg << " [" << err << "]";
-    lua_pushstring(L, msg.str().c_str());
+    Base::LuaHandle::LuaError.push_back(error.c_str());
+    LOG(ERR) << Base::ModConfig::ModName << " LUA RUN ERR:" << error;
     return 1;
 }
 
@@ -1857,6 +1905,33 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Player_CancelHookCoordinateChange", Game_Player_CancelHookCoordinateChange);
     
     #pragma endregion
+
+    #pragma region Otomo
+    //获取艾露猫坐标
+    lua_register(L, "Game_Otomo_GetOtomoCoordinate", Game_Otomo_GetOtomoCoordinate);
+    //获取增量坐标
+    lua_register(L, "Game_Otomo_GetOtomoIncrementCoordinate", Game_Otomo_GetOtomoIncrementCoordinate);
+    //获取艾露猫地址
+    lua_register(L, "Game_Entity_GetOtomoPtr", Game_Entity_GetOtomoPtr);
+    //获取艾露猫动作id
+    lua_register(L, "Game_Otomo_GetOtomoActionId", Game_Otomo_GetOtomoActionId);
+    //获取朝向角度
+    lua_register(L, "Game_Otomo_GetOtomoAngle", Game_Otomo_GetOtomoAngle);
+    //设置朝向角度
+    lua_register(L, "Game_Otomo_SetOtomoAngle", Game_Otomo_SetOtomoAngle);
+    //设置朝向坐标
+    lua_register(L, "Game_Otomo_SetOtomoAimToCoordinate", Game_Otomo_SetOtomoAimToCoordinate);
+
+    //获取艾露猫派生信息
+    lua_register(L, "Game_Otomo_GetFsmData", Game_Otomo_GetFsmData);
+    //执行指定的派生动作
+    lua_register(L, "Game_Otomo_RunFsmAction", Game_Otomo_RunFsmAction);
+    //获取当前动作帧
+    lua_register(L, "Game_Otomo_GetActionFrame", Game_Otomo_GetActionFrame);
+    //设置当前动作帧
+    lua_register(L, "Game_Otomo_SetActionFrame", Game_Otomo_SetActionFrame);
+
+    #pragma endregion
     //获取当前地图Id
     lua_register(L, "Game_World_GetMapId", Game_World_GetMapId);
     //获取聊天消息
@@ -1966,6 +2041,8 @@ int Lua_Main(string LuaFile)
     lua_register(L, "Game_Entity_ClearEntityFrameSpeed", Game_Entity_ClearEntityFrameSpeed);
     //使实体执行动作
     lua_register(L, "Game_Entity_BehaviorControl", Game_Entity_BehaviorControl);
+    //使实体执行FSM动作
+    lua_register(L, "Game_Entity_RunFsmAction", Game_Entity_RunFsmAction);
     #pragma endregion
     
 #pragma endregion
@@ -2092,10 +2169,10 @@ int Lua_Main(string LuaFile)
     int err = 0;
     
     if (Base::LuaHandle::LuaCode[LuaFile].hotReload) {
-        err = luaL_loadfile(L, Base::LuaHandle::LuaCode[LuaFile].file.c_str());
+        err = luaL_dofile(L, Base::LuaHandle::LuaCode[LuaFile].file.c_str());
     }
     else {
-        err = luaL_loadstring(L, Base::LuaHandle::LuaCode[LuaFile].code.c_str());
+        err = luaL_dostring(L, Base::LuaHandle::LuaCode[LuaFile].code.c_str());
     }
 
     if (err != 0)
@@ -2109,43 +2186,19 @@ int Lua_Main(string LuaFile)
         return -1;
     }
     Nowlua = LuaFile;
-    if (Base::LuaHandle::LuaCode[LuaFile].hotReload) {
-        err = lua_pcall(L, 0, 0, 0);
-    }
-    else {
-        err = lua_pcall(L, 0, LUA_MULTRET, 0);
-    }
-    /*
-    lua_pushcfunction(L, pcall_callback_err_fun);
-    int pos_err = lua_gettop(L);
-    lua_getglobal(L, "run");               //调用lua中的函数f
-    err = lua_pcall(L, 0, 1, pos_err);
-    if (err != 0)
-    {
-        int t = lua_type(L, -1);
-        const char* error = lua_tostring(L, -1);
-        LOG(ERR) << Base::ModConfig::ModName << " LUA ERR:" << error;
-        lua_pop(L, 1);
-    }
-    lua_close(L);
-    */
+
     //设置错误回调函数
     lua_pushcfunction(L, LuaErrorCallBack);
     //获取栈顶的位置即错误回调函数的位置
     int callBack = lua_gettop(L);
     lua_getglobal(L, "run");
-    int runerr = 0;
-    runerr = lua_pcall(L, 0, 0, 0);
     err = lua_pcall(L, 0, 0, callBack);
-    
-    if (runerr != 0)
+    if (err != 0)
     {
-        //string error = lua_tostring(L, -1);
-        //LuaErrorRecord(error);
         int type = lua_type(L, -1);
         if (type == 4) {
-            const char* error = lua_tostring(L, -1);
-            LOG(ERR) << Base::ModConfig::ModName << " LUA RUN ERR:" << error;
+            string error = lua_tostring(L, -1);
+            LuaErrorRecord(error);
         }
     }
     lua_close(L);

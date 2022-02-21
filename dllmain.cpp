@@ -28,6 +28,7 @@ using namespace loader;
 
 void Lua_System()
 {
+
 	while (true)
 	{
 		if (Base::ModConfig::GameDataInit) {

@@ -50,6 +50,9 @@ namespace MH {
         static void(*HookCoordinateChange2)(undefined8*, undefined8*) = (void(*)(undefined8*, undefined8*))0x140EFA699;
         static void* PlayerArchive = (void*)0x145073E80;
     }
+    namespace Otomo {
+        static undefined(*OtomoBasePlot)() = (undefined(*)())0x144FFF7A8;
+    }
     namespace EnvironmentalBiological {
         static undefined * (*ctor)(undefined*, undefined4, undefined4) = (undefined * (*)(undefined*, undefined4, undefined4))0x141D442C0;
     }

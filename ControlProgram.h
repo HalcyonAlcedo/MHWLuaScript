@@ -269,10 +269,10 @@ namespace ControlProgram {
 				}
 				if (ImGui::TreeNode(u8"错误记录"))
 				{
-					ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+					ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
 					ImGui::BeginChild("LuaErrList", ImVec2(ImGui::GetWindowContentRegionWidth(), 260), false, window_flags);
-					for (auto iter = Base::ModConfig::LuaError.cbegin(); iter != Base::ModConfig::LuaError.cend(); iter++)
-						ImGui::Text("%s", *iter);
+					for (auto iter = Base::LuaHandle::LuaError.cbegin(); iter != Base::LuaHandle::LuaError.cend(); iter++)
+						ImGui::Text("Err: %s", *iter);
 					ImGui::EndChild();
 					ImGui::TreePop();
 				}
@@ -322,6 +322,28 @@ namespace ControlProgram {
 					ImGui::Text(u8"下落速率：%f", Base::PlayerData::Fallspeedrate);
 					ImGui::TreePop();
 				}
+				if (ImGui::TreeNode(u8"艾露猫信息"))
+				{
+					ImGui::Text(u8"动作Id：%d", Base::Otomo::ActionId);
+					if (ImGui::TreeNode(u8"派生信息"))
+					{
+						ImGui::Text(u8"当前Fsm：%d - %d", Base::Otomo::NowFsm.Target, Base::Otomo::NowFsm.Id);
+						ImGui::Text(u8"上一个执行的Fsm：%d - %d", Base::Otomo::Fsm.Target, Base::Otomo::Fsm.Id);
+						ImGui::Text(u8"当前动作帧：%f", Base::Otomo::ActionFrame);
+						ImGui::Text(u8"当前动作帧长度：%f", Base::Otomo::ActionFrameEnd);
+						ImGui::Text(u8"当前动作帧速率：%f", Base::Otomo::ActionFrameSpeed);
+						ImGui::TreePop();
+					}
+					if (ImGui::TreeNode(u8"当前坐标"))
+					{
+						ImGui::Text(u8"X：%f", Base::Otomo::Coordinate::Entity.x);
+						ImGui::Text(u8"Y：%f", Base::Otomo::Coordinate::Entity.y);
+						ImGui::Text(u8"Z：%f", Base::Otomo::Coordinate::Entity.z);
+						ImGui::TreePop();
+					}
+					ImGui::Text(u8"朝向角：%f", Base::Otomo::Angle);
+					ImGui::TreePop();
+				}
 				if (ImGui::TreeNode(u8"怪物信息"))
 				{
 					for (auto [monster, monsterData] : Base::Monster::Monsters) {
@@ -355,7 +377,7 @@ namespace ControlProgram {
 									*offsetPtr<float>(monsterData.Plot, 0x180)
 								));
 								ImGui::Text(u8"朝向角：%f", MonsterAngle);
-								float MonsterActionId = 0;
+								int MonsterActionId = 0;
 								float MonsterActionFrame = 0;
 								float MonsterActionFrameEnd = 0;
 								float MonsterActionFrameSpeed = 0;

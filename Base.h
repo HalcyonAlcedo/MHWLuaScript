@@ -52,8 +52,8 @@ namespace Base {
 		//可设置参数
 		string ModName = "LuaScript";
 		string ModAuthor = "Alcedo";
-		string ModVersion = "v1.2.8";
-		long long ModBuild = 128002151927;
+		string ModVersion = "v1.2.9";
+		long long ModBuild = 129002172340;
 		string Version = "421471";
 	}
 #pragma endregion
@@ -101,6 +101,7 @@ namespace Base {
 		void* PlayerInfoPlot = nullptr;
 		void* PlayerDataPlot = nullptr;
 		void* PlayerArchivePlot = nullptr;
+		void* OtomoPlot = nullptr;
 		void* MapPlot = nullptr;
 		void* GameTimePlot = nullptr;
 		void* XboxPadPlot = nullptr;
@@ -574,6 +575,135 @@ namespace Base {
 		static void BehaviorControl(void* monster, int Fsm) {
 			//感谢南风焓大佬提供的地址
 			MH::Monster::BehaviorControl((undefined*)monster, Fsm);
+		}
+	}
+#pragma endregion
+	//艾露猫信息
+#pragma region Otomo
+	namespace Otomo {
+		struct OtomoData {
+			void* Plot;
+			float CoordinatesX;
+			float CoordinatesY;
+			float CoordinatesZ;
+			OtomoData(
+				void* Plot = nullptr,
+				float CoordinatesX = 0,
+				float CoordinatesY = 0,
+				float CoordinatesZ = 0
+				)
+				:Plot(Plot), CoordinatesX(CoordinatesX), CoordinatesY(CoordinatesY), CoordinatesZ(CoordinatesZ) {
+			};
+		};
+		struct FsmData {
+			//对象
+			int Target = 0;
+			//执行Id
+			int Id = 0;
+			FsmData(int Target = 0, int Id = 0) :Target(Target), Id(Id) {
+			};
+		};
+		//坐标
+		namespace Coordinate {
+			//玩家坐标
+			Vector3 Entity = Vector3();
+			//碰撞返回坐标
+			Vector3 Collision = Vector3();
+			//增量坐标
+			Vector3 Increment = Vector3();
+		}
+		//朝向角度
+		float Angle = 0;
+		//动作id
+		int ActionId = 0;
+		//当前动作帧
+		float ActionFrame = 0;
+		float ActionFrameEnd = 0;
+		float ActionFrameSpeed = 0;
+		//派生信息
+		FsmData Fsm = FsmData();
+		FsmData NowFsm = FsmData();
+		//执行派生动作(执行对象,执行Id)
+		static void RunDerivedAction(int type, int id) {
+			*offsetPtr<int>(BasicGameData::OtomoPlot, 0x6284) = type;
+			*offsetPtr<int>(BasicGameData::OtomoPlot, 0x6288) = id;
+			*offsetPtr<int>(BasicGameData::OtomoPlot, 0x628C) = type;
+			*offsetPtr<int>(BasicGameData::OtomoPlot, 0x6290) = id;
+		}
+		//设置当前动作帧
+		static void SetActionFrame(float Frame) {
+			void* ActionFramePlot = *offsetPtr<void*>(BasicGameData::OtomoPlot, 0x468);
+			*offsetPtr<float>(ActionFramePlot, 0x10c) = Frame;
+		}
+		//设置朝向角度、坐标
+		static void SetPlayerAimAngle(float angle)//输入与Z轴正方向夹角
+		{
+			Vector4 quaternion = Calculation::AngleToQuaternion(angle);
+			*offsetPtr<float>(BasicGameData::OtomoPlot, 0x174) = quaternion.x;
+			*offsetPtr<float>(BasicGameData::OtomoPlot, 0x17C) = quaternion.z;
+		}
+		static void SetPlayerAimCoordinate(float aim_x, float aim_z)//输入目标的x轴，z轴坐标
+		{
+			float direction_x = (aim_x - Otomo::Coordinate::Entity.x);//目标x轴 减去 人物x轴
+			float direction_z = (aim_z - Otomo::Coordinate::Entity.z);//目标z轴 减去 人物z轴
+
+			float aim_angle = std::atan(direction_x / direction_z);
+
+			aim_angle = aim_angle + sign(direction_x) * (1 - sign(direction_z)) * M_PI / 2;
+
+			SetPlayerAimAngle(aim_angle);//设置角度
+		}
+		//数据更新
+		static void Updata() {
+			Coordinate::Entity = Vector3(
+				*offsetPtr<float>(BasicGameData::OtomoPlot, 0x160),
+				*offsetPtr<float>(BasicGameData::OtomoPlot, 0x164),
+				*offsetPtr<float>(BasicGameData::OtomoPlot, 0x168)
+			);
+			Coordinate::Collision = Vector3(
+				*offsetPtr<float>(BasicGameData::OtomoPlot, 0xA50),
+				*offsetPtr<float>(BasicGameData::OtomoPlot, 0xA54),
+				*offsetPtr<float>(BasicGameData::OtomoPlot, 0xA58)
+			);
+
+			void* IncrementPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::OtomoPlot, 0x468);
+			if (IncrementPlot != nullptr) {
+				Coordinate::Increment.x = *offsetPtr<float>(IncrementPlot, 0xE250);
+				Coordinate::Increment.y = *offsetPtr<float>(IncrementPlot, 0xE254);
+				Coordinate::Increment.z = *offsetPtr<float>(IncrementPlot, 0xE258);
+			}
+			else {
+				Coordinate::Increment.x = 0.0;
+				Coordinate::Increment.y = 0.0;
+				Coordinate::Increment.z = 0.0;
+			}
+			Angle = Calculation::QuaternionToAngle(Vector4(
+				*offsetPtr<float>(BasicGameData::OtomoPlot, 0x174),
+				*offsetPtr<float>(BasicGameData::OtomoPlot, 0x178),
+				*offsetPtr<float>(BasicGameData::OtomoPlot, 0x17C),
+				*offsetPtr<float>(BasicGameData::OtomoPlot, 0x180)
+			));
+			void* ActionPlot = *offsetPtr<undefined**>((undefined(*)())BasicGameData::OtomoPlot, 0x468);
+			if (ActionPlot != nullptr) {
+				ActionId = *offsetPtr<int>(ActionPlot, 0xE9C4);
+			}
+			else {
+				ActionId = 0;
+			}
+			Fsm = FsmData(
+				*offsetPtr<int>(BasicGameData::OtomoPlot, 0x628C),
+				*offsetPtr<int>(BasicGameData::OtomoPlot, 0x6290)
+			);
+			NowFsm = FsmData(
+				*offsetPtr<int>(BasicGameData::OtomoPlot, 0x6274),
+				*offsetPtr<int>(BasicGameData::OtomoPlot, 0x6278)
+			);
+			void* ActionFramePlot = *offsetPtr<void*>(BasicGameData::OtomoPlot, 0x468);
+			if (ActionFramePlot != nullptr) {
+				ActionFrame = *offsetPtr<float>(ActionFramePlot, 0x10C);
+				ActionFrameEnd = *offsetPtr<float>(ActionFramePlot, 0x114);
+				ActionFrameSpeed = *offsetPtr<float>(BasicGameData::OtomoPlot, 0x6c);
+			}
 		}
 	}
 #pragma endregion
@@ -1379,6 +1509,8 @@ namespace Base {
 			void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 			void* PlayerInfoPlot = *(undefined**)MH::Player::BasePtr;
 			BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
+			void* OtomoPlot = *(undefined**)MH::Otomo::OtomoBasePlot;
+			BasicGameData::OtomoPlot = *offsetPtr<undefined**>((undefined(*)())OtomoPlot, 0x38);
 			void* PlayerDataHandlePlot = *(undefined**)MH::Player::PlayerDataHandlePlot;
 			void* PlayerDataHandleOffset1 = nullptr;
 			if (PlayerDataHandlePlot != nullptr)
@@ -1406,6 +1538,7 @@ namespace Base {
 				BasicGameData::PlayerArchivePlot = *offsetPtr<undefined**>((undefined(*)())PlayerArchivePlot, 0xA8);
 			if (
 				BasicGameData::PlayerPlot != nullptr and
+				BasicGameData::OtomoPlot != nullptr and
 				BasicGameData::MapPlot != nullptr and
 				BasicGameData::GameTimePlot != nullptr
 				) {
@@ -1647,20 +1780,22 @@ Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 			}
 			else {
 				if (ModConfig::InitErrInfo) {
-					LOG(ERR) << ModConfig::ModName << " : Game data initialization failed!";
-					LOG(ERR) << "The following address failed to complete the initialization. We will try again later. If the address is still not initialized successfully, please contact the mod author for solution.";
+					LOG(WARN) << ModConfig::ModName << " : Game data initialization failed!";
+					LOG(WARN) << "The following address failed to complete the initialization. We will try again later. If the address is still not initialized successfully, please contact the mod author for solution.";
 					if (BasicGameData::PlayerPlot == nullptr)
-						LOG(ERR) << " |  PlayerPlot";
+						LOG(WARN) << " |  PlayerPlot";
 					if (BasicGameData::PlayerDataPlot == nullptr)
-						LOG(ERR) << " |  PlayerDataPlot";
+						LOG(WARN) << " |  PlayerDataPlot";
+					if (BasicGameData::OtomoPlot == nullptr)
+						LOG(WARN) << " |  OtomoPlot";
 					if (BasicGameData::MapPlot == nullptr)
-						LOG(ERR) << " |  MapPlot";
+						LOG(WARN) << " |  MapPlot";
 					if (BasicGameData::GameTimePlot == nullptr)
-						LOG(ERR) << " |  GameTimePlot";
+						LOG(WARN) << " |  GameTimePlot";
 					if (BasicGameData::XboxPadPlot == nullptr)
-						LOG(ERR) << " |  XboxPadPlot";
+						LOG(WARN) << " |  XboxPadPlot";
 					if (BasicGameData::Quest == nullptr)
-						LOG(ERR) << " |  QuestPlot";
+						LOG(WARN) << " |  QuestPlot";
 					ModConfig::InitErrCount++;
 					if (ModConfig::InitErrCount > 10)
 						ModConfig::InitErrInfo = false;
@@ -1699,6 +1834,9 @@ Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 				//更新地址信息
 				void* PlayerPlot = *(undefined**)MH::Player::PlayerBasePlot;
 				BasicGameData::PlayerPlot = *offsetPtr<undefined**>((undefined(*)())PlayerPlot, 0x50);
+				void* OtomoPlot = *(undefined**)MH::Otomo::OtomoBasePlot;
+				BasicGameData::OtomoPlot = *offsetPtr<undefined**>((undefined(*)())OtomoPlot, 0x38);
+				
 				//清除按键数据
 				Keyboard::TempData::t_KeyCount.clear();
 				Keyboard::TempData::t_KeyDown.clear();
@@ -1710,6 +1848,7 @@ Mod源码可从[GitHub](https://github.com/HalcyonAlcedo/MHWLuaScript)获取
 			}
 			//更新玩家数据
 			PlayerData::Updata();
+			Otomo::Updata();
 			//清除死亡的环境生物,此处最好能找到环境生物吊销的地址，目前先这样用着
 			for (auto [Environmental, EData] : World::EnvironmentalData::Environmentals) {
 				if (EData.Plot == nullptr) {

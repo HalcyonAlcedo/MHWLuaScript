@@ -941,6 +941,18 @@ namespace Component {
 				Base::Monster::BehaviorControl(EntityAddress, fsm);
 			}
 		}
+
+		static void EntityRunDerivedAction(string ptr, int type, int id) {
+			long long Ptr = 0;
+			sscanf_s(ptr.c_str(), "%p", &Ptr, sizeof(long long));
+			void* EntityAddress = (double*)Ptr;
+			if (EntityAddress != nullptr) {
+				*offsetPtr<int>(EntityAddress, 0x6284) = type;
+				*offsetPtr<int>(EntityAddress, 0x6288) = id;
+				*offsetPtr<int>(EntityAddress, 0x628C) = type;
+				*offsetPtr<int>(EntityAddress, 0x6290) = id;
+			}
+		}
 #pragma endregion
 #pragma region GetMonstersName_CN
 		static string GetMonstersName_CN(int id) {
